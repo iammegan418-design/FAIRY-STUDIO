@@ -210,6 +210,7 @@ textarea{min-height:150px;resize:vertical;line-height:1.6}
     <button class="feat" type="button" data-go="title"><span class="no">②</span><span class="txt"><b>爆款標題生成</b><span class="d">10 種風格的封面標題，附吸引力評分</span></span><span class="st on">開始使用</span></button>
     <button class="feat" type="button" data-go="gen"><span class="no">③</span><span class="txt"><b>短影音腳本生成</b><span class="d">開場、完整口白、拍攝與剪輯建議</span></span><span class="st on">開始使用</span></button>
     <button class="feat" type="button" data-go="check"><span class="no">④</span><span class="txt"><b>腳本健檢優化</b><span class="d">六大評分、找出問題、給你優化版</span></span><span class="st on">開始使用</span></button>
+    <button class="feat" type="button" data-go="shoot"><span class="no">📱</span><span class="txt"><b>拍攝教學</b><span class="d">不知道畫面要拍什麼？照著清單一顆一顆拍</span></span><span class="st on">查看</span></button>
     <button class="feat" type="button" data-go="music"><span class="no">♪</span><span class="txt"><b>推薦音樂</b><span class="d">2026 四大情境 BGM＋爆款開頭，依影片情境挑</span></span><span class="st on">查看</span></button>
     <button class="feat" type="button" data-go="life"><span class="no">⑤</span><span class="txt"><b>信任度題庫</b><span class="d">食衣住行育樂＋價值觀，一題就是一支信任型影片</span></span><span class="st on">開始使用</span></button>
     <button class="feat" type="button" data-go="history"><span class="no">✦</span><span class="txt"><b>我的創作紀錄</b><span class="d">存下來的選題、標題、腳本都在這裡</span></span><span class="st on" id="hist-count">查看</span></button>
@@ -334,6 +335,20 @@ textarea{min-height:150px;resize:vertical;line-height:1.6}
     <h2>三種影片怎麼分</h2>
     <div class="items" id="l-types"></div>
   </section>
+</main>
+</div>
+<div id="v-shoot" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="inspire">← 創作靈感室</button>
+  <div class="subhead"><p class="eyebrow">拍攝教學</p><h1>不會拍？照著拍就對了</h1><p class="muted">一支短影音，其實就是幾個 2–3 秒的小畫面接在一起。先學會 6 種基本鏡頭，再照情境清單一顆一顆拍。</p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px;display:flex;flex-direction:column;gap:16px">
+  <section class="panel"><h2>拍之前 30 秒檢查</h2><p class="muted">每次開拍前看一下，畫面質感差很多。</p><div class="checks" id="sh-pre" style="margin-top:10px"></div></section>
+  <section class="panel"><h2>6 種基本鏡頭</h2><p class="muted">一支影片裡交替使用 3–4 種，看起來就很專業。</p><div class="items" id="sh-basic"></div></section>
+  <section class="panel"><h2>照情境拍：拍攝清單</h2><p class="muted">選你要拍的主題，照順序拍，每一顆 3–5 秒，剪的時候再挑最好的 2–3 秒。</p><div class="chips" id="sh-tabs"></div><div id="sh-list"></div></section>
+  <section class="panel"><h2>一支影片怎麼組起來</h2><div class="items" id="sh-flow"></div></section>
+  <section class="panel"><h2>不想露臉也可以拍</h2><ul class="plist" id="sh-noface"></ul></section>
+  <section class="panel"><h2>新手最常犯的錯</h2><div class="items" id="sh-oops"></div></section>
 </main>
 </div>
 <div id="v-music" hidden>
@@ -1333,7 +1348,7 @@ function renderGen(){
   <div class="ptitle" style="font-size:1.35rem">${esc(r.title)}</div>
   <div class="sec"><h2>前 3 秒開場</h2><p style="margin:0;font-size:1.05rem">${esc(r.hook)}</p></div>
   <div class="sec"><div class="sechead"><h2>${r.make==='原音'?'片段順序與字幕':r.make==='配音'?'旁白文案與素材':'完整口白'}</h2><button class="btn ghost" type="button" data-gcopy="script">複製</button></div><div class="preview">${hiTodo(r.script)}</div></div>
-  <div class="sec"><h2>拍攝畫面建議</h2><ol class="plist">${r.shots.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>
+  <div class="sec"><h2>拍攝畫面建議</h2><ol class="plist">${r.shots.map(x=>`<li>${esc(x)}</li>`).join('')}</ol><button class="linkbtn" type="button" data-go="shoot" style="margin-top:8px">看不懂畫面怎麼拍？看拍攝教學 →</button></div>
   <div class="sec"><h2>剪輯節奏建議</h2><ul class="plist">${r.edit.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
   <div class="sec"><h2>結尾互動</h2><p style="margin:0">${esc(r.cta)}</p></div>
   ${r.todo.length?`<div class="sec"><h2>拍之前要補的真實資訊</h2><p class="muted">AI 不會幫你編經歷，這些請換成你自己的。</p><ul class="plist">${r.todo.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
@@ -1791,6 +1806,44 @@ document.addEventListener('click',e=>{
 });
 renderSpCase();renderSpOpts();
 
+/* --- 拍攝教學 --- */
+const SH_PRE=['手機直拍（9:16），不要橫拍','鏡頭用衛生紙擦一下','面向窗戶或光源，不要背光','背景收乾淨，雜物移出畫面','關掉美顏或調低，看起來比較自然','要說話就靠近手機，或戴耳機麥克風收音','手機放穩：腳架、靠在杯子或書上都可以'];
+const SH_BASIC=[
+ ['遠景','交代你在哪裡','整個空間都拍進來：客廳、公園、教室門口。放在開頭或換場景時。'],
+ ['中景','拍你在做什麼','拍到腰或半身，最適合說話、做動作。露臉說話就用這個。'],
+ ['特寫','讓人看清楚細節','手機靠很近：手在切菜、塗保養品、寫筆記、飲料倒進杯子。最有質感的鏡頭。'],
+ ['俯拍','從正上方往下拍','手機舉在桌子正上方：早餐、擺盤、桌面、筆記本。不露臉也很好看。'],
+ ['第一人稱','用你的眼睛看世界','手機拿在胸前往前拍：走路、開門、看風景，觀眾會像跟你一起。'],
+ ['空鏡','沒有人的氣氛畫面','窗外天空、咖啡冒煙、樹葉、街景。拿來轉場或配旁白，非常好用。']];
+const SH_SCENE={
+ '料理早餐':[['俯拍','食材全部擺在桌上，手機在正上方拍 3 秒'],['特寫','手在切、倒、擺盤的動作'],['中景','側面拍你在煮或準備的樣子'],['特寫','成品慢慢靠近，或轉一圈'],['收尾','坐下來準備吃的畫面，或對鏡頭說一句話']],
+ '保養化妝':[['中景','坐在鏡子前、準備開始的樣子'],['特寫','手拿瓶子，讓包裝看清楚（不用說功效）'],['特寫','擠在手上、塗抹的手部動作'],['中景','完成後照鏡子或整理頭髮'],['收尾','看鏡頭微笑，或關燈、收東西的畫面']],
+ '帶小孩日常':[['第一人稱','牽著小孩的手往前走'],['特寫','小孩的小手、小腳步（不露臉也可以）'],['遠景','公園、學校門口、餐廳的環境'],['中景','你們一起玩、一起吃的樣子'],['空鏡','回家路上的天空或車窗外']],
+ '上課學習':[['遠景','會場或教室外面，交代你在哪'],['特寫','筆記本上手寫的字'],['特寫','投影片或白板（不要拍到別人的臉）'],['中景','你專心聽課的側面'],['收尾','下課後自拍，說一句今天最有感的話']],
+ '產品分享':[['中景','在生活場景中自然出現產品，不要像拍廣告'],['特寫','打開、沖泡、擠出來的手部動作'],['中景','你使用中的樣子'],['空鏡','產品放在桌上的氣氛畫面'],['收尾','你的表情或說一句真實感受']],
+ '綠燈卡點 BA':[['Before','以前的照片或影片，最好同角度、同類型衣服'],['轉場','手遮鏡頭、轉身、彈指、跳一下'],['After','現在的你，跟 Before 同一個角度'],['生活快剪','3–4 個 1 秒的日常片段，卡在音樂節拍'],['收尾','定格在最喜歡的一個畫面']]};
+const SH_TIP={'產品分享':'綠燈影片不要拍產品、不要吃播；黃燈分享也不拍價目表、不說功效。','綠燈卡點 BA':'不放產品、不吃播、不提功效，40 秒內。BA 對比放在音樂最強的那一拍。','上課學習':'拍到別人時，先問過再發，或只拍背影和手。','帶小孩日常':'孩子的學校名稱、制服、門牌不要拍得太清楚。'};
+const SH_FLOW=[['開場 1–3 秒','用特寫或一個動作開始，不要先說「大家好」'],['中間','中景和特寫交替，每 2–3 秒換一個畫面'],['結尾','看鏡頭說一句話、空鏡，或定格'],['剪輯','每顆畫面只留最好的 2–3 秒，切換卡在音樂節拍上']];
+const SH_NOFACE=['拍手：做菜、寫字、拿杯子、塗保養品','拍背影：走路、看窗外、牽小孩','拍腳步：出門、走在路上','俯拍桌面：早餐、筆記、工作桌','鏡子反射，用手機擋住臉','配旁白或字幕，你的聲音和文字就是你的特色'];
+const SH_OOPS=[['畫面太暗','面向窗戶拍，晚上開大燈或用補光燈'],['一顆鏡頭拍太久','一個畫面 3–5 秒就換，剪的時候只留 2–3 秒'],['手機一直晃','手肘夾緊身體，或把手機靠在東西上'],['只拍一種角度','同一件事拍遠景＋中景＋特寫，剪起來才有節奏'],['背景很亂','拍之前花 30 秒收一下，或拍特寫避開'],['收音很糊','靠近手機說話，關掉電視和風扇']];
+let SHTAB='料理早餐';
+function renderShoot(){
+  $('#sh-pre').innerHTML=SH_PRE.map((t,i)=>`<label class="ck" for="shp-${i}"><input type="checkbox" id="shp-${i}">${esc(t)}</label>`).join('');
+  $('#sh-basic').innerHTML=SH_BASIC.map((b,i)=>`<div class="it"><span class="pill ok">${i+1}</span><div><div class="nm">${b[0]}｜${b[1]}</div><div class="fx">${b[2]}</div></div></div>`).join('');
+  $('#sh-flow').innerHTML=SH_FLOW.map(f=>`<div class="it"><span class="pill warn">${f[0]}</span><div><div class="ms">${f[1]}</div></div></div>`).join('');
+  $('#sh-noface').innerHTML=SH_NOFACE.map(x=>`<li>${x}</li>`).join('');
+  $('#sh-oops').innerHTML=SH_OOPS.map(o=>`<div class="it"><span class="pill bad">${o[0]}</span><div><div class="ms">👉 ${o[1]}</div></div></div>`).join('');
+  renderShTab();
+}
+function renderShTab(){
+  $('#sh-tabs').innerHTML=Object.keys(SH_SCENE).map(k=>`<button class="chip" type="button" data-shtab="${k}" aria-pressed="${SHTAB===k}">${k}</button>`).join('');
+  const L=SH_SCENE[SHTAB];
+  $('#sh-list').innerHTML=`<div class="items" style="margin-top:8px">${L.map((x,i)=>`<div class="it"><span class="pill ok">第 ${i+1} 顆</span><div><div class="nm">${x[0]}</div><div class="ms">${x[1]}</div></div></div>`).join('')}</div>${SH_TIP[SHTAB]?`<p class="tip">⚠️ ${SH_TIP[SHTAB]}</p>`:''}<button class="btn ghost" type="button" data-shcopy style="margin-top:10px">複製這份拍攝清單</button>`;
+}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-shtab]');if(t){SHTAB=t.dataset.shtab;renderShTab();return}
+  if(e.target.closest('[data-shcopy]')){copyText(`【${SHTAB}｜拍攝清單】\n`+SH_SCENE[SHTAB].map((x,i)=>`${i+1}. ${x[0]}：${x[1]}`).join('\n')+(SH_TIP[SHTAB]?`\n提醒：${SH_TIP[SHTAB]}`:''));return}});
+renderShoot();
+
 let MTAB=0;
 function renderMusic(){const g=MUSIC[MTAB];
   $('#m-list').innerHTML=`<span class="stage">2026 四大情境 BGM 挑選指南</span><div class="chips" style="margin-top:12px">${MUSIC.map((x,i)=>`<button class="chip" type="button" data-mtab="${i}" aria-pressed="${MTAB===i}">${esc(x.cat)}</button>`).join('')}</div>
@@ -1800,9 +1853,9 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-mtab]');if
   const m=e.target.closest('[data-mcopy]');if(m){const x=MUSIC[MTAB].songs[+m.dataset.mcopy];copyText(x[0].replace(/（…）/g,'').trim())}});
 renderMusic();
 
-function go(v){['home','inspire','persona','script','copy','account','ip','topic','title','gen','check','history','life','story','sgen','scheck','sdata','steach','sup','music','ssplit'].forEach(k=>$('#v-'+k).hidden=v!==k);window.scrollTo(0,0);try{history.replaceState(null,'',v==='home'?location.pathname+location.search:'#'+v)}catch(e){}}
+function go(v){['home','inspire','persona','script','copy','account','ip','topic','title','gen','check','history','life','story','sgen','scheck','sdata','steach','sup','music','ssplit','shoot'].forEach(k=>$('#v-'+k).hidden=v!==k);window.scrollTo(0,0);try{history.replaceState(null,'',v==='home'?location.pathname+location.search:'#'+v)}catch(e){}}
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)go(g.dataset.go)});
-go(['#script','#inspire','#persona','#copy','#account','#ip','#topic','#title','#gen','#check','#history','#life','#story','#sgen','#scheck','#sdata','#steach','#sup','#music','#ssplit'].includes(location.hash)?location.hash.slice(1):'home');
+go(['#script','#inspire','#persona','#copy','#account','#ip','#topic','#title','#gen','#check','#history','#life','#story','#sgen','#scheck','#sdata','#steach','#sup','#music','#ssplit','#shoot'].includes(location.hash)?location.hash.slice(1):'home');
 load();renderTypes();renderChips();build();renderOut();
 $('#sampleNote').hidden=!S.isSample;
 </script>
