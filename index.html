@@ -1253,7 +1253,7 @@ function TP_MORE(){const m=ST2.more,j=(m.job||'').trim().replace(/^(在|做)/,''
     T(['變現型',`${j}也能好好照顧自己：我的小習慣`,`忙碌的${j}，我都這樣照顧自己`,'先說忙碌的煩惱，再分享你的做法，結尾邀請私訊聊聊','G',[6,6,6,8,9,7],'約 40 秒'])}
   if(h){T(['引流型',`${h}新手最常問的 3 個問題`,`想開始${h}？先看這支`,'用你的經驗回答新手問題，好收藏','E',[6,5,8,8,8,8],'約 40 秒']);
     T(['信任型',`為什麼我一直堅持${h}？`,`${h}，是我留給自己的時間`,'帶出你重視的價值：生活、自我照顧','B',[6,6,4,7,9,8],'約 35 秒'])}
-  const ind=findInd(`${j} ${m.job||''}`);if(ind){T(['引流型',`${ind.name}有哪些服務？一次帶你看`,`${ind.name}到底在做什麼？`,`介紹 3 個服務項目，每個配一個動作畫面`,'A',[7,6,8,8,9,7],'約 45 秒']);T(['信任型',`${ind.name}前 vs 後，差在哪裡`,`${ind.name}前後差這麼多`,ind.ba,'C',[8,9,5,8,9,7],'約 30 秒']);T(['變現型',`${ind.name}最常被問的 3 個問題`,`做${ind.name}前，一定要知道的事`,ind.tips[0],'E',[6,6,9,7,9,8],'約 45 秒'])}
+  const ind=findInd(`${j} ${m.job||''}`);if(ind){TP_IND(ind).slice(0,4).forEach(t=>T(t))}
   if(j&&h)T(['引流型',`${j}下班後，我都在${h}`,`下班後的我，都在做這件事`,`工作和${h}的反差，最容易讓人停下來`,'C',[8,7,4,8,9,8],'約 30 秒']);
   if(e){T(['信任型',`最近發生一件小事：${e.slice(0,18)}`,'最近發生一件小事，讓我想了很久','把這件小事說成故事，最後說出你的想法或價值觀','F',[7,7,4,8,9,8],'約 40 秒']);
     T(['引流型',`${e.slice(0,14)}，你也遇過嗎？`,'這件事，你是不是也遇過','用提問開場，讓觀眾留言分享自己的經驗','A',[7,6,4,9,8,8],'約 30 秒'])}
@@ -1277,19 +1277,16 @@ function offTopics(q){
   const qi=findInd(raw);const PACK=qi?TP_IND(qi):noSub?TP_TRAFFIC:/美食|料理|吃|早餐|晚餐|便當/.test(raw)?TP_FOOD:/育兒|小孩|孩子|寶寶|媽媽|親子/.test(raw)?TP_KID:TP_GEN(x);
   const pick=[...TP_MORE(),...(ST2.ttype?PACK.filter(t=>t[0]===VTYPES[ST2.ttype][0]):[...PACK])].filter(t=>!ST2.ttype||t[0]===VTYPES[ST2.ttype][0]);const nMore=TP_MORE().length;
   const sh=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-  if(nMore){const mine=sh(pick.filter(t=>t.mine)),rest=sh(pick.filter(t=>!t.mine));pick.length=0;pick.push(...mine,...rest)}else sh(pick);
-  let out=pick;if(!ST2.ttype){const by=k=>pick.filter(t=>t[0]===k);out=[...by('引流型').slice(0,2),...by('信任型').slice(0,2),...by('變現型').slice(0,1)];if(nMore)out.sort((a,b)=>(b.mine?1:0)-(a.mine?1:0))}
-  return out.slice(0,5).map(t=>({vtype:t[0],topic:t[1],title:t[2],angle:t[3],formula:t[4],scores:mkScores(t[5]),length:t[6]}));
+  if(nMore){const mine=sh(pick.filter(t=>t.mine)),rest=(qi?pick.filter(t=>!t.mine):sh(pick.filter(t=>!t.mine)));pick.length=0;pick.push(...mine,...rest)}else if(!qi)sh(pick);
+  let out=pick;if(!ST2.ttype&&!qi&&!pick.some(t=>t[7])){const by=k=>pick.filter(t=>t[0]===k);out=[...by('引流型').slice(0,2),...by('信任型').slice(0,2),...by('變現型').slice(0,1)];if(nMore)out.sort((a,b)=>(b.mine?1:0)-(a.mine?1:0))}
+  return out.slice(0,5).map(t=>({vtype:t[0],topic:t[1],title:t[2],angle:t[3],formula:t[4],scores:mkScores(t[5]),length:t[6],dir:t[7]||'',mine:!!t.mine}));
 }
-const TP_IND=ind=>[
-  ['引流型',`${ind.name}有哪些服務？一次帶你看`,`${ind.name}到底在做什麼？`,'介紹 3 個服務項目，每個配一個動作畫面','A',[7,6,8,8,9,7],'約 45 秒'],
-  ['引流型',`${ind.name}的 3 個冷知識`,`做${ind.name}這麼久，很多人不知道這件事`,ind.tips[0],'E',[7,7,9,8,9,8],'約 35 秒'],
-  ['引流型',`${ind.who}最常做錯的一件事`,`${ind.ask}這樣做，其實不太好`,ind.tips[1]||ind.tips[0],'E',[7,7,8,8,9,8],'約 35 秒'],
-  ['信任型',`${ind.name}前 vs 後，差在哪裡`,`${ind.name}前後差這麼多`,ind.ba,'C',[8,9,5,8,9,7],'約 30 秒'],
-  ['信任型',`我為什麼會開始做${ind.name}`,`我為什麼選擇${ind.name}這一行`,'說出你的起點和堅持的原因','F',[6,7,4,6,9,7],'約 45 秒'],
-  ['信任型',`${ind.name}的真實一天`,`我的一天｜${ind.name}`,'從開門到收店的片段快剪','H',[7,6,4,8,9,8],'約 30 秒'],
-  ['變現型',`${ind.name}最常被問的 3 個問題`,`做${ind.name}前，一定要知道的事`,'用問答回覆客人最常問的問題，結尾邀請私訊','E',[6,6,9,7,9,8],'約 45 秒'],
-  ['變現型',`如果你的${ind.ask}也有這個狀況，可以來找我`,`你的${ind.ask}也這樣嗎？`,'先說常見狀況，再介紹適合的服務','G',[6,6,7,7,9,7],'約 40 秒']];
+const DIRS=['價格透明','避坑抓錯','職人視角','實用知識'];
+const DIR_INFO={價格透明:['消除不信任感','信任型',[8,8,8,7,9,7],'B'],避坑抓錯:['痛點＋展現專業','引流型',[8,8,9,8,9,7],'E'],職人視角:['滿足好奇心','信任型',[6,7,7,7,9,6],'F'],實用知識:['提供日常價值','引流型',[6,5,9,9,9,8],'A']};
+function TP_IND(ind){const out=[];const sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+  const mk=(d,x,i)=>{const di=DIR_INFO[d];const vt=d==='價格透明'&&i===ind.dirs[d].length-1?'變現型':di[1];return[vt,x[0],x[1],x[2],di[3],di[2],'約 40 秒',d]};
+  const rest=[];DIRS.forEach(d=>{const L=sh(ind.dirs[d].map((x,i)=>mk(d,x,i)));out.push(L[0]);rest.push(...L.slice(1))});
+  return [...out,...sh(rest)]}
 const TP_GEN=x=>[
   ['引流型',`我以前以為${x}很難，後來才發現…`,`原來${x}沒有我想的那麼難`,'用你自己觀念轉變的過程開場，【待補：你以前卡在哪】','F',[7,7,5,8,8,7],'約 40 秒'],
   ['引流型',`${x}新手最常犯的 3 個錯`,`${x}，別再這樣做了`,'整理你自己踩過的雷，實用又好收藏','E',[7,6,8,8,7,6],'約 45 秒'],
@@ -1342,7 +1339,20 @@ function offGen(topic,len,f,mk,green){
     cta:'你也在努力改變嗎？留言給我一個 💪',todo:['Before／After 的照片或影片','這段時間的真實時間【X】','你自己的心路歷程']};
   const cam='用後鏡頭（外鏡頭）拍，請別人幫你拍或用腳架，不要用前鏡頭自拍';
   const isAngle=point&&point===ST2.gen.angle,pt=isAngle?'':point;
-  const ind=findInd(`${topic} ${pt} ${ST2.more.job||''}`);
+  const ind=findInd(`${topic} ${pt} ${ST2.more.job||''} ${ST2.topic.q||''}`);
+  const pk=ST2.gen.pick&&ST2.gen.pick.topic===topic&&ST2.gen.pick.dir?ST2.gen.pick:null;
+  if(pk){const d=pk.dir,nm=ind?ind.name:'這一行',hook=cover||pk.title;const ps=String(pk.angle||'').split(/[、，,；;]/).map(x=>x.trim()).filter(Boolean);const three=(a,b,c)=>ps.length>=3?`${a}【待補：${ps[0]}】\n${b}【待補：${ps[1]}】\n${c}【待補：${ps[2]}】`:`${a}【待補】\n${b}【待補】\n${c}【待補】\n【提示：${pk.angle}】`;
+    const body={價格透明:['很多人問我這個問題，今天直接說清楚',`重點是：${pk.angle}`,'【待補：用你自己的真實例子說明，例如兩種選擇差在哪】','我的原則是：【待補：你的收費或建議原則】','不是越貴越好，也不是越便宜越划算，適合你最重要',`想知道你的情況適合哪一種，私訊問我`],
+      避坑抓錯:[`我做${nm}【X】年，最常看到這幾種狀況`,three('第一，','第二，','第三，'),'遇到這種情況，建議你：【待補：你的專業建議】','你有遇過嗎？留言跟我說'],
+      職人視角:['今天讓你看看，我們是怎麼做的',three('第一步，','第二步，','第三步，'),'這些細節，客人通常看不到，但我們一定會做','【待補：一句你對這份工作的想法】','想看哪個過程，留言告訴我'],
+      實用知識:['今天教你 3 件事，收藏起來',three('① ','② ','③ '),'每個人狀況不一樣，有疑問可以先問專業的人','收藏起來，需要的時候拿出來看']}[d];
+    const shotsD={價格透明:['0–2 秒｜特寫：兩樣東西並排（兩個零件、兩份資料）','2–5 秒｜中景：你對鏡頭說第一句話','5–12 秒｜特寫：指出差別的細節，每 2–3 秒換一顆','12–20 秒｜中景：你解釋原因',`20–${len-6} 秒｜特寫：價目表或流程（不用寫價格也可以）`,`最後 6 秒｜中景：你看鏡頭說結尾`],
+      避坑抓錯:['0–2 秒｜特寫：問題的畫面（常見狀況或錯誤示範）','2–5 秒｜中景：你對鏡頭說第一句話','5–20 秒｜每個狀況各 2 顆：問題特寫＋正確做法，每 2–3 秒換',`20–${len-6} 秒｜中景：你的建議`,'最後 6 秒｜中景：看鏡頭問觀眾'],
+      職人視角:['0–2 秒｜特寫：工具或拆開的瞬間','2–5 秒｜遠景：工作環境全景','5–25 秒｜過程縮時＋手部特寫交替，每 2–3 秒換一顆',`25–${len-6} 秒｜特寫：完成的細節`,'最後 6 秒｜中景：你看鏡頭說一句話'],
+      實用知識:['0–2 秒｜特寫：要教的東西','2–5 秒｜中景：你說「今天教你 3 件事」','5–25 秒｜每一點 2–3 顆：示範＋細節特寫，上大字幕 ①②③',`25–${len-5} 秒｜中景：補充提醒`,'最後 5 秒｜中景：提醒收藏']}[d];
+    return{make:mk,title:hook,hook,formula:f||pk.formula||'A',seconds:len,script:[hook,...body].join('\n'),shots:shotsD,
+      edit:['每 2–3 秒換一個畫面，不要一鏡到底',cam,'重點句放大字幕',...(ind?[ind.privacy]:[]),`音樂可以試：${mus}`],
+      cta:body[body.length-1],todo:['【待補】的地方換成你自己的真實例子和專業建議','專業內容以實際狀況為準，不說得太絕對']}}
   if(ind){const sv=ind.services.slice(0,3),tip=ind.tips[Math.floor(Math.random()*ind.tips.length)];
     return{make:mk,title:cover||`${ind.name}有哪些服務？一次帶你看`,hook:ind.hook,formula:f||'A',seconds:len,
     script:[ind.hook,`我是【待補：你的名字】，做${ind.name}【待補：幾年】了`,`今天帶你看看，${ind.who}來找我們，我們會做哪些事`,
@@ -1382,6 +1392,41 @@ const INDUSTRY=[
   services:[['剪髮','依臉型和生活習慣剪，好整理最重要','剪刀剪下的瞬間'],['染髮','依膚色和喜好調顏色','上染膏、調色'],['燙髮','讓頭髮有型，早上省時間','上捲子'],['護髮','讓髮絲比較好梳理','塗護髮、梳開']],
   tips:['染完頭髮，前 1–2 天先不要洗','吹頭髮先從髮根吹乾，再吹髮尾','每個人頭皮狀況不同，選洗髮精可以先問設計師'],
   ba:'做之前和做完同一個角度的頭髮',privacy:'客人的臉要先問過，或只拍背面'}];
+INDUSTRY.push(
+ {re:/保險|保單|理賠|壽險|產險/,name:'保險',who:'客戶',ask:'保單',hook:'你知道你現在的保險，到底保了什麼嗎？',open:'你跟客戶見面的咖啡廳（客戶不露臉）',end:'整理好的保單資料夾',
+  services:[['保單健檢','幫你看現在的保障夠不夠、有沒有重複','翻保單、用螢光筆畫重點（資料打碼）'],['保障規劃','依你的年齡和家庭狀況規劃','在紙上畫規劃圖'],['理賠協助','出事的時候，陪你準備文件、跑流程','整理收據和文件的手']],
+  tips:['投保時的告知義務很重要，有就醫紀錄要據實告知','保單上的受益人要記得確認，人生階段改變時要更新','買保險前先看條款裡的除外責任'],
+  ba:'整理前和整理後的保單資料（資料打碼）',privacy:'不保證收益、不貶低同業，實際保障以條款為準；客戶資料一定要打碼'},
+ {re:/保母|褓姆|嬤嬤|托嬰|月嫂|育兒顧問/,name:'保母',who:'爸媽',ask:'寶寶',hook:'把孩子交給別人照顧，你最擔心什麼？',open:'早上爸媽把孩子交過來（不拍臉）',end:'下午交接、揮手說再見（不拍臉）',
+  services:[['日間托育','白天照顧寶寶的吃、睡、玩','準備副食品、陪玩的手'],['作息記錄','每天記錄喝奶、睡覺、換尿布','寫聯絡簿的手'],['發展陪伴','依年齡陪孩子玩、說故事','繪本、積木的特寫']],
+  tips:['寶寶睡覺時，床上不要放枕頭、棉被和玩偶','插座、桌角要做好防護','副食品開始的時間和順序，以醫師建議為準'],
+  ba:'整理前後的遊戲區',privacy:'孩子的臉不露、名字不寫，拍之前一定先問過家長'});
+const DIRS_DATA={
+ 車子保養:{價格透明:[['原廠和外廠，價差到底差在哪？','同一個零件，價格為什麼差這麼多','用同一個零件比較品質和保固，不貶低同業'],['哪些零件其實不用急著換','這些不用換，我們不會叫你換','說明「預防性更換」和「真的該換」的差別'],['保養收費怎麼算？一次說清楚','保養費用怎麼算，一次講清楚','工資、零件、項目列清楚，讓人覺得明碼實價']],
+  避坑抓錯:[['保養最常見的 3 個坑','保養前，先看完這支','漏油沒清乾淨、螺絲沒鎖緊這類狀況，教車主怎麼看'],['別家抓不到的問題，我們怎麼找到的','這台車跑了好幾間都修不好','說一個真實案例的過程（車主同意、遮車牌）'],['車子出現這 3 種聲音，要趕快進廠','聽到這種聲音，別再開了','什麼要馬上處理、什麼不用緊張']],
+  職人視角:[['把煞車卡鉗拆開給你看','拆開來，你就知道為什麼要保養','邊拆邊解釋原理和損壞原因'],['我們怎麼保護你的車漆','師傅施工前一定會做的事','鋪保護墊、頂高、確實施工的細節'],['一位老客人的信任故事','他為什麼一直把車交給我們','老顧客的真實故事（先問過客人）']],
+  實用知識:[['新車、老車保養週期不一樣','幾公里該換什麼？一次整理','依原廠手冊和里程整理，提醒以車款為準'],['冷氣不冷，先自己檢查這 3 件事','冷氣不冷，先別急著修','初步判斷方法，什麼狀況要進廠'],['雨季開車前，檢查這 3 個地方','雨季前一定要檢查的地方','雨刷、輪胎、燈']]},
+ 美甲:{價格透明:[['美甲價格差很多，差在哪裡？','同樣是凝膠，價格為什麼差這麼多','材料、技術、衛生、保固'],['美甲收費怎麼算？一次說清楚','美甲收費，一次講清楚','單色、造型、卸甲、延甲分開說明']],
+  避坑抓錯:[['做美甲最常踩的坑','做美甲前，先看完這支','硬撕凝膠、工具沒消毒、指緣修太深'],['美甲一直翹，問題在這','為什麼你的美甲一直翹？','前置處理的重要性']],
+  職人視角:[['一組造型指甲是怎麼完成的','一組指甲，背後花了多少時間','從修型到上色的完整過程'],['工具消毒，我都這樣做','你的美甲店有消毒嗎？','展示消毒流程']],
+  實用知識:[['做完美甲後，這樣保養比較持久','美甲想撐久一點，記得這 3 件事','護手霜、指緣油、少碰清潔劑'],['什麼膚色適合什麼顏色','黃皮、白皮適合什麼顏色','色卡比對']]},
+ 美睫:{價格透明:[['美睫價格差在哪？','同樣是嫁接，價格為什麼不一樣','材料、根數、技術'],['美睫收費一次說清楚','美睫收費，一次講清楚','自然款、濃密款、補睫']],
+  避坑抓錯:[['嫁接睫毛最常踩的坑','嫁接前，先看完這支','膠水品質、根數太多傷睫毛'],['睫毛一直掉，可能是這些原因','睫毛掉很快？問題可能在這','碰水、油性卸妝、搓眼睛']],
+  職人視角:[['一根一根接，是這樣完成的','一雙睫毛，要接多久？','過程縮時'],['我怎麼設計適合你眼型的款式','每個人的眼型，適合的款式不一樣','眼型分析']],
+  實用知識:[['嫁接後怎麼保養','睫毛想撐久一點，記得這樣做','24 小時不碰水、用睫毛刷'],['多久要回來補一次','睫毛多久補一次比較剛好','依睫毛生長週期說明']]},
+ 美髮:{價格透明:[['染髮價格差在哪？','同樣是染髮，價格為什麼差這麼多','染劑、技術、髮長'],['剪燙染收費一次說清楚','美髮收費，一次講清楚','依項目和髮長說明']],
+  避坑抓錯:[['染髮最常踩的坑','染髮前，先看完這支','自己漂髮、顏色選錯、沒先護髮'],['燙壞的頭髮，我們怎麼救','頭髮燙壞了，還有救嗎？','真實案例（客人同意）']],
+  職人視角:[['一顆頭從剪到吹完的過程','設計師是怎麼剪出這個髮型的','過程快剪'],['我怎麼幫客人挑髮型','你適合什麼髮型？我會先看這些','臉型、髮質、生活習慣']],
+  實用知識:[['吹頭髮的正確方式','頭髮吹不順？你可能吹錯了','先吹髮根再吹髮尾'],['染完頭髮怎麼保養','染完頭髮，顏色這樣比較持久','洗髮精、水溫、護髮']]},
+ 保險:{價格透明:[['同樣的保障，保費為什麼差很多？','保費差很多，差在哪裡','用年齡、保障內容、繳費年期說明，不比較貶低同業'],['哪些保險你可能不需要','這些保險，你可能不需要','依人生階段說明，避免重複投保'],['保費要花多少才合理？','保費到底要花多少才合理','分享常見的規劃原則，實際依個人狀況']],
+  避坑抓錯:[['理賠最常被拒的 3 個原因','理賠被拒，常常是因為這個','告知義務、等待期、除外責任，提醒看條款'],['買保險最常踩的坑','買保險前，先看完這支','只看保費、不看條款、受益人沒寫清楚'],['一個理賠的真實案例','這次理賠，我陪客戶走了好久','說過程和學到的事（客戶同意、不露個資）']],
+  職人視角:[['保險業務的真實一天','我的一天｜保險業務','跑客戶、整理資料、陪理賠的片段'],['我為什麼會做保險','我為什麼選擇做保險','說出你的起點和堅持的原因'],['幫客戶整理保單，我會先看哪裡','幫你健檢保單，我會先看這 3 件事','展示整理流程（資料打碼）']],
+  實用知識:[['人生不同階段，保險重點不一樣','25 歲和 35 歲，保險重點差在哪','單身、結婚、有小孩、退休'],['發生事故後，理賠要準備什麼','出事了，理賠要準備什麼','收據、診斷證明、申請流程'],['3 分鐘看懂你的保單','你的保單，你看得懂嗎？','教大家看保單上最重要的幾個欄位']]},
+ 保母:{價格透明:[['保母費用怎麼算？一次說清楚','保母費用到底怎麼算','說明時段、年齡、加班等常見計算方式'],['托嬰中心和保母，差在哪裡','托嬰還是保母？差在這幾點','比較照顧人數、彈性、環境，不貶低任何一方'],['找保母前，這些費用要先問清楚','找保母前一定要先問的事','餐費、尿布、假日加班']],
+  避坑抓錯:[['找保母最常踩的坑','找保母前，先看完這支','沒簽合約、沒確認證照、沒參觀環境'],['家裡最容易讓孩子受傷的地方','這些地方，孩子最容易受傷','插座、桌角、小物件、窗邊'],['寶寶一直哭，先檢查這幾件事','寶寶一直哭，可能是這幾個原因','餓、尿布、太熱太冷、想睡；不舒服要就醫']],
+  職人視角:[['保母的一天','我的一天｜照顧寶寶','餵奶、陪玩、午睡、記錄的片段（不拍孩子的臉）'],['每天交接，我會跟爸媽說這些','接送時，我一定會跟爸媽說的事','聯絡簿、紀錄、溝通方式'],['帶過最難忘的一個孩子','這個孩子，教會我很多','真實故事（家長同意、不露臉）']],
+  實用知識:[['副食品怎麼開始？','第一次吃副食品，先這樣做','時間和順序參考，以醫師建議為準'],['寶寶作息怎麼排','寶寶作息這樣排，大人也輕鬆','一天作息範例'],['哄睡的小方法','哄睡，我都用這招','睡前儀式、環境']]}};
+INDUSTRY.forEach(x=>x.dirs=DIRS_DATA[x.name]);
 function findInd(t){return INDUSTRY.find(x=>x.re.test(t||''))}
 
 /* shared action bar: 重新生成 / 複製 / 儲存 / 編輯 / 生成標題 / 腳本健檢 */
@@ -1406,8 +1451,9 @@ async function runTopic(){
     const r=await askAI(`任務：使用者說「${q.slice(0,300)}」。${moreBlock()}依照她的人設，產生 5 個不同的短影音主題。${ST2.ttype?`5 個都要是「${VTYPES[ST2.ttype][0]}影片」（${VTYPES[ST2.ttype][1]}）。`:'5 個主題要混合引流型、信任型、變現型，至少各 1 個。'}信任型主題優先用「生活面向（食衣住行育樂）＋說故事＋價值觀」來發想。
 腳本公式庫：${Object.entries(FORMULAS).map(([k,f])=>`${k} ${f[0]}（${f[1]}）`).join('；')}。5 個主題要用至少 3 種不同公式。
 六大評估（每項 0–10 分）：話題性、衝擊性、知識量、大眾性、帳號契合性、簡易性。評分要誠實、有高有低，每個主題至少 2 項低於 7 分，每項理由具體（20 字內），不可以全部給高分。
+如果主題是一種行業、服務或專業（例如車廠、保險、保母、美甲），5 個主題要從「觀眾最想知道」的四個方向發想，每個方向至少 1 個：① 價格透明（消除不信任感：價差真相、哪些錢不用花、收費怎麼算）② 避坑抓錯（痛點＋展現專業：常見的坑、別人解決不了的案例、什麼狀況要馬上處理）③ 職人視角（滿足好奇心：拆解過程、施工細節、老客人的信任故事）④ 實用知識（日常價值：正確週期、季節或突發狀況怎麼處理）。主題要具體到可以直接拍，不要空泛；不貶低同業；涉及專業數字要提醒以實際狀況為準。dir 填方向名稱（價格透明／避坑抓錯／職人視角／實用知識），不是行業主題就給空字串。
 封面標題 8–16 字。
-只回傳 JSON：{"topics":[{"vtype":"引流型／信任型／變現型","topic":"影片主題","title":"封面標題","angle":"切入角度，40 字內","formula":"A","scores":{"話題性":{"s":7,"r":"理由"},"衝擊性":{"s":5,"r":""},"知識量":{"s":6,"r":""},"大眾性":{"s":8,"r":""},"帳號契合性":{"s":9,"r":""},"簡易性":{"s":7,"r":""}},"length":"約 45 秒"}]}`);
+只回傳 JSON：{"topics":[{"dir":"避坑抓錯","vtype":"引流型／信任型／變現型","topic":"影片主題","title":"封面標題","angle":"切入角度，40 字內","formula":"A","scores":{"話題性":{"s":7,"r":"理由"},"衝擊性":{"s":5,"r":""},"知識量":{"s":6,"r":""},"大眾性":{"s":8,"r":""},"帳號契合性":{"s":9,"r":""},"簡易性":{"s":7,"r":""}},"length":"約 45 秒"}]}`);
     s.res=(r.topics||[]).slice(0,5).map(t=>({...t,formula:FORMULAS[t.formula]?t.formula:'A',scores:normScores(t.scores)}));s.q=q;
     s.text=topicText();
   }catch(e){if(e&&e.code==='unavailable'){s.res=offTopics(q);s.offline=true;s.q=q;s.text=topicText()}else{s.res=null;s.err=aiErr(e)}}
@@ -1419,7 +1465,7 @@ function renderTopic(){
   if(s.busy){$('#t-out').innerHTML=busyHTML('AI 正在依照你的人設想主題…');return}
   if(!s.res){$('#t-out').innerHTML=s.err?errHTML(s.err):'';return}
   $('#t-out').innerHTML=s.res.map((t,i)=>{const tot=sumScores(t.scores);return `<section class="panel">
-    <div class="result-top">${ringHTML(Math.round(tot/60*100),`${tot}/60`)}<div class="grade"><span class="stage">${esc(t.vtype||'主題 '+(i+1))}｜${esc(t.length||'')}</span><b style="margin-top:6px">${esc(t.topic)}</b></div></div>
+    <div class="result-top">${ringHTML(Math.round(tot/60*100),`${tot}/60`)}<div class="grade"><span class="stage">${t.dir?esc(t.dir)+'｜':''}${esc(t.vtype||'主題 '+(i+1))}｜${esc(t.length||'')}</span><b style="margin-top:6px">${esc(t.topic)}</b></div></div>
     <div class="row" style="margin-top:10px"><span><span class="tag">封面</span>${esc(t.title)}</span><button class="btn ghost" type="button" data-tcopy="${i}">複製</button></div>
     <p style="margin:8px 0 0"><b>切入角度</b>　${esc(t.angle||'')}</p>
     <p style="margin:6px 0 0"><b>腳本公式</b>　${t.formula}｜${FORMULAS[t.formula][0]}</p>
@@ -1586,7 +1632,7 @@ document.addEventListener('click',e=>{
   const lf=t.closest('[data-life]');if(lf){ST2.life=lf.dataset.life;renderLife();return}
   const lq=t.closest('[data-lq]');if(lq){const q=LIFE[ST2.life][+lq.dataset.lq];$('#g-topic').value=`${ST2.life}＋價值觀：${q}`;$('#g-cover').value='';$('#g-point').value='';$('#g-feel').value='';$('#g-green').checked=false;ST2.gen.vtype='信任';renderGenOpts();ST2.gen.res=null;ST2.gen.err=null;renderGen();go('gen');return}
   const gl=t.closest('[data-glen]');if(gl){ST2.gen.len=Number(gl.dataset.glen);renderGenOpts();return}
-  const tp=t.closest('[data-tpick]');if(tp){const x=ST2.topic.res[+tp.dataset.tpick];$('#g-topic').value=x.topic;$('#g-cover').value=x.title;$('#g-point').value=x.angle||'';ST2.gen.angle=x.angle||'';$('#g-formula').value=x.formula;const vt=Object.keys(VTYPES).find(k=>(x.vtype||'').includes(k));if(vt){ST2.gen.vtype=vt;renderGenOpts()}ST2.gen.res=null;ST2.gen.err=null;renderGen();go('gen');return}
+  const tp=t.closest('[data-tpick]');if(tp){const x=ST2.topic.res[+tp.dataset.tpick];$('#g-topic').value=x.topic;$('#g-cover').value=x.title;$('#g-point').value=x.angle||'';ST2.gen.angle=x.angle||'';ST2.gen.pick=x;$('#g-formula').value=x.formula;const vt=Object.keys(VTYPES).find(k=>(x.vtype||'').includes(k));if(vt){ST2.gen.vtype=vt;renderGenOpts()}ST2.gen.res=null;ST2.gen.err=null;renderGen();go('gen');return}
   const tc=t.closest('[data-tcopy]');if(tc){copyText(ST2.topic.res[+tc.dataset.tcopy].title);return}
   const tic=t.closest('[data-ticopy]');if(tic){copyText(ST2.title.res[+tic.dataset.ticopy].text);return}
   const tip=t.closest('[data-tipick]');if(tip){const x=ST2.title.res[+tip.dataset.tipick];const src=ST2.title.q||'';$('#g-cover').value=x.text;if(!$('#g-topic').value.trim()||src.length<=60)$('#g-topic').value=src.length<=60?src:x.text;if(src.length>60)$('#g-point').value=src.slice(0,500);ST2.gen.res=null;ST2.gen.err=null;renderGen();go('gen');return}
