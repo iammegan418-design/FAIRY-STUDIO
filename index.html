@@ -768,7 +768,7 @@ function renderOut(){
   <p class="muted">封面放大字、貼文第一句都能用。挑一個最像你的，再改成自己的話。</p>
   ${OUT.titles.map((h,i)=>`<div class="row"><span><span class="tag">${h[0]}</span>${esc(h[1])}</span><button class="btn ghost" type="button" data-copy="title" data-i="${i}">複製</button></div>`).join('')}
   <button class="btn gold" type="button" id="t-ai" ${TBUSY?'disabled':''}>${TBUSY?'正在想標題…':TAI?'再想 10 個':'AI 再幫我想 10 個標題'}</button>
-  ${TAI?`${TAI.offline?'<p class="tip">目前無法連線 AI，先用上面的標題。</p>':(TAI.titles||[]).map((h,i)=>`<div class="row"><span>${h.type?`<span class="tag">${esc(h.type)}</span>`:''}${esc(h.text||h)}</span><button class="btn ghost" type="button" data-copy="aititle" data-i="${i}">複製</button></div>`).join('')}`:''}
+  ${TAI?`${TAI.offline?'':(TAI.titles||[]).map((h,i)=>`<div class="row"><span>${h.type?`<span class="tag">${esc(h.type)}</span>`:''}${esc(h.text||h)}</span><button class="btn ghost" type="button" data-copy="aititle" data-i="${i}">複製</button></div>`).join('')}`:''}
   <div class="preview" style="margin-top:14px;font-size:.86rem"><b>好標題 4 個小撇步</b>
 ① 封面大字 6–14 個字，一眼看懂在講什麼
 ② 能放數字就放數字：3 個步驟、10 分鐘、一個月
@@ -873,7 +873,7 @@ function cRender(){
   ${r.hasRisk?`<div class="sec"><h2>要注意的字</h2><p class="muted">紅色是建議拿掉的，黃色是功效用字。</p><div class="preview">${r.preview}</div></div>`:''}
   <div class="sec"><h2>AI 幫我改寫</h2><p class="muted">照上面的問題改成一版新的文案，給你 3 個新開頭。</p>
   <button class="btn gold" type="button" id="c-ai" ${C.busy?'disabled':''}>${C.busy?'正在改寫…':C.ai?'再改一版':'幫我改寫'}</button>
-  ${C.ai?`${C.ai.offline?'<p class="tip">目前無法連線 AI，先給你改寫方向。</p>':''}
+  ${C.ai?`${C.ai.offline?'':''}
   ${C.ai.summary?`<p style="margin:14px 0 0">${esc(C.ai.summary)}</p>`:''}
   <div class="sechead" style="margin-top:14px"><b>改寫後文案</b><button class="btn ghost" type="button" data-ccopy="rw">複製</button></div><div class="preview">${esc(C.ai.rewrite)}</div>
   <div style="margin-top:14px"><b>新開頭</b>${(C.ai.hooks||[]).map((h,i)=>`<div class="row"><span>${esc(h)}</span><button class="btn ghost" type="button" data-ccopy="h" data-i="${i}">複製</button></div>`).join('')}</div>`:''}</div>`;
@@ -950,7 +950,7 @@ function aRender(){
   ${['定位','內容','互動'].map(g=>`<div class="sec"><h2>${g}</h2>${itemsHTML(r.items.filter(i=>i.g===g))}</div>`).join('')}
   <div class="sec"><h2>AI 幫我寫簡介</h2><p class="muted">依照你的定位和目標，寫 3 版個人簡介。</p>
   <button class="btn gold" type="button" id="a-ai" ${A.busy?'disabled':''}>${A.busy?'正在寫…':A.ai?'再寫一版':'幫我寫簡介'}</button>
-  ${A.ai?`${A.ai.offline?'<p class="tip">目前無法連線 AI，先給你範本版本。</p>':''}${(A.ai.bios||[]).map((b,i)=>`<div class="sechead" style="margin-top:14px"><b>版本 ${i+1}</b><button class="btn ghost" type="button" data-acopy="${i}">複製</button></div><div class="preview">${esc(b)}</div>`).join('')}${A.ai.direction?`<p class="tip">${esc(A.ai.direction)}</p>`:''}`:''}</div>`;
+  ${A.ai?`${A.ai.offline?'':''}${(A.ai.bios||[]).map((b,i)=>`<div class="sechead" style="margin-top:14px"><b>版本 ${i+1}</b><button class="btn ghost" type="button" data-acopy="${i}">複製</button></div><div class="preview">${esc(b)}</div>`).join('')}${A.ai.direction?`<p class="tip">${esc(A.ai.direction)}</p>`:''}`:''}</div>`;
 }
 async function aAI(){
   const r=A.res;if(!r)return;A.busy=true;aRender();const d=r.d;
@@ -1048,7 +1048,7 @@ function pRenderOut(){
   <div class="sec"><div class="sechead"><h2>個人簡介</h2><button class="btn ghost" type="button" data-pcopy="bio">複製</button></div><div class="preview">${esc(a&&a.bio||r.bio)}</div></div>
   ${a&&a.advice?`<div class="sec"><h2>AI 給你的建議</h2><p style="margin:0">${esc(a.advice)}</p></div>`:''}
   <button class="btn gold" type="button" id="p-ai" ${P.busy?'disabled':''}>${P.busy?'AI 正在幫你寫…':a?'AI 再寫一版':'AI 幫我把人設寫得更完整'}</button>
-  ${P.ai&&P.ai.offline?'<p class="tip">目前無法連線 AI，先用上面的人設。</p>':''}
+  ${P.ai&&P.ai.offline?'':''}
   <button class="btn" type="button" id="p-saveip">存成我的個人 IP ✦</button>
   <div class="qnav"><button class="btn ghost" type="button" id="p-redo">重新回答</button><button class="btn ghost" type="button" data-go="gen">用這個人設去寫腳本</button></div>`;
 }
@@ -1229,7 +1229,7 @@ async function askAI(task){
   if(!sm)throw{code:'unavailable'};
   return sm.json(`你是台灣短影音內容教練，替「仙女團隊」夥伴服務。全部使用台灣繁體中文。\n\n${ipBlock()}\n\n${COURSE}\n\n${RULES}\n\n${task}`,{modelTier:'default',cache:false});
 }
-function aiErr(e){return e&&e.code==='unavailable'?'這個網址沒辦法使用 AI，AI 功能只能在 claude.ai 的 AI 版使用。':e&&e.code==='not_granted'?'需要先允許這個頁面使用 AI，才能生成內容。':e&&e.code==='rate_limited'?'使用太頻繁了，休息一下再試。':'AI 這次沒有回應，請再按一次。'}
+function aiErr(e){return e&&e.code==='unavailable'?'這個功能在這個網址暫時不能用，請先用其他功能。':e&&e.code==='not_granted'?'需要先允許這個頁面使用 AI，才能生成內容。':e&&e.code==='rate_limited'?'使用太頻繁了，休息一下再試。':'AI 這次沒有回應，請再按一次。'}
 const n10=x=>Math.max(0,Math.min(10,Math.round(Number(x)||0)));
 function normScores(sc){const o={};SIX.forEach(k=>{const v=sc&&sc[k];o[k]={s:n10(v&&typeof v==='object'?v.s??v.score:v),r:String(v&&typeof v==='object'?(v.r||v.reason||''):'')}});return o}
 const sumScores=o=>SIX.reduce((a,k)=>a+o[k].s,0);
@@ -1238,11 +1238,32 @@ function busyHTML(t){return `<section class="panel"><p class="muted" style="marg
 const AI_URL='https://claude.ai/artifact/8bgwrhS5aWAZvTXFCBzp6C';
 const ON_CLAUDE=/claude\.ai$|claudeusercontent|claude\.site/.test(location.hostname);
 function aiLinkHTML(){return ON_CLAUDE?'':`<a class="btn" href="${AI_URL}" target="_blank" rel="noopener" style="text-decoration:none;margin-top:12px">開啟 AI 版（要登入 claude.ai）</a>`}
-function errHTML(m){return `<section class="panel"><p style="margin:0">${esc(m)}</p>${/AI 版/.test(m)?aiLinkHTML():''}</section>`}
+function errHTML(m){return `<section class="panel"><p style="margin:0">${esc(m)}</p></section>`}
 function offNote(v){return ST2[v]&&ST2[v].offline?`<section class="panel" style="background:var(--gold-soft);border-color:var(--gold)"><b>這是範本版</b><p class="muted" style="margin:4px 0 0">這個網址不能用 AI，先給你範本，【待補】的地方換成你自己的。想要依你的人設量身寫，請開 AI 版。</p>${aiLinkHTML()}</section>`:''}
 function subjOf(q){let x=String(q||'').split('\n')[0].replace(/[。！!？?，,\s]/g,'').replace(/^(我|你)?(最近)?(想要|想|要)?(拍|分享|做|寫|聊)?(一支|一個|一些)?/,'').replace(/(有流量)?的?(影片|短影音|內容)$/,'').replace(/^(關於|有關)/,'').replace(/的?主題/g,'');
   if(!x||/不知道|^流量|什麼/.test(x))x=(ST2.ip.field||'').split(/[、,，\s]/)[0]||'我的日常';return x.slice(0,12)}
 function mkScores(a){const o={};SIX.forEach((k,i)=>o[k]={s:a[i],r:''});return o}
+const MORE_LS='fairy-topic-more-v1';
+ST2.more=lsGet(MORE_LS)||{job:'',hobby:'',recent:''};
+function moreBlock(){const m=ST2.more;const l=[m.job&&`工作或身分：${m.job}`,m.hobby&&`興趣：${m.hobby}`,m.recent&&`最近發生的小事：${m.recent}`].filter(Boolean);return l.length?`\n她補充的資訊（主題要優先用這些，讓內容更像她；最近的小事至少要有 1 個主題用到）：\n${l.join('\n')}\n`:''}
+function TP_MORE(){const m=ST2.more,j=(m.job||'').trim(),h=(m.hobby||'').trim().split(/[、,，\s]/)[0],e=(m.recent||'').trim(),o=[];
+  const T=(a)=>{a.mine=true;o.push(a)};
+  if(j){T(['引流型',`${j}的一天，跟你想的不一樣`,`當${j}的一天`,`從早到晚的真實片段快剪，讓人看見${j}的日常`,'H',[7,6,4,8,9,8],'約 30 秒']);
+    T(['信任型',`以前的我 vs 現在的我：${j}篇`,`當${j}這幾年，我變了`,'說出這份工作帶給你的改變','F',[7,7,4,7,9,7],'約 40 秒']);
+    T(['變現型',`${j}也能好好照顧自己：我的小習慣`,`忙碌的${j}，我都這樣照顧自己`,'先說忙碌的煩惱，再分享你的做法，結尾邀請私訊聊聊','G',[6,6,6,8,9,7],'約 40 秒'])}
+  if(h){T(['引流型',`${h}新手最常問的 3 個問題`,`想開始${h}？先看這支`,'用你的經驗回答新手問題，好收藏','E',[6,5,8,8,8,8],'約 40 秒']);
+    T(['信任型',`為什麼我一直堅持${h}？`,`${h}，是我留給自己的時間`,'帶出你重視的價值：生活、自我照顧','B',[6,6,4,7,9,8],'約 35 秒'])}
+  if(j&&h)T(['引流型',`${j}下班後，我都在${h}`,`下班後的我，都在做這件事`,`工作和${h}的反差，最容易讓人停下來`,'C',[8,7,4,8,9,8],'約 30 秒']);
+  if(e){T(['信任型',`最近發生一件小事：${e.slice(0,18)}`,'最近發生一件小事，讓我想了很久','把這件小事說成故事，最後說出你的想法或價值觀','F',[7,7,4,8,9,8],'約 40 秒']);
+    T(['引流型',`${e.slice(0,14)}，你也遇過嗎？`,'這件事，你是不是也遇過','用提問開場，讓觀眾留言分享自己的經驗','A',[7,6,4,9,8,8],'約 30 秒'])}
+  return o}
+function moreHTML(){const m=ST2.more;return `<section class="panel"><span class="stage">想要更像你？</span><p class="muted" style="margin:8px 0 0">補充這幾件事，都可以不填，填越多主題越像你。</p>
+  <label for="mo-job">你現在的工作或身分</label><input type="text" id="mo-job" maxlength="30" value="${esc(m.job)}" placeholder="例：上班族媽媽、護理師、美甲師">
+  <label for="mo-hobby">你的興趣</label><input type="text" id="mo-hobby" maxlength="40" value="${esc(m.hobby)}" placeholder="例：煮飯、爬山、追劇">
+  <label for="mo-recent">最近發生的小事</label><input type="text" id="mo-recent" maxlength="80" value="${esc(m.recent)}" placeholder="例：女兒第一次自己綁頭髮">
+  <button class="btn" type="button" id="mo-go">依這些再想 5 個主題</button></section>`}
+document.addEventListener('input',e=>{const m=/^mo-(job|hobby|recent)$/.exec(e.target.id||'');if(m){ST2.more[m[1]]=e.target.value;lsSet(MORE_LS,ST2.more)}});
+document.addEventListener('click',e=>{if(e.target.closest('#mo-go')){if(!$('#t-in').value.trim())$('#t-in').value='我想拍一支有流量的影片';runTopic();$('#t-out').scrollIntoView({block:'start'})}});
 function offTopics(q){
   if(/綠燈|卡點/.test(q))return [
     ['變現型','我的改變只花了【X】個月','我的改變只需要【X】個月','前後對比＋這段時間的心路歷程，不放產品、不提功效','F',[8,8,4,7,9,6],'約 30 秒'],
@@ -1250,14 +1271,51 @@ function offTopics(q){
     ['信任型','以前的我，最怕的是什麼','當你沒動力請反覆看','從低谷說到現在，讓人想收藏','F',[6,7,4,8,9,6],'約 40 秒'],
     ['引流型','為了這個轉場，我拍了好幾次','為了這個轉場我整整用了【X】個月','用有趣的轉場吸引人看到最後','C',[8,7,2,8,6,5],'約 20 秒'],
     ['信任型','減脂路上，陪我最久的一首歌','減脂人的主打歌','用音樂帶出這段時間的日常片段','H',[7,5,3,8,7,8],'約 30 秒']].map(t=>({vtype:t[0],topic:t[1],title:t[2],angle:t[3],formula:t[4],scores:mkScores(t[5]),length:t[6]}));
+  const raw=String(q||'').replace(/\s/g,'');const noSub=/不知道|流量|什麼/.test(raw)&&!/美食|料理|育兒|小孩|孩子|保養|穿搭|化妝|車/.test(raw);
   const x=subjOf(q);
-  return [
-    ['引流型',`我以前以為${x}很難，後來才發現…`,`我以前以為${x}很難`,`用你自己觀念轉變的過程開場，【待補：你以前卡在哪】`,'F',[7,7,5,8,8,7],'約 40 秒'],
-    ['引流型',`${x}新手最常犯的 3 個錯`,`${x}，別再這樣做了`,'整理你自己踩過的雷，實用又好收藏','E',[7,6,8,8,7,6],'約 45 秒'],
-    ['信任型',`${x}這件事，讓我改變最多的是…`,`${x}讓我改變最多的一件事`,'說一個真實畫面，讓人更認識你','F',[5,6,4,7,9,8],'約 40 秒'],
-    ['信任型',`為什麼我一直願意花時間在${x}上？`,`為什麼我一直堅持${x}`,'帶出你的價值觀，不是說教，是分享','B',[6,5,4,6,9,7],'約 35 秒'],
-    ['變現型',`如果你也在為${x}煩惱，先做這件事`,`${x}卡住時，先做這件事`,'先說觀眾的煩惱，再分享你的做法，最後引導私訊','G',[6,6,7,7,8,7],'約 45 秒']].map(t=>({vtype:t[0],topic:t[1],title:t[2],angle:t[3],formula:t[4],scores:mkScores(t[5]),length:t[6]}));
+  const PACK=noSub?TP_TRAFFIC:/美食|料理|吃|早餐|晚餐|便當/.test(raw)?TP_FOOD:/育兒|小孩|孩子|寶寶|媽媽|親子/.test(raw)?TP_KID:TP_GEN(x);
+  const pick=[...TP_MORE(),...(ST2.ttype?PACK.filter(t=>t[0]===VTYPES[ST2.ttype][0]):[...PACK])].filter(t=>!ST2.ttype||t[0]===VTYPES[ST2.ttype][0]);const nMore=TP_MORE().length;
+  const sh=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+  if(nMore){const mine=sh(pick.filter(t=>t.mine)),rest=sh(pick.filter(t=>!t.mine));pick.length=0;pick.push(...mine,...rest)}else sh(pick);
+  let out=pick;if(!ST2.ttype){const by=k=>pick.filter(t=>t[0]===k);out=[...by('引流型').slice(0,2),...by('信任型').slice(0,2),...by('變現型').slice(0,1)];if(nMore)out.sort((a,b)=>(b.mine?1:0)-(a.mine?1:0))}
+  return out.slice(0,5).map(t=>({vtype:t[0],topic:t[1],title:t[2],angle:t[3],formula:t[4],scores:mkScores(t[5]),length:t[6]}));
 }
+const TP_GEN=x=>[
+  ['引流型',`我以前以為${x}很難，後來才發現…`,`原來${x}沒有我想的那麼難`,'用你自己觀念轉變的過程開場，【待補：你以前卡在哪】','F',[7,7,5,8,8,7],'約 40 秒'],
+  ['引流型',`${x}新手最常犯的 3 個錯`,`${x}，別再這樣做了`,'整理你自己踩過的雷，實用又好收藏','E',[7,6,8,8,7,6],'約 45 秒'],
+  ['引流型',`${x}的 3 個小撇步，我每次都用`,`${x}，我只靠這 3 招`,'給具體做法，讓人想收藏、轉傳','A',[6,5,8,8,7,8],'約 40 秒'],
+  ['信任型',`${x}這件事，讓我改變最多的是…`,`${x}讓我改變最多的一件事`,'說一個真實畫面，讓人更認識你','F',[5,6,4,7,9,8],'約 40 秒'],
+  ['信任型',`為什麼我一直願意花時間在${x}上？`,`為什麼我一直堅持${x}`,'帶出你的價值觀，不是說教，是分享','B',[6,5,4,6,9,7],'約 35 秒'],
+  ['信任型',`${x}的時候，我最常想起以前的自己`,`以前的我 vs 現在的我`,'過去和現在對比，讓人看見你的成長','F',[6,7,3,7,9,7],'約 40 秒'],
+  ['變現型',`如果你也在為${x}煩惱，先做這件事`,`${x}卡住時，先做這件事`,'先說觀眾的煩惱，再分享你的做法，最後引導私訊','G',[6,6,7,7,8,7],'約 45 秒'],
+  ['變現型',`最常被問的${x}問題，一次回答`,`大家最常問我的 ${x} 問題`,'用問答方式回覆大家的疑問，結尾邀請私訊','E',[5,5,8,7,8,8],'約 50 秒']];
+const TP_TRAFFIC=[
+  ['引流型','跟我過一天：真實的一天長怎樣','我的一天，跟你想的不一樣','早到晚的生活片段快剪，配有節奏的音樂','H',[7,6,3,9,8,8],'約 30 秒'],
+  ['引流型','3 個讓生活變好的小習慣','做了這 3 件事，生活真的變好了','具體、好模仿，容易被收藏和轉傳','E',[7,5,7,9,7,8],'約 40 秒'],
+  ['引流型','最近最常被問的一個問題','你們最常問我的，就是這個','用留言或私訊截圖開場（遮名字），再回答','A',[6,6,7,8,8,8],'約 35 秒'],
+  ['信任型','以前的我 vs 現在的我','如果你也覺得自己很普通，請看完','對比過去和現在，說出改變的關鍵','F',[8,8,4,8,9,7],'約 40 秒'],
+  ['信任型','如果重來一次，我會給自己的 3 個建議','給 3 年前的自己 3 句話','帶出價值觀和人生經驗，很容易引起共鳴','E',[6,7,5,8,9,8],'約 40 秒'],
+  ['信任型','我做了一個很多人不理解的決定','我做了一個很多人不懂的決定','說出決定背後的原因，讓人看見你的態度','F',[8,8,3,7,9,7],'約 45 秒'],
+  ['變現型','真實分享：這陣子我最大的改變','這陣子我最大的改變','不提功效，只說生活和心態的改變，結尾邀請私訊聊聊','F',[6,6,4,7,9,7],'約 40 秒'],
+  ['變現型','我的愛用清單，先存起來','我每天都在用的東西','生活場景自然帶出，不硬銷、不寫價格','E',[6,5,6,7,8,8],'約 35 秒']];
+const TP_FOOD=[
+  ['引流型','下班 10 分鐘的晚餐，我都這樣做','10 分鐘晚餐，我只用這 3 樣','俯拍食材＋手部特寫，步驟簡單好學','A',[7,6,8,9,8,8],'約 40 秒'],
+  ['引流型','一週的早餐紀錄','我一週都吃什麼早餐','快剪 7 天的早餐，配有節奏的音樂，好收藏','E',[6,5,6,9,8,9],'約 30 秒'],
+  ['引流型','外食族的我，現在都這樣點','外食也能吃得剛剛好','分享你自己的選擇方式，不寫功效','A',[7,6,7,9,7,8],'約 40 秒'],
+  ['信任型','以前我很怕吃，現在我學會怎麼吃','以前的我，最怕吃東西','說出飲食觀念的轉變，帶出你的價值觀','F',[7,7,5,8,9,7],'約 40 秒'],
+  ['信任型','我家餐桌上，最常出現的一道菜','我家最常出現的一道菜','結合家人的故事，讓人更認識你','H',[5,5,4,8,9,8],'約 35 秒'],
+  ['信任型','為什麼我願意花時間好好吃一餐','好好吃一餐，是我給自己的禮物','生活儀式感＋價值觀','B',[5,6,3,7,9,8],'約 35 秒'],
+  ['變現型','大家最常問我：你都吃什麼？','你們最常問我都吃什麼','用問答方式分享，結尾邀請私訊','E',[6,5,7,8,8,8],'約 45 秒'],
+  ['變現型','忙碌的時候，我怎麼照顧自己的飲食','忙到沒時間吃，我都這樣做','先說煩惱，再分享你的做法（不寫功效）','G',[6,6,7,8,8,7],'約 40 秒']];
+const TP_KID=[
+  ['引流型','帶小孩出門，我一定會準備的 3 樣東西','帶小孩出門，我一定帶這 3 樣','實用清單，爸媽很愛收藏','E',[6,5,8,8,8,9],'約 35 秒'],
+  ['引流型','孩子說了一句話，讓我愣住','孩子一句話，讓我想了很久','用孩子的話開場，引發共鳴（不露臉也可以）','H',[8,8,3,8,9,8],'約 30 秒'],
+  ['引流型','媽媽的一天，跟你想的不一樣','當媽之後的一天','vlog 快剪，從早到晚的真實片段','H',[7,6,3,9,9,8],'約 30 秒'],
+  ['信任型','當了媽媽之後，我最大的改變','當媽之後，我變得不一樣了','說出你的轉變和價值觀','F',[6,7,4,8,9,8],'約 40 秒'],
+  ['信任型','我不想成為什麼樣的媽媽','我不想成為的那種媽媽','觀點分享，容易引起討論','D',[8,8,4,7,9,7],'約 40 秒'],
+  ['信任型','為什麼我選擇一邊工作一邊陪孩子','工作和陪伴，我怎麼選','帶出你重視的事：時間自由、陪伴','B',[7,7,4,8,9,7],'約 45 秒'],
+  ['變現型','媽媽也需要照顧自己','先照顧好自己，才能照顧家人','分享你給自己的小時間，結尾邀請私訊聊聊','G',[6,6,5,8,9,7],'約 40 秒'],
+  ['變現型','很多媽媽問我怎麼開始的','很多媽媽私訊問我這件事','分享你開始的契機，邀請有興趣的人聊聊','F',[6,6,5,7,9,7],'約 45 秒']];
 function offTitles(q){const x=subjOf(q.length>40?q.split('\n')[0]:q);return [
   ['痛點型',`${x}總是做不好？問題可能在這`,7,'直接說出觀眾的困擾'],['反差型',`我以為${x}很難，結果…`,8,'前後反差讓人想看結局'],
   ['好奇型',`${x}的這件事，很少人知道`,7,'製造資訊落差'],['數字型',`${x}，我只做了這 3 件事`,8,'數字讓人覺得簡單好學'],
@@ -1298,7 +1356,7 @@ async function runTopic(){
   const q=$('#t-in').value.trim();if(!q){toast('先說說你的想法');$('#t-in').focus();return}
   const s=ST2.topic;s.busy=true;s.offline=false;s.err=null;s.edit=false;renderTopic();
   try{
-    const r=await askAI(`任務：使用者說「${q.slice(0,300)}」。依照她的人設，產生 5 個不同的短影音主題。${ST2.ttype?`5 個都要是「${VTYPES[ST2.ttype][0]}影片」（${VTYPES[ST2.ttype][1]}）。`:'5 個主題要混合引流型、信任型、變現型，至少各 1 個。'}信任型主題優先用「生活面向（食衣住行育樂）＋說故事＋價值觀」來發想。
+    const r=await askAI(`任務：使用者說「${q.slice(0,300)}」。${moreBlock()}依照她的人設，產生 5 個不同的短影音主題。${ST2.ttype?`5 個都要是「${VTYPES[ST2.ttype][0]}影片」（${VTYPES[ST2.ttype][1]}）。`:'5 個主題要混合引流型、信任型、變現型，至少各 1 個。'}信任型主題優先用「生活面向（食衣住行育樂）＋說故事＋價值觀」來發想。
 腳本公式庫：${Object.entries(FORMULAS).map(([k,f])=>`${k} ${f[0]}（${f[1]}）`).join('；')}。5 個主題要用至少 3 種不同公式。
 六大評估（每項 0–10 分）：話題性、衝擊性、知識量、大眾性、帳號契合性、簡易性。評分要誠實、有高有低，每個主題至少 2 項低於 7 分，每項理由具體（20 字內），不可以全部給高分。
 封面標題 8–16 字。
@@ -1313,13 +1371,13 @@ function renderTopic(){
   const s=ST2.topic;
   if(s.busy){$('#t-out').innerHTML=busyHTML('AI 正在依照你的人設想主題…');return}
   if(!s.res){$('#t-out').innerHTML=s.err?errHTML(s.err):'';return}
-  $('#t-out').innerHTML=offNote('topic')+s.res.map((t,i)=>{const tot=sumScores(t.scores);return `<section class="panel">
+  $('#t-out').innerHTML=s.res.map((t,i)=>{const tot=sumScores(t.scores);return `<section class="panel">
     <div class="result-top">${ringHTML(Math.round(tot/60*100),`${tot}/60`)}<div class="grade"><span class="stage">${esc(t.vtype||'主題 '+(i+1))}｜${esc(t.length||'')}</span><b style="margin-top:6px">${esc(t.topic)}</b></div></div>
     <div class="row" style="margin-top:10px"><span><span class="tag">封面</span>${esc(t.title)}</span><button class="btn ghost" type="button" data-tcopy="${i}">複製</button></div>
     <p style="margin:8px 0 0"><b>切入角度</b>　${esc(t.angle||'')}</p>
     <p style="margin:6px 0 0"><b>腳本公式</b>　${t.formula}｜${FORMULAS[t.formula][0]}</p>
     <div style="margin-top:12px">${scoresHTML(t.scores)}</div>
-    <button class="btn" type="button" data-tpick="${i}">用這個主題寫腳本</button></section>`}).join('')+`<section class="panel">${actBar('topic')}</section>`;
+    <button class="btn" type="button" data-tpick="${i}">用這個主題寫腳本</button></section>`}).join('')+moreHTML()+`<section class="panel">${actBar('topic')}</section>`;
 }
 
 /* ---------- ② 標題 ---------- */
@@ -1345,7 +1403,7 @@ function renderTitle(){
   const s=ST2.title;
   if(s.busy){$('#ti-out').innerHTML=busyHTML('AI 正在想 10 個不同風格的標題…');return}
   if(!s.res){$('#ti-out').innerHTML=s.err?errHTML(s.err):'';return}
-  $('#ti-out').innerHTML=offNote('title')+`<section class="panel"><h2>10 個封面標題</h2><p class="muted">點「寫腳本」會帶著這個標題去生成完整腳本。</p>
+  $('#ti-out').innerHTML=`<section class="panel"><h2>10 個封面標題</h2><p class="muted">點「寫腳本」會帶著這個標題去生成完整腳本。</p>
   ${s.res.map((t,i)=>`<div class="it"><span class="pill ${t.score>=8?'ok':t.score>=6?'warn':'bad'}">${t.score}/10</span><div><div class="nm" style="font-size:1.05rem">${esc(t.text)}</div><div class="fx"><span class="tag" style="margin:0 6px 0 0">${esc(t.type)}</span>${esc(t.reason)}</div>
   <div class="chips" style="margin-top:6px"><button class="chip" type="button" data-ticopy="${i}">複製</button><button class="chip" type="button" data-tipick="${i}">用這個標題寫腳本</button></div></div></div>`).join('')}
   ${actBar('title')}</section>`;
@@ -1385,7 +1443,7 @@ function renderGen(){
   if(s.busy){$('#g-out').innerHTML=busyHTML('AI 正在依照你的人設寫腳本…');return}
   if(!s.res){$('#g-out').innerHTML=s.err?errHTML(s.err):'';return}
   const r=s.res,chars=r.script.replace(/\s/g,'').length;
-  $('#g-out').innerHTML=offNote('gen')+`<section class="panel">
+  $('#g-out').innerHTML=`<section class="panel">
   <span class="stage">${r.make?MAKES[r.make][0]+'・':''}公式 ${r.formula}｜${FORMULAS[r.formula][0]}　約 ${r.seconds} 秒・${chars} 字</span>
   <div class="ptitle" style="font-size:1.35rem">${esc(r.title)}</div>
   <div class="sec"><h2>前 3 秒開場</h2><p style="margin:0;font-size:1.05rem">${esc(r.hook)}</p></div>
@@ -1414,7 +1472,7 @@ async function runCheck(){
     const ch=(x,d)=>({ok:!!(x&&x.ok),r:String(x&&x.r||d)});
     s.res={scores:normScores(r.scores),persona:ch(r.persona,''),fc:ch(r.formulaCopy,''),problems:(r.problems||[]).map(String).slice(0,3),suggestions:(r.suggestions||[]).map(String),titles:(r.titles||[]).map(String).slice(0,3),optimized:String(r.optimized||''),shoot:(r.shoot||[]).map(String),edit:(r.edit||[]).map(String)};
     s.orig=q;s.text=checkText();
-  }catch(e){s.res=null;s.err=aiErr(e)}
+  }catch(e){if(e&&e.code==='unavailable'){s.busy=false;offCheck(q);return}s.res=null;s.err=aiErr(e)}
   s.busy=false;renderCheck();
 }
 function checkText(){const r=ST2.check.res;return `【健檢總分】${sumScores(r.scores)}/60\n${SIX.map(k=>`${k} ${r.scores[k].s}/10：${r.scores[k].r}`).join('\n')}\n個人特質呈現：${r.persona.ok?'通過':'要改'}｜${r.persona.r}\n開場是否照搬公式：${r.fc.ok?'通過':'要改'}｜${r.fc.r}\n\n【最需要改善】\n${r.problems.map((x,i)=>`${i+1}. ${x}`).join('\n')}\n\n【修改建議】\n${r.suggestions.map(x=>'・'+x).join('\n')}\n\n【更吸引人的標題】\n${r.titles.map(x=>'・'+x).join('\n')}\n\n【優化後口白】\n${r.optimized}\n\n【拍攝建議】\n${r.shoot.map(x=>'・'+x).join('\n')}\n【剪輯建議】\n${r.edit.map(x=>'・'+x).join('\n')}`}
@@ -1596,7 +1654,7 @@ async function runSg(){
 只回傳 JSON：{"topic":"限動主題","category":"生活價值型","face":"食","formula":"生活感受型","frames":[{"role":"生活切入","text":"限動文字","media":"建議搭配的照片或影片"}],"interaction":"適合的互動方式（投票、問答、私訊…），寫出具體題目和選項","ctas":["2–3 個可選擇的 CTA"],"tip":"一句話提醒這組限動的目的","todo":["需要使用者補的真實資訊，沒有就空陣列"]}`);
     s.res={topic:String(r.topic||''),category:String(r.category||''),face:String(r.face||''),formula:String(r.formula||''),frames:(r.frames||[]).map(x=>({role:String(x.role||''),text:String(x.text||''),media:String(x.media||'')})),interaction:String(r.interaction||''),ctas:(r.ctas||[]).map(String),tip:String(r.tip||''),todo:(r.todo||[]).map(String)};
     s.q=q;s.text=sgText();
-  }catch(e){s.res=null;s.err=aiErr(e)}
+  }catch(e){if(e&&e.code==='unavailable'){s.res=offSg(q);s.q=q;s.text=sgText()}else{s.res=null;s.err=aiErr(e)}}
   s.busy=false;renderSg();
 }
 function sgText(){const r=SS.gen.res;return `【限動主題】${r.topic}\n【分類】${r.category}｜${r.face}｜${r.formula}\n\n${r.frames.map((f,i)=>`第 ${i+1} 則｜${f.role}\n${f.text}\n📷 ${f.media}`).join('\n\n')}${r.interaction?`\n\n【互動方式】${r.interaction}`:''}${r.ctas.length?`\n【可選 CTA】\n${r.ctas.map(x=>'・'+x).join('\n')}`:''}${r.todo.length?`\n\n【待補資訊】\n${r.todo.map(x=>'・'+x).join('\n')}`:''}`}
@@ -1637,7 +1695,7 @@ async function runSc(){
 ① 內容分類：屬於生活、信任還是變現？ ② 內容目的：希望觀眾看完產生什麼感受或行動？ ③ 故事完整度：是否有事件、感受、觀點？ ④ 價值觀呈現：是否能讓觀眾更了解使用者？ ⑤ 信任建立：是否提供真實經驗或有用資訊？ ⑥ 互動設計：是否適合加入投票、問答或私訊引導？
 只回傳 JSON：{"category":"生活價值型","purpose":"這組限動的目的","checks":[{"name":"內容分類","status":"good","note":"說明"}],"praise":["2–3 個做得好的地方"],"mainIssue":"最需要調整的一件事","suggestions":["3 個可以立即執行的建議"],"optimized":"優化後的完整限動文案，每則之間用空一行分開，保留她原本的經歷，缺的用【待補】"}`,files);
     s.res={category:String(r.category||''),purpose:String(r.purpose||''),checks:(r.checks||[]).map(c=>({name:String(c.name||''),ok:c.status==='good',note:String(c.note||'')})),praise:(r.praise||[]).map(String),main:String(r.mainIssue||''),sug:(r.suggestions||[]).map(String),opt:String(r.optimized||'')};
-  }catch(e){s.res=null;s.err=e&&e.code==='images_unavailable'?'這裡沒辦法送截圖，請改貼文字。':aiErr(e)}
+  }catch(e){if(e&&e.code==='unavailable'&&q){s.res=offSc(q)}else{s.res=null;s.err=e&&e.code==='images_unavailable'?'這裡沒辦法送截圖，請改貼文字。':aiErr(e)}}
   s.busy=false;renderSc();
 }
 function renderSc(){
@@ -1753,7 +1811,7 @@ ${UPCASES.slice(0,3).map(c=>`普通「${c[1]}」→ 價值觀版「${c[2].replac
 可以寫：{"original":"原始生活紀錄","upgraded":"價值觀升級版本，分句用 \\n","value":"傳達的個人價值觀（2–3 個詞）","media":"建議搭配的照片或影片","interaction":"適合的互動引導（選用，沒有就空字串）"}`);
     if(r.ask&&r.ask.length){SU.ask=r.ask.map(String).slice(0,3)}
     else SU.res={original:String(r.original||v[0]),up:String(r.upgraded||''),value:String(r.value||''),media:String(r.media||''),inter:String(r.interaction||'')};
-  }catch(e){SU.err=aiErr(e)}
+  }catch(e){if(e&&e.code==='unavailable'){offSu(v)}else SU.err=aiErr(e)}
   SU.busy=false;renderSu();
 }
 function renderSu(){
@@ -1818,7 +1876,7 @@ tips：最多 2 個發布前的小提醒，例如隱私（他人、學校、孩�
     const fr=(r.frames||[]).map(x=>[String(x.role||''),String(x.text||''),String(x.media||'')]).filter(x=>x[1]);
     SP.res={orig:q,frames:fr,note:String(r.note||''),fixes:(r.fixes||[]).map(String),extra:String(r.extra||''),inter:String(r.interaction||''),tips:(r.tips||[]).map(String).slice(0,2)};
     SP.res.missing=spMissing(q,fr);
-  }catch(e){SP.err=aiErr(e)}
+  }catch(e){if(e&&e.code==='unavailable'){SP.res=offSp(q)}else SP.err=aiErr(e)}
   SP.busy=false;renderSp();
 }
 function spText(){const r=SP.res;return r.frames.map((f,i)=>`第 ${i+1} 則｜${f[0]}\n${f[1]}${f[2]?`\n📷 ${f[2]}`:''}`).join('\n\n')+(r.extra?`\n\n（可選擇補充）${r.extra}`:'')}
@@ -1885,6 +1943,33 @@ function renderShTab(){
 document.addEventListener('click',e=>{const t=e.target.closest('[data-shtab]');if(t){SHTAB=t.dataset.shtab;renderShTab();return}
   if(e.target.closest('[data-shcopy]')){copyText(`【${SHTAB}｜拍攝清單】\n`+SH_SCENE[SHTAB].map((x,i)=>`${i+1}. ${x[0]}：${x[1]}`).join('\n')+(SH_TIP[SHTAB]?`\n提醒：${SH_TIP[SHTAB]}`:''));return}});
 renderShoot();
+
+/* --- 不能用 AI 時的範本 --- */
+function offCheck(q){$('#c-text').value=q;C.type='script';cRenderOpts();cSave();C.isSample=false;$('#c-note').hidden=true;cRun(false);go('copy');toast('已用文案健檢幫你檢查這支腳本')}
+function spLines(t){return String(t).split(/\n/).map(x=>x.trim()).filter(Boolean)}
+function offSp(q){const ls=spLines(q);let n=SP.n==='auto'?(ls.length>8?3:2):SP.n;n=Math.max(1,Math.min(n,ls.length));
+  const per=Math.ceil(ls.length/n),roles=['發生什麼事','我的感受與想法','後續與想法'],media=['當下的生活畫面或場景','你的背影、手部或氣氛空鏡','相關的生活片段'];
+  const frames=[];for(let i=0;i<n;i++){const part=ls.slice(i*per,(i+1)*per);if(part.length)frames.push([n===2?roles[i]:roles[i],part.join('\n'),media[i]])}
+  const tips=[];if(/學校|老師|園|小孩|孩子|女兒|兒子|妹妹|弟弟/.test(q))tips.push('孩子的臉、學校名稱和制服不要拍得太清楚。');if(/對方|家長|同事|朋友|客人/.test(q))tips.push('提到其他人時，避免讓人認出是誰。');
+  return{orig:q,frames,note:'照你原本的順序分則，一個字都沒刪。想調整順序，複製後自己移動就好。',fixes:[],extra:'',inter:'',tips,missing:[]}}
+function offSg(q){const ls=String(q).split(/[\n。！!]/).map(x=>x.trim()).filter(Boolean);const n=SS.n==='auto'?(ls.length>3?3:2):SS.n;
+  const isP=SS.type==='變現',pv=[1,2,3,4].map(i=>($('#sg-p'+i)||{}).value||'');
+  const frames=[];
+  if(isP){frames.push({role:'生活切入',text:pv[0]||ls[0]||q,media:'你在用的當下，生活場景裡自然出現'});frames.push({role:'真實感受',text:pv[1]+(pv[2]?`\n${pv[2]}`:''),media:'手部特寫或你的表情'});if(pv[3])frames.push({role:'客人回饋',text:`剛好收到客人訊息，她說：\n「${pv[3]}」`,media:'對話截圖（遮名字和頭像）'});if(SS.ask!=='no'&&frames.length<n+1)frames.push({role:'互動引導',text:'想知道我平常怎麼用，可以問我 🤍',media:'產品放在桌上的氣氛畫面'})}
+  else{const per=Math.ceil(ls.length/Math.min(n,Math.max(1,ls.length)));const roles=['生活切入','故事延伸','價值觀','專業價值','互動引導'];
+    for(let i=0;i<n;i++){const part=ls.slice(i*per,(i+1)*per);frames.push({role:roles[i]||'延伸',text:part.length?part.join('\n'):(i===n-1?'【待補：這件事讓你想到什麼？】':'【待補】'),media:i?'你的背影、手部或氣氛空鏡':'當下的照片或影片'})}}
+  const cat=isP?'產品變現型':SS.type==='信任'?'專業信任型':'生活價值型';
+  return{topic:(ls[0]||q).slice(0,20),category:cat,face:'生活',formula:'生活感受型',frames:frames.slice(0,5),interaction:isP?'':'可以加一個問答框：「你也有一樣的經驗嗎？」',ctas:isP&&SS.ask!=='no'?['想了解可以私訊我','想知道我的使用方式可以問我']:[],tip:'【待補】的地方換成你自己的話，就可以發了。',todo:[]}}
+function offSc(q){const r=checkCopy(q,'story','green');const nm={'開頭 3 秒':'開頭吸引力','讀者共鳴':'讀者共鳴','真實經驗':'真實經驗','排版好讀':'排版好讀','長度':'長度','行動引導':'互動設計','連結':'連結','功效用字':'用字規範','推銷感':'推銷感'};
+  const ok=r.items.filter(i=>i.st==='ok'),bad=r.items.filter(i=>i.st!=='ok');
+  const hasCta=r.items.find(i=>i.name==='行動引導').st==='ok';
+  return{category:/私訊|購買|優惠|產品/.test(q)?'產品變現型':'生活價值型',purpose:'讓觀眾更認識你',checks:r.items.map(i=>({name:nm[i.name]||i.name,ok:i.st==='ok',note:i.st==='ok'?i.msg:i.fix})),
+    praise:ok.slice(0,3).map(i=>i.msg),main:bad.length?bad[0].fix:'整體很完整，維持這樣的分享方式。',sug:bad.slice(1,4).map(i=>i.fix),
+    opt:q.replace(LINK_RE,'').trim()+(hasCta?'':'\n\n你也有一樣的經驗嗎？')}}
+function offSu(v){if(!v[2]&&!v[4]&&!(SU.answers&&SU.answers.some(a=>a.a))){SU.ask=['這件事讓你想到什麼？','以前有沒有類似的經驗？','你希望別人透過這件事，知道你重視什麼？'];return}
+  const ex=(SU.answers||[]).map(a=>a.a).filter(Boolean);
+  const up=[v[0],v[3]?`以前的我，${v[3]}`:'',v[2]||ex[0]||'',v[1]||'',ex[1]?`以前${ex[1]}`:'',v[4]?`對我來說，${v[4]}一直都很重要。`:(ex[2]?`對我來說，${ex[2]}。`:'')].filter(Boolean).join('\n');
+  SU.res={original:v[0],up,value:v[4]||ex[2]||'（寫下你想讓別人知道你重視什麼）',media:'當下的照片，或你的背影、手部畫面',inter:''}}
 
 let MTAB=0;
 function renderMusic(){const g=MUSIC[MTAB];
