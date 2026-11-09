@@ -1,0 +1,1810 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>仙女創作室</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="apple-touch-icon" sizes="180x180" href="fairy-icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="fairy-icon-192.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-title" content="仙女創作室">
+<meta name="application-name" content="仙女創作室">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#F1FAF6">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: sky hero → one input panel → script output (segments, hooks, titles, caption) */
+:root{
+  --bg:#F1FAF6; --paper:#FFFFFF; --ink:#1F4A40; --soft:#5E7F76; --line:#D3ECE3;
+  --rose:#24876F; --rose-soft:#DDF3EB; --rose-ink:#1E7560; --title:#1B5C4C; --on-accent:#FFFFFF;
+  --gold:#C9A66B; --gold-soft:#F6EEDD; --gold-ink:#86642A; --plaque:#FFFFFF;
+  --ok:#2E8B6F; --ok-soft:#DDF3EB; --warn:#A8730F; --warn-soft:#FBEFD6; --bad:#C2475F; --bad-soft:#FBE3E8;
+  --sky:linear-gradient(160deg,#CDEFE3 0%,#E4F7F0 55%,#F4FBF8 100%);
+  --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1F1B; --paper:#172C26; --ink:#E4F5EF; --soft:#9DBDB3; --line:#28443C;
+    --rose:#5FD0B2; --rose-soft:#1E3F36; --rose-ink:#7FDDC3; --title:#E8FBF4; --on-accent:#0F1F1B;
+    --gold:#D9BC85; --gold-soft:#2E2A1E; --gold-ink:#E6CC98; --plaque:#FBFAF6;
+    --ok:#6CD3B6; --ok-soft:#1D3C33; --warn:#E8C070; --warn-soft:#3A3120; --bad:#F08AA0; --bad-soft:#3D2230;
+    --sky:linear-gradient(160deg,#12302A 0%,#1A4A3F 55%,#22594C 100%);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1F1B; --paper:#172C26; --ink:#E4F5EF; --soft:#9DBDB3; --line:#28443C;
+  --rose:#5FD0B2; --rose-soft:#1E3F36; --rose-ink:#7FDDC3; --title:#E8FBF4; --on-accent:#0F1F1B;
+    --gold:#D9BC85; --gold-soft:#2E2A1E; --gold-ink:#E6CC98; --plaque:#FBFAF6;
+    --ok:#6CD3B6; --ok-soft:#1D3C33; --warn:#E8C070; --warn-soft:#3A3120; --bad:#F08AA0; --bad-soft:#3D2230;
+  --sky:linear-gradient(160deg,#12302A 0%,#1A4A3F 55%,#22594C 100%);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--rose);outline-offset:2px}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+.sky{background:var(--sky);position:relative;overflow:hidden}
+.sky .wrap{padding-block:26px 30px;position:relative;z-index:1}
+.bub{position:absolute;border-radius:50%;background:radial-gradient(circle at 32% 30%,rgba(255,255,255,.9),rgba(255,255,255,.3) 45%,rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.6);pointer-events:none}
+@media (prefers-reduced-motion:no-preference){.bub{animation:floaty 7s ease-in-out infinite}.bub:nth-child(2n){animation-duration:9s;animation-delay:-3s}}
+@keyframes floaty{50%{transform:translateY(-8px)}}
+.eyebrow{font-size:.8rem;letter-spacing:.12em;color:var(--soft);margin:0}
+h1{font-family:var(--serif);font-weight:900;color:var(--title);font-size:clamp(2rem,8vw,2.8rem);line-height:1.15;margin:4px 0 6px;letter-spacing:.06em;text-wrap:balance}
+.lead{margin:0;max-width:34em;opacity:.85;font-size:.95rem}
+
+main.wrap{padding-block:20px 36px;display:flex;flex-direction:column;gap:16px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:18px}
+h2{font-family:var(--serif);font-weight:600;font-size:1.2rem;margin:0;text-wrap:balance}
+.muted{color:var(--soft);font-size:.88rem;margin:0}
+label,.lbl{display:block;font-size:.86rem;color:var(--soft);margin:16px 0 6px}
+input[type=text]{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;font-size:1rem}
+
+.types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.type{border:1px solid var(--line);background:var(--bg);border-radius:16px;padding:12px 6px;text-align:center;cursor:pointer;min-width:0}
+.type b{display:block;font-family:var(--serif);font-size:1.05rem;line-height:1.3}
+.type span{display:block;font-size:.74rem;color:var(--soft);margin-top:4px}
+.type[aria-pressed="true"]{border-color:var(--rose);background:var(--rose-soft)}
+.flow{font-size:.86rem;color:var(--soft);margin:10px 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 14px;font-size:.92rem;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--rose-soft);border-color:var(--rose);color:var(--rose-ink)}
+.btn{display:flex;align-items:center;justify-content:center;border:0;border-radius:999px;padding:14px 20px;font-weight:700;cursor:pointer;background:var(--rose);color:var(--on-accent);font-size:1.02rem;width:100%;margin-top:20px}
+.btn.ghost{display:inline-flex;background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500;padding:6px 14px;font-size:.86rem;width:auto;margin:0;flex:0 0 auto;white-space:nowrap}
+.note{font-size:.84rem;background:var(--rose-soft);border-radius:12px;padding:9px 12px;margin-top:14px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.linkbtn{background:none;border:0;color:var(--rose-ink);font-weight:700;cursor:pointer;padding:2px 0;font-size:.88rem}
+
+.sec{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.sec:first-child{border-top:0;padding-top:0;margin-top:0}
+.sechead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.seg{display:grid;grid-template-columns:5.6em 1fr;gap:4px 14px;padding:14px 0;border-bottom:1px dashed var(--line)}
+.seg:last-child{border-bottom:0}
+.seg .t b{display:block;font-variant-numeric:tabular-nums;font-size:1rem}
+.seg .t span{display:block;font-size:.84rem;color:var(--soft)}
+.tag{display:inline-block;font-size:.76rem;font-weight:700;color:var(--rose-ink);background:var(--rose-soft);border-radius:999px;padding:1px 9px;margin-top:4px}
+.seg .say{min-width:0;font-size:1.02rem}
+.seg .shot{font-size:.86rem;color:var(--soft);margin-top:4px}
+.row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--line)}
+.row:last-of-type{border-bottom:0}
+.row span{min-width:0}
+.row .tag{margin:0 6px 0 0}
+.tip{font-size:.84rem;color:var(--soft);margin:8px 0 0}
+.pre{white-space:pre-wrap}
+footer{text-align:center;font-size:.78rem;color:var(--soft);padding:4px 0 28px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(30px);opacity:0;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:.92rem;transition:all .25s;pointer-events:none;z-index:20;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+@media (max-width:400px){.seg{grid-template-columns:1fr}.seg .t{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.seg .t span,.seg .t .tag{margin:0}}
+
+/* Home: small logo + name row → slogan → stacked horizontal feature cards */
+.home{padding-block:22px 8px}
+.brandrow{display:flex;align-items:center;gap:12px}
+.brandrow img{width:52px;height:52px;border-radius:14px;background:#FFFFFF;border:1px solid var(--line);object-fit:cover;flex:0 0 auto}
+.brandrow .en{font-family:var(--serif);font-weight:900;letter-spacing:.18em;font-size:1.05rem;color:var(--title);line-height:1.2}
+.brandrow .zh{font-size:.86rem;color:var(--gold-ink);letter-spacing:.12em}
+.slogan{margin:26px 0 6px}
+.slogan h1{font-size:clamp(1.5rem,6vw,2rem);letter-spacing:.04em;margin:0;line-height:1.45}
+.slogan .rule{display:flex;align-items:center;gap:10px;color:var(--gold);margin-top:12px;font-size:.9rem}
+.slogan .rule i{display:block;width:40px;height:1px;background:var(--gold)}
+.feats{display:flex;flex-direction:column;gap:12px;margin-top:22px}
+.feat{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:16px 16px 16px 18px;cursor:pointer;width:100%}
+.feat:not(:disabled):hover{border-color:var(--rose)}
+.feat:disabled{cursor:default}
+.feat .no{font-family:var(--serif);font-weight:900;font-size:1.6rem;line-height:1;color:var(--gold);font-variant-numeric:tabular-nums}
+.feat .txt{min-width:0;display:flex;flex-direction:column;gap:2px}
+.feat b{font-family:var(--serif);font-size:1.14rem}
+.feat .d{font-size:.86rem;color:var(--soft);line-height:1.5}
+.feat .st{font-size:.74rem;font-weight:700;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.feat .st.on{background:var(--rose);color:var(--on-accent)}
+.feat .st.soon{background:var(--gold-soft);color:var(--gold-ink)}
+.back{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--ink);font-weight:700;cursor:pointer;padding:6px 0;margin-bottom:6px;font-size:.92rem}
+.subhead h1{font-size:clamp(1.5rem,6vw,1.9rem);margin:4px 0 4px}
+
+/* Checkers */
+textarea,select{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;font-size:1rem;font:inherit;color:inherit}
+textarea{min-height:150px;resize:vertical;line-height:1.6}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.two>div{min-width:0}
+.seg3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.seg3 button{border:1px solid var(--line);background:var(--bg);border-radius:14px;padding:10px 4px;cursor:pointer;font-size:.92rem}
+.seg3 button small{display:block;font-size:.72rem;color:var(--soft)}
+.seg3 button[aria-pressed="true"]{border-color:var(--rose);background:var(--rose-soft);font-weight:700}
+.checks{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.ck{display:flex;align-items:center;gap:10px;font-size:.94rem;cursor:pointer}
+.ck input{width:20px;height:20px;accent-color:var(--rose);flex:0 0 auto}
+.btn.gold{background:var(--gold-soft);color:var(--gold-ink);border:1px solid var(--gold)}
+.result-top{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.ring{--v:0;width:92px;height:92px;border-radius:50%;background:conic-gradient(var(--rc) calc(var(--v)*1%),var(--line) 0);display:grid;place-items:center;flex:0 0 auto}
+.ring div{width:74px;height:74px;border-radius:50%;background:var(--paper);display:grid;place-items:center;font-family:var(--serif);font-weight:900;font-size:1.7rem;font-variant-numeric:tabular-nums;line-height:1}
+.ring div small{display:block;font-family:var(--sans);font-weight:500;font-size:.66rem;color:var(--soft);text-align:center}
+.grade{min-width:0;flex:1 1 180px}
+.grade b{display:block;font-family:var(--serif);font-size:1.3rem}
+.items{display:flex;flex-direction:column;margin-top:8px}
+.it{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;padding:12px 0;border-bottom:1px dashed var(--line)}
+.it:last-child{border-bottom:0}
+.pill{font-size:.74rem;font-weight:700;border-radius:999px;padding:2px 10px;white-space:nowrap;align-self:start;margin-top:2px}
+.pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.warn{background:var(--warn-soft);color:var(--warn)} .pill.bad{background:var(--bad-soft);color:var(--bad)}
+.it .nm{font-weight:700}
+.it .ms{font-size:.9rem}
+.it .fx{font-size:.86rem;color:var(--soft)}
+.it>div{min-width:0}
+.preview{white-space:pre-wrap;background:var(--bg);border-radius:14px;padding:12px 14px;font-size:.94rem;margin-top:8px;overflow-wrap:anywhere}
+.preview mark{background:var(--bad-soft);color:var(--bad);border-radius:4px;padding:0 2px}
+.preview mark.s{background:var(--warn-soft);color:var(--warn)}
+.bars{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.bar{display:grid;grid-template-columns:3.5em 1fr 2.5em;align-items:center;gap:10px;font-size:.88rem}
+.bar .tr{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar .tr i{display:block;height:100%;border-radius:4px;background:var(--rose)}
+.bar b{text-align:right;font-variant-numeric:tabular-nums}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+.metric{background:var(--bg);border-radius:14px;padding:10px;text-align:center;min-width:0}
+.metric b{display:block;font-family:var(--serif);font-size:1.2rem;font-variant-numeric:tabular-nums}
+.metric span{font-size:.74rem;color:var(--soft)}
+.dir ol{margin:6px 0 0;padding-left:1.3em;display:flex;flex-direction:column;gap:8px}
+.stage{display:inline-block;font-size:.8rem;font-weight:700;color:var(--gold-ink);background:var(--gold-soft);border-radius:999px;padding:2px 12px}
+@media (max-width:400px){.two{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(3,1fr)}}
+
+/* Persona quiz */
+.qprog{display:flex;align-items:center;gap:10px;font-size:.84rem;color:var(--soft)}
+.qprog .tr{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.qprog .tr i{display:block;height:100%;background:var(--rose);border-radius:3px;transition:width .25s}
+.qtitle{font-family:var(--serif);font-weight:600;font-size:1.25rem;margin:16px 0 4px;text-wrap:balance}
+.qnav{display:flex;gap:10px;margin-top:20px}
+.qnav .btn{margin-top:0}
+.qnav .btn.ghost{padding:12px 18px;font-size:.95rem}
+.ptitle{font-family:var(--serif);font-weight:900;font-size:clamp(1.4rem,5.6vw,1.9rem);line-height:1.35;margin:6px 0;color:var(--title);text-wrap:balance}
+.pill3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.pill3 div{background:var(--bg);border-radius:14px;padding:12px 10px;min-width:0}
+.pill3 b{display:block;font-family:var(--serif);font-size:1.4rem;color:var(--gold);font-variant-numeric:tabular-nums;line-height:1.1}
+.pill3 strong{display:block;font-size:.95rem;margin-top:4px}
+.pill3 span{font-size:.8rem;color:var(--soft)}
+.plist{margin:6px 0 0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+@media (max-width:420px){.pill3{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.qprog .tr i{transition:none}}
+</style>
+
+<div id="v-home">
+<div class="wrap home">
+  <div class="brandrow"><img src="fairy-studio-logo.jpg" alt="仙女創作室 Logo" width="52" height="52"><div><div class="en">FAIRY STUDIO</div><div class="zh">仙女創作室</div></div></div>
+  <div class="slogan">
+    <h1>讓創作更簡單<br>讓每一篇內容更有價值</h1>
+    <div class="rule" aria-hidden="true"><i></i>✦<i></i></div>
+  </div>
+  <div class="feats">
+    <button class="feat" type="button" data-go="inspire"><span class="no">01</span><span class="txt"><b>創作靈感室</b><span class="d">從靈感、腳本到剪輯，一次完成</span></span><span class="st on">開始使用</span></button>
+    <button class="feat" type="button" data-go="copy"><span class="no">02</span><span class="txt"><b>文案健檢室</b><span class="d">找出文案問題，讓內容更吸引人</span></span><span class="st on">開始使用</span></button>
+    <button class="feat" type="button" data-go="account"><span class="no">03</span><span class="txt"><b>帳號健檢室</b><span class="d">分析 IG 經營現況，找到成長方向</span></span><span class="st on">開始使用</span></button>
+    <button class="feat" type="button" data-go="story"><span class="no">04</span><span class="txt"><b>限動經營室</b><span class="d">從生活到信任，排出有目的的限動</span></span><span class="st on">開始使用</span></button>
+  </div>
+</div>
+</div>
+<div id="v-inspire" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="home">← 仙女創作室</button>
+  <div class="subhead"><p class="eyebrow">01｜創作靈感室</p><h1>仙女短影音創作室</h1><p class="muted">輸入一個主題，就能產生符合你個人 IP、可以直接拍的短影音內容。</p></div>
+  <section class="panel" id="ip-card" style="margin-top:18px"></section>
+  <div class="feats">
+    <button class="feat" type="button" data-go="topic"><span class="no">①</span><span class="txt"><b>AI 選題發想</b><span class="d">不知道拍什麼？給你 5 個主題和六大評分</span></span><span class="st on">開始使用</span></button>
+    <button class="feat" type="button" data-go="title"><span class="no">②</span><span class="txt"><b>爆款標題生成</b><span class="d">10 種風格的封面標題，附吸引力評分</span></span><span class="st on">開始使用</span></button>
+    <button class="feat" type="button" data-go="gen"><span class="no">③</span><span class="txt"><b>短影音腳本生成</b><span class="d">開場、完整口白、拍攝與剪輯建議</span></span><span class="st on">開始使用</span></button>
+    <button class="feat" type="button" data-go="check"><span class="no">④</span><span class="txt"><b>腳本健檢優化</b><span class="d">六大評分、找出問題、給你優化版</span></span><span class="st on">開始使用</span></button>
+    <button class="feat" type="button" data-go="music"><span class="no">♪</span><span class="txt"><b>推薦音樂</b><span class="d">2026 四大情境 BGM＋爆款開頭，依影片情境挑</span></span><span class="st on">查看</span></button>
+    <button class="feat" type="button" data-go="life"><span class="no">⑤</span><span class="txt"><b>信任度題庫</b><span class="d">食衣住行育樂＋價值觀，一題就是一支信任型影片</span></span><span class="st on">開始使用</span></button>
+    <button class="feat" type="button" data-go="history"><span class="no">✦</span><span class="txt"><b>我的創作紀錄</b><span class="d">存下來的選題、標題、腳本都在這裡</span></span><span class="st on" id="hist-count">查看</span></button>
+  </div>
+</div>
+</div>
+
+<div id="v-ip" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="inspire">← 創作靈感室</button>
+  <div class="subhead"><p class="eyebrow">個人 IP 設定</p><h1>讓 AI 寫出像你的內容</h1><p class="muted">每個 AI 功能都會讀這份資料。不用一次填完，之後隨時可以改。</p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px">
+  <section class="panel">
+    <div class="note" id="ip-note" hidden style="margin-top:0"><span>已經把人設測驗的結果帶進來了，看一下再按儲存。</span></div>
+    <div id="ip-form"></div>
+    <button class="btn" type="button" id="ip-save">儲存我的個人 IP</button>
+    <button class="linkbtn" type="button" data-go="persona" style="margin-top:12px">還不知道怎麼填？用 7 題找到我的人設</button>
+  </section>
+</main>
+</div>
+
+<div id="v-topic" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="inspire">← 創作靈感室</button>
+  <div class="subhead"><p class="eyebrow">①｜AI 選題發想</p><h1>今天想拍什麼？</h1><p class="muted">說說你的想法，AI 依照你的人設給你 5 個主題，每個都有六大評分。</p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px;display:flex;flex-direction:column;gap:16px">
+  <section class="panel">
+    <label for="t-in" style="margin-top:0">你的想法</label>
+    <textarea id="t-in" style="min-height:90px" placeholder="例：我想拍美食"></textarea>
+    <div class="chips" id="t-quick"></div>
+    <span class="lbl">影片類型</span><div class="chips" id="t-type"></div>
+    <p class="tip" id="t-typedesc"></p>
+    <button class="btn" type="button" id="t-go">幫我想 5 個主題</button>
+  </section>
+  <div id="t-out" aria-live="polite"></div>
+</main>
+</div>
+
+<div id="v-title" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="inspire">← 創作靈感室</button>
+  <div class="subhead"><p class="eyebrow">②｜爆款標題生成</p><h1>10 個封面標題</h1><p class="muted">輸入影片主題，或直接貼上寫好的腳本。</p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px;display:flex;flex-direction:column;gap:16px">
+  <section class="panel">
+    <label for="ti-in" style="margin-top:0">影片主題或原始腳本</label>
+    <textarea id="ti-in" style="min-height:110px" placeholder="例：下班 10 分鐘的小黃瓜海苔捲"></textarea>
+    <span class="lbl">吸金標題範例（綠燈卡點，纖體、美肌都可以）</span>
+    <div class="chips" id="ti-gold"></div>
+    <p class="tip">標題要有感、能引發好奇、讓人想點進來。【X】換成你自己的真實數字。</p>
+    <button class="btn" type="button" id="ti-go">生成 10 個標題</button>
+  </section>
+  <div id="ti-out" aria-live="polite"></div>
+</main>
+</div>
+
+<div id="v-gen" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="inspire">← 創作靈感室</button>
+  <div class="subhead"><p class="eyebrow">③｜短影音腳本生成</p><h1>寫一支可以直接拍的腳本</h1><p class="muted">只有主題是必填，其他填越多，腳本越像你。沒提供的經歷不會亂編，會標成【待補】。</p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px;display:flex;flex-direction:column;gap:16px">
+  <section class="panel">
+    <label for="g-topic" style="margin-top:0">影片主題</label><input type="text" id="g-topic" maxlength="60" placeholder="例：下班 10 分鐘的小黃瓜海苔捲">
+    <label for="g-cover">指定封面標題（可以不填）</label><input type="text" id="g-cover" maxlength="40" placeholder="例：10 分鐘晚餐，我只用這 3 樣">
+    <label for="g-point">影片重點</label><textarea id="g-point" style="min-height:80px" placeholder="例：海苔包小黃瓜、鮪魚、玉米，不用開火"></textarea>
+    <label for="g-feel">想傳達的感受</label><input type="text" id="g-feel" maxlength="60" placeholder="例：下班很累也能好好吃一餐">
+    <span class="lbl">影片類型</span><div class="chips" id="g-vtype"></div>
+    <div id="g-makewrap" hidden><span class="lbl">製作方式</span><div class="seg3" id="g-make" style="grid-template-columns:1fr 1fr"></div><p class="tip" id="g-makedesc"></p></div>
+    <label class="ck" for="g-green" style="margin-top:14px"><input type="checkbox" id="g-green">綠燈卡點影片（BA 對比、不放產品、不提功效、40 秒內）</label>
+    <span class="lbl">影片長度</span><div class="seg3" id="g-len"></div>
+    <div class="two">
+      <div><label for="g-shoot">拍攝方式</label><select id="g-shoot"><option>露臉說話</option><option>不露臉拍日常</option><option>手部特寫＋旁白</option><option>Vlog 跟拍</option></select></div>
+      <div><label for="g-formula">腳本公式</label><select id="g-formula"></select></div>
+    </div>
+    <button class="btn" type="button" id="g-go">生成完整腳本</button>
+    <button class="linkbtn" type="button" data-go="script" style="margin-top:12px">不用 AI？用快速範本排腳本</button>
+  </section>
+  <div id="g-out" aria-live="polite"></div>
+</main>
+</div>
+
+<div id="v-check" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="inspire">← 創作靈感室</button>
+  <div class="subhead"><p class="eyebrow">④｜腳本健檢優化</p><h1>這支腳本會有流量嗎？</h1><p class="muted">貼上寫好的腳本，AI 用六大標準打分，找出問題，再給你優化後的口白。</p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px;display:flex;flex-direction:column;gap:16px">
+  <section class="panel">
+    <label for="k-in" style="margin-top:0">貼上你的腳本</label>
+    <textarea id="k-in" style="min-height:160px" placeholder="例：大家好，今天要分享我的晚餐……"></textarea>
+    <button class="btn" type="button" id="k-go">開始健檢</button>
+  </section>
+  <div id="k-out" aria-live="polite"></div>
+</main>
+</div>
+
+<div id="v-life" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="inspire">← 創作靈感室</button>
+  <div class="subhead"><p class="eyebrow">⑤｜信任度題庫</p><h1>經營自媒體，「自己」最重要</h1><p class="muted">你輸出的內容，會決定你遇到的客人，也會決定找你加盟的夥伴。</p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px;display:flex;flex-direction:column;gap:16px">
+  <section class="panel">
+    <span class="stage">公式</span>
+    <div class="ptitle" style="font-size:1.25rem">生活六大面向 ＋ 說故事 ＋ 價值觀</div>
+    <p class="muted" style="margin:0">用生活裡的各種素材，結合過去的照片、影片佐證。讓陌生網友從認識你 → 了解你 → 喜歡你 → 欣賞你 → 信任你。</p>
+    <div class="chips" id="l-tabs" style="margin-top:14px"></div>
+  </section>
+  <section class="panel" id="l-list"></section>
+  <section class="panel">
+    <h2>信任影片兩種製作方式</h2>
+    <p class="muted">同樣是信任影片，不同的做法，呈現不同的溫度與風格。</p>
+    <div class="items" id="l-makes"></div>
+    <div class="preview" style="margin-top:10px"><b>核心觀念</b>
+信任影片不一定要拍得很精緻，重點是讓觀眾透過影片，更認識真實的你。
+真實的分享＋持續的輸出，才能慢慢累積信任感。</div>
+  </section>
+  <section class="panel">
+    <h2>三種影片怎麼分</h2>
+    <div class="items" id="l-types"></div>
+  </section>
+</main>
+</div>
+<div id="v-music" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="inspire">← 創作靈感室</button>
+  <div class="subhead"><p class="eyebrow">推薦音樂</p><h1>音樂是整支影片的靈魂</h1><p class="muted">好的音樂讓影片更有感染力，也更容易被記住。選小紅書、抖音觀看率高、節奏感強又正在流行的音樂。</p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px;display:flex;flex-direction:column;gap:16px">
+  <section class="panel" id="m-list"></section>
+  <section class="panel">
+    <h2>怎麼用</h2>
+    <ol class="plist">
+      <li>先選影片情境，再按「複製歌名」，到剪映的音樂庫貼上搜尋（歌名是簡體，直接貼就好）。</li>
+      <li>開頭 1–3 秒就讓音樂進來，畫面切換卡在節拍上。</li>
+      <li>綠燈卡點影片控制在 40 秒內，BA 對比放在音樂最強的那一拍。</li>
+    </ol>
+    <p class="tip">各平台音樂庫的歌不完全一樣，搜不到就換一首；商業帳號可用的音樂也比較少。</p>
+  </section>
+</main>
+</div>
+<div id="v-history" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="inspire">← 創作靈感室</button>
+  <div class="subhead"><p class="eyebrow">我的創作紀錄</p><h1>存下來的內容</h1><p class="muted" id="hist-where"></p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px">
+  <div class="chips" id="h-filter" style="margin-bottom:12px"></div>
+  <div id="h-list" style="display:flex;flex-direction:column;gap:12px"></div>
+</main>
+</div>
+
+<div id="v-persona" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="inspire">← 創作靈感室</button>
+  <div class="subhead"><p class="eyebrow">01｜創作靈感室</p><h1>找到我的人設</h1><p class="muted">先回答 7 個關於你的問題，回答完才會幫你整理出人設、內容主軸和簡介。</p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px;display:flex;flex-direction:column;gap:16px">
+  <section class="panel" id="p-quiz" aria-live="polite"></section>
+  <section class="panel" id="p-out" hidden aria-live="polite"></section>
+</main>
+</div>
+<div id="v-story" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="home">← 仙女創作室</button>
+  <div class="subhead"><p class="eyebrow">04｜限動經營室</p><h1>每一則限動，都要有分享的目的</h1><p class="muted">限動不只是記錄生活，而是透過生活讓觀眾認識你、喜歡你、信任你。</p></div>
+  <section class="panel" style="margin-top:18px">
+    <span class="stage">經營公式</span>
+    <div class="ptitle" style="font-size:1.15rem">生活素材＋個人故事＋價值觀＋專業分享＋互動引導</div>
+    <div class="chips" style="margin-top:10px" aria-label="經營目標">
+      <span class="chip" style="cursor:default">陌生人</span><span class="chip" style="cursor:default">認識</span><span class="chip" style="cursor:default">喜歡</span><span class="chip" style="cursor:default">欣賞</span><span class="chip" style="cursor:default">信任</span><span class="chip" style="cursor:default">詢問</span><span class="chip" style="cursor:default">成交</span><span class="chip" style="cursor:default">回購</span>
+    </div>
+    <ol class="plist" style="margin-top:12px">
+      <li><b>記錄生活</b>　讓觀眾知道你在做什麼</li>
+      <li><b>分享想法</b>　讓觀眾了解你是什麼樣的人</li>
+      <li><b>輸出價值</b>　讓觀眾感受到你的專業與能力</li>
+      <li><b>引導行動</b>　讓有需求的人願意主動詢問</li>
+    </ol>
+  </section>
+  <div class="feats">
+    <button class="feat" type="button" data-go="sup"><span class="no">✦</span><span class="txt"><b>價值觀升級</b><span class="d">把「今天上課好累」變成讓人認識你的限動</span></span><span class="st on">開始使用</span></button>
+    <button class="feat" type="button" data-go="sgen"><span class="no">A</span><span class="txt"><b>AI 限動生成</b><span class="d">輸入今天發生的事，排出 2–5 則串聯限動</span></span><span class="st on">開始使用</span></button>
+    <button class="feat" type="button" data-go="ssplit"><span class="no">✎</span><span class="txt"><b>原文排限動</b><span class="d">自己寫好了？不刪原文，幫你分成 2–3 則</span></span><span class="st on">開始使用</span></button>
+    <button class="feat" type="button" data-go="scheck"><span class="no">B</span><span class="txt"><b>AI 限動健檢</b><span class="d">貼文案或上傳截圖，先肯定再給建議</span></span><span class="st on">開始使用</span></button>
+    <button class="feat" type="button" data-go="sdata"><span class="no">C</span><span class="txt"><b>限動數據診斷</b><span class="d">填數字，看出卡在共鳴、詢問還是成交</span></span><span class="st on">開始使用</span></button>
+    <button class="feat" type="button" data-go="steach"><span class="no">D</span><span class="txt"><b>限動經營教學</b><span class="d">三大分類、故事公式、串聯技巧、信任五階段</span></span><span class="st on">查看</span></button>
+  </div>
+  <section class="panel" style="margin-top:16px">
+    <div class="sechead"><h2>仙女限動七天實作任務</h2><span class="muted" id="d7-count"></span></div>
+    <p class="muted">每天至少完成一組有主題的限動。重點不是發得多，而是練習有目的地分享。</p>
+    <div id="d7-list" class="checks" style="margin-top:10px"></div>
+  </section>
+</div>
+</div>
+
+<div id="v-sup" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="story">← 限動經營室</button>
+  <div class="subhead"><p class="eyebrow">進階｜價值觀升級</p><h1>讓別人透過生活看見你</h1><p class="muted">同樣一件事，有人只是記錄，有人能建立信任。差別在有沒有放進自己的故事、感受與價值觀。</p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px;display:flex;flex-direction:column;gap:16px">
+  <section class="panel">
+    <span class="lbl" style="margin-top:0">先看範例（點一下看前後對比）</span>
+    <div class="chips" id="su-cases"></div>
+    <div id="su-case"></div>
+  </section>
+  <section class="panel">
+    <span class="stage">生活事件＋真實感受＋個人故事＋價值觀</span>
+    <label for="su-1">① 發生什麼事情？（必填）</label><input type="text" id="su-1" maxlength="80" placeholder="例：今天上課好累。">
+    <label for="su-2">② 為什麼想分享？</label><input type="text" id="su-2" maxlength="120" placeholder="例：上完課很有感，想記錄下來">
+    <label for="su-3">③ 這件事讓你想到什麼？</label><input type="text" id="su-3" maxlength="160" placeholder="例：做了八年還是覺得有很多要學">
+    <label for="su-4">④ 有沒有相關的過去經歷？</label><input type="text" id="su-4" maxlength="200" placeholder="例：剛開始做的時候什麼都不懂">
+    <label for="su-5">⑤ 想讓觀眾了解你什麼價值觀？</label><input type="text" id="su-5" maxlength="120" placeholder="例：持續成長、自我投資">
+    <p class="tip">②～⑤ 填越多越像你。沒填的部分，AI 不會亂編，會先問你。</p>
+    <button class="btn" type="button" id="su-go">升級成價值觀限動</button>
+  </section>
+  <div id="su-out" aria-live="polite"></div>
+</main>
+</div>
+<div id="v-sgen" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="story">← 限動經營室</button>
+  <div class="subhead"><p class="eyebrow">A｜AI 限動生成</p><h1>把今天的生活，變成一組限動</h1><p class="muted">寫下發生的事、照片內容或心情，AI 幫你判斷分類、生活面向和故事公式，排出有連貫性的限動。</p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px;display:flex;flex-direction:column;gap:16px">
+  <section class="panel">
+    <label for="sg-in" style="margin-top:0">今天發生什麼事？</label>
+    <textarea id="sg-in" style="min-height:110px" placeholder="例：今天早餐吃地瓜和茶葉蛋。以前減肥很怕吃澱粉，現在比較會搭配了。"></textarea>
+    <span class="lbl">內容分類</span><div class="chips" id="sg-type"></div>
+    <div id="sg-prod" hidden style="margin-top:16px;padding:14px;border-radius:16px;background:var(--bg)">
+      <span class="stage">產品心得引導</span>
+      <p class="tip" style="margin-top:8px">填越多越像你，不會寫得像廣告。第 1、2 題一定要填。</p>
+      <label for="sg-p1">① 什麼時候、在哪裡用？（必填）</label><input type="text" id="sg-p1" maxlength="80" placeholder="例：下午開完會，坐在窗邊泡一杯">
+      <label for="sg-p2">② 用起來的感覺？（必填，用自己的話，不寫功效）</label><input type="text" id="sg-p2" maxlength="100" placeholder="例：熱熱的、甜度剛好，喝完心情很放鬆">
+      <label for="sg-p3">③ 為什麼會用它？</label><input type="text" id="sg-p3" maxlength="100" placeholder="例：下午很容易嘴饞，想給自己一點休息時間">
+      <label for="sg-p4">④ 客人說了什麼？（原話，沒有就留空）</label><input type="text" id="sg-p4" maxlength="150" placeholder="例：她說每天下午最期待這一杯">
+      <span class="lbl">⑤ 這組要不要引導詢問？</span><div class="seg3" id="sg-ask"></div>
+      <p class="tip">客人原話或截圖要遮名字和頭像，最好先問過客人。AI 不會幫你編客人的話。</p>
+    </div>
+    <label for="sg-formula">故事公式</label><select id="sg-formula"></select>
+    <span class="lbl">要幾則</span><div class="seg3" id="sg-n"></div>
+    <button class="btn" type="button" id="sg-go">排出我的限動</button>
+  </section>
+  <div id="sg-out" aria-live="polite"></div>
+</main>
+</div>
+
+<div id="v-scheck" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="story">← 限動經營室</button>
+  <div class="subhead"><p class="eyebrow">B｜AI 限動健檢</p><h1>這組限動，有達到目的嗎？</h1><p class="muted">不為了修改而修改。先肯定有效的地方，再指出具體問題，給你馬上能做的建議。</p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px;display:flex;flex-direction:column;gap:16px">
+  <section class="panel">
+    <label for="sc-in" style="margin-top:0">貼上限動文字</label>
+    <textarea id="sc-in" style="min-height:130px" placeholder="例：今天早餐吃這個！&#10;以前減肥時我真的很怕吃澱粉……"></textarea>
+    <div id="sc-imgwrap" hidden>
+      <label for="sc-img">或上傳限動截圖</label>
+      <input type="file" id="sc-img" accept="image/*" multiple>
+      <p class="tip" id="sc-imgnote"></p>
+    </div>
+    <button class="btn" type="button" id="sc-go">開始健檢</button>
+  </section>
+  <div id="sc-out" aria-live="polite"></div>
+</main>
+</div>
+
+<div id="v-sdata" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="story">← 限動經營室</button>
+  <div class="subhead"><p class="eyebrow">C｜限動數據診斷</p><h1>不只看觀看數</h1><p class="muted">抓最近一週的平均就好。數據只是觀察線索，要搭配內容、受眾和長期表現一起看。</p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px;display:flex;flex-direction:column;gap:16px">
+  <section class="panel">
+    <h2>每則限動平均</h2>
+    <div class="two">
+      <div><label for="sd-view">觀看數</label><input type="number" inputmode="numeric" min="0" id="sd-view" placeholder="例：800"></div>
+      <div><label for="sd-like">愛心數</label><input type="number" inputmode="numeric" min="0" id="sd-like" placeholder="例：25"></div>
+      <div><label for="sd-reply">回覆數</label><input type="number" inputmode="numeric" min="0" id="sd-reply" placeholder="例：3"></div>
+      <div><label for="sd-poll">投票參與</label><input type="number" inputmode="numeric" min="0" id="sd-poll" placeholder="例：40"></div>
+      <div><label for="sd-lifev">生活限動平均觀看</label><input type="number" inputmode="numeric" min="0" id="sd-lifev" placeholder="例：900"></div>
+      <div><label for="sd-prodv">產品限動平均觀看</label><input type="number" inputmode="numeric" min="0" id="sd-prodv" placeholder="例：500"></div>
+    </div>
+    <h2 style="margin-top:20px">這一週</h2>
+    <div class="two">
+      <div><label for="sd-dm">私訊詢問（則）</label><input type="number" inputmode="numeric" min="0" id="sd-dm" placeholder="例：2"></div>
+      <div><label for="sd-deal">成交與回購（筆）</label><input type="number" inputmode="numeric" min="0" id="sd-deal" placeholder="例：0"></div>
+      <div><label for="sd-c1">發了幾則生活價值型</label><input type="number" inputmode="numeric" min="0" id="sd-c1" placeholder="例：10"></div>
+      <div><label for="sd-c2">幾則專業信任型</label><input type="number" inputmode="numeric" min="0" id="sd-c2" placeholder="例：3"></div>
+      <div><label for="sd-c3">幾則產品變現型</label><input type="number" inputmode="numeric" min="0" id="sd-c3" placeholder="例：7"></div>
+    </div>
+    <button class="btn" type="button" id="sd-go">開始診斷</button>
+  </section>
+  <section class="panel" id="sd-out" hidden aria-live="polite"></section>
+</main>
+</div>
+
+<div id="v-ssplit" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="story">← 限動經營室</button>
+  <div class="subhead"><p class="eyebrow">原文排限動</p><h1>寫好了，只差排版</h1><p class="muted">貼上你自己寫的文字。不刪原文、不改你的語氣，只幫你斷句、分則、調順序，讓人一看就懂。</p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px;display:flex;flex-direction:column;gap:16px">
+  <section class="panel"><span class="stage">範例</span><div id="sp-case"></div></section>
+  <section class="panel">
+    <label for="sp-in" style="margin-top:0">貼上你寫好的文字</label>
+    <textarea id="sp-in" style="min-height:150px" placeholder="想到什麼就寫什麼，不用排版"></textarea>
+    <span class="lbl">要分成幾則</span><div class="seg3" id="sp-n"></div>
+    <label class="ck" for="sp-extra" style="margin-top:14px"><input type="checkbox" id="sp-extra" checked>可以建議我補一句價值觀（另外列出，不會塞進原文）</label>
+    <button class="btn" type="button" id="sp-go">幫我排成限動</button>
+  </section>
+  <div id="sp-out" aria-live="polite"></div>
+</main>
+</div>
+<div id="v-steach" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="story">← 限動經營室</button>
+  <div class="subhead"><p class="eyebrow">D｜限動經營教學</p><h1>仙女限動經營教學</h1><p class="muted">不是說服，是服務。錯了可以調整，不夠好可以升級，但不能不開始。</p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px;display:flex;flex-direction:column;gap:16px" id="st-body"></main>
+</div>
+<div id="v-copy" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="home">← 仙女創作室</button>
+  <div class="subhead"><p class="eyebrow">02｜文案健檢室</p><h1>找出文案問題，讓內容更吸引人</h1><p class="muted">貼上你寫好的文案，馬上檢查開頭、共鳴、行動引導，還有連結和功效用字。</p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px;display:flex;flex-direction:column;gap:16px">
+  <section class="panel" aria-label="貼上文案">
+    <span class="lbl" style="margin-top:0">文案類型</span>
+    <div class="seg3" id="c-type"></div>
+    <span class="lbl">這篇的燈號</span>
+    <div class="seg3" id="c-light"></div>
+    <label for="c-text">貼上文案</label>
+    <textarea id="c-text" placeholder="例：今天跟大家分享我的早餐&#10;最近早上都很忙……&#10;你也有一樣的困擾嗎？留言跟我說"></textarea>
+    <button class="btn" id="c-go" type="button">開始健檢</button>
+    <div class="note" id="c-note" hidden><span>下面是範例健檢結果。貼上你自己的文案，按「開始健檢」就會換成你的。</span></div>
+  </section>
+  <section class="panel" id="c-out" aria-live="polite"></section>
+</main>
+</div>
+<div id="v-account" hidden>
+<div class="wrap home">
+  <button class="back" type="button" data-go="home">← 仙女創作室</button>
+  <div class="subhead"><p class="eyebrow">03｜帳號健檢室</p><h1>分析 IG 經營現況，找到成長方向</h1><p class="muted">打開你的 IG 主頁，照著填數字和簡介，幫你看定位、內容和互動，排出接下來最該先做的事。</p></div>
+</div>
+<main class="wrap" style="padding-block:16px 36px;display:flex;flex-direction:column;gap:16px">
+  <section class="panel" aria-label="帳號資料">
+    <h2>帳號基本</h2>
+    <label for="a-name">IG 名稱</label><input type="text" id="a-name" maxlength="40" placeholder="例：小晴｜上班族的保養日常">
+    <label for="a-bio">個人簡介（整段貼上）</label><textarea id="a-bio" style="min-height:100px" placeholder="例：台中上班族媽媽&#10;分享下班後 10 分鐘的保養和生活&#10;想知道我怎麼挑，歡迎私訊聊聊 👇"></textarea>
+    <div class="two">
+      <div><label for="a-pos">帳號定位</label><select id="a-pos"><option>個人品牌</option><option>生活分享</option><option>好物推薦</option><option>還沒想好</option></select></div>
+      <div><label for="a-goal">現在最想要</label><select id="a-goal"><option>引流私訊</option><option>漲粉曝光</option><option>建立信任</option></select></div>
+    </div>
+    <h2 style="margin-top:22px">數字</h2>
+    <p class="muted">按讚和留言，抓最近 9 篇大概的平均就好。</p>
+    <div class="two">
+      <div><label for="a-followers">粉絲數</label><input type="number" inputmode="numeric" min="0" id="a-followers" placeholder="例：860"></div>
+      <div><label for="a-following">追蹤中</label><input type="number" inputmode="numeric" min="0" id="a-following" placeholder="例：1200"></div>
+      <div><label for="a-likes">平均按讚</label><input type="number" inputmode="numeric" min="0" id="a-likes" placeholder="例：42"></div>
+      <div><label for="a-comments">平均留言</label><input type="number" inputmode="numeric" min="0" id="a-comments" placeholder="例：3"></div>
+      <div><label for="a-perweek">每週發幾篇（含 Reels）</label><input type="number" inputmode="numeric" min="0" id="a-perweek" placeholder="例：3"></div>
+      <div><label for="a-reels">其中 Reels 幾支</label><input type="number" inputmode="numeric" min="0" id="a-reels" placeholder="例：1"></div>
+    </div>
+    <h2 style="margin-top:22px">自我檢查</h2>
+    <div class="checks" id="a-checks"></div>
+    <button class="btn" id="a-go" type="button">開始健檢</button>
+    <div class="note" id="a-note" hidden><span>下面是範例健檢結果。填上你自己的帳號，按「開始健檢」就會換成你的。</span></div>
+  </section>
+  <section class="panel" id="a-out" aria-live="polite"></section>
+</main>
+</div>
+<div id="v-script" hidden>
+<header class="sky">
+  <span class="bub" style="width:42px;height:42px;right:5%;top:22px"></span>
+  <span class="bub" style="width:16px;height:16px;right:22%;top:12px"></span>
+  <span class="bub" style="width:24px;height:24px;right:12%;bottom:16px"></span>
+  <span class="bub" style="width:12px;height:12px;left:58%;bottom:28px"></span>
+  <div class="wrap">
+    <button class="back" type="button" data-go="inspire">← 創作靈感室</button>
+    <p class="eyebrow">01｜創作靈感室</p>
+    <h1>腳本小幫手</h1>
+    <p class="lead">一格一格填，幫你排出 60 秒的分段腳本、開頭、標題和文案。每格寫短短一句就好。</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="panel" aria-label="填寫內容">
+    <span class="lbl" style="margin-top:0">選腳本類型</span>
+    <div class="types" id="types"></div>
+    <p class="flow" id="flow"></p>
+
+    <label for="topic">這支要拍什麼（短短幾個字）</label>
+    <input type="text" id="topic" maxlength="30" placeholder="例：小黃瓜海苔捲">
+    <label for="aud">拍給誰看</label>
+    <input type="text" id="aud" maxlength="30" placeholder="例：想做料理瘦身的人">
+    <label for="pain">他們的煩惱</label>
+    <input type="text" id="pain" maxlength="30" placeholder="例：沒時間煮">
+    <div class="chips" id="chips"></div>
+    <label for="method">你的做法或用的東西</label>
+    <input type="text" id="method" maxlength="40" placeholder="例：海苔包小黃瓜、鮪魚、玉米">
+    <label for="result">做完的結果或感受（不寫功效）</label>
+    <input type="text" id="result" maxlength="40" placeholder="例：10 分鐘一餐，吃完很清爽">
+    <label for="dur">你持續多久了（可以不填）</label>
+    <input type="text" id="dur" maxlength="20" placeholder="例：一個月">
+    <button class="btn" id="go" type="button">排出我的腳本</button>
+    <div class="note" id="sampleNote" hidden><span>下面是範例腳本。填上你自己的內容，按「排出我的腳本」就會換成你的。</span></div>
+  </section>
+
+  <section class="panel" id="out" aria-live="polite"></section>
+</main>
+</div>
+<footer>仙女創作室 FAIRY STUDIO｜巧穎開發</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const FIELDS=['topic','aud','pain','method','result','dur'];
+const PAINS=['沒時間','每天很累','熬夜','怕變老','身材焦慮','存不到錢','想變漂亮','想多賺一點','不知道怎麼選'];
+const TIMES=['1–5 秒','5–10 秒','10–15 秒','15–20 秒','20–30 秒','30–38 秒','38–46 秒','46–54 秒','54–60 秒'];
+const SAMPLE={type:'pain',topic:'小黃瓜海苔捲',aud:'想做料理瘦身的人',pain:'沒時間煮',method:'海苔包小黃瓜、鮪魚、玉米',result:'10 分鐘一餐，吃完很清爽',dur:'一個月'};
+const KEY='fairy-script-v2';
+
+const TYPES={
+  pain:{name:'痛點解決型',desc:'料理、保養、生活困擾',
+    flow:['痛點','共鳴','疑問','先給結果','公布答案','適合誰','改變','真實','行動'],
+    segs:v=>[
+      ['恐懼',`「${v.A}，是不是常常${v.P}？」`,'你最困擾的那一瞬間'],
+      ['認同','「我以前也是這樣，____」（說一個你自己的真實畫面）','以前的狀態'],
+      ['好奇','「到底是哪裡出了問題？是方法不對，還是____？」','你看鏡頭、思考的表情'],
+      ['慾望',`「現在的我，${v.R}」`,'用畫面說話，先讓人看到結果'],
+      ['信任',`「我後來改成這樣做：${v.M}」`,'做的過程，手部特寫'],
+      ['認同',`「如果你也${v.P}，這個做法很適合你」`,'面對鏡頭，像跟朋友說話'],
+      ['慾望',`「${v.D?`做了${v.D}`:'開始這樣做之後'}，我最大的改變是____」`,'前後的生活畫面對比'],
+      ['信任','「我不是專家，只是把自己真實的做法分享給你」','自然的日常片段'],
+      ['行動',`「你也${v.P}嗎？留言跟我說」`,'微笑看鏡頭'] ]},
+  reveal:{name:'好奇揭曉型',desc:'好物、開箱、生活小物',
+    flow:['懸念','痛點','揭曉','細節','使用','結果','適合誰','真實','行動'],
+    segs:v=>[
+      ['好奇',`「最近發現一個東西，${v.A}一定要知道」`,'東西先藏在手後或包裝裡'],
+      ['恐懼',`「以前我總是${v.P}」`,'以前困擾的畫面'],
+      ['好奇',`「就是它：${v.T}」`,'拿出來的那一瞬間'],
+      ['好奇','「它最讓我喜歡的地方是____」','外觀、質地、細節特寫'],
+      ['信任',`「我的用法是：${v.M}」`,'實際使用的過程'],
+      ['慾望',`「用完的感覺是：${v.R}」`,'用完之後的樣子'],
+      ['認同',`「如果你也${v.P}，可以參考看看」`,'面對鏡頭說'],
+      ['信任',`「這是我自己${v.D?`用了${v.D}`:'真的在用'}的真實心得」`,'放在生活裡的自然畫面'],
+      ['行動','「想知道更多，留言『我要』」','微笑看鏡頭'] ]},
+  life:{name:'生活場景型',desc:'一天、日常、Vlog',
+    flow:['開場','場景','轉折','融入','結果','日常','持續','收尾','行動'],
+    segs:v=>[
+      ['好奇',`「${v.A}的一天，跟我一起過」`,'早上的第一個畫面'],
+      ['認同',`「每天最怕的就是${v.P}」`,'忙碌、趕時間的片段'],
+      ['好奇','「所以我給自己留了一個小習慣」','停下來、深呼吸的畫面'],
+      ['信任',`「${v.M}」`,'自然帶到你的做法或用的東西'],
+      ['慾望',`「${v.R}」`,'舒服、放鬆的狀態'],
+      ['認同','「這樣的節奏，讓我____」','生活裡的小片段'],
+      ['信任',v.D?`「已經持續${v.D}了」`:'「慢慢持續做下去就好」','重複出現的日常動作'],
+      ['認同','「你的一天又是怎麼過的？」','收工、回家的畫面'],
+      ['行動','「留言跟我說，下支拍給你看」','微笑看鏡頭'] ]}
+};
+let S={type:'pain',isSample:false,made:false};
+
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2200)}
+async function copyText(t){
+  try{await navigator.clipboard.writeText(t);toast('已複製');return}catch(e){}
+  const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');toast('已複製')}catch(e){toast('複製失敗，請長按文字手動複製')}
+  ta.remove();
+}
+function load(){let d=null;try{d=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+  if(!d){d={type:'pain'};S.isSample=true}
+  S.type=TYPES[d.type]?d.type:'pain';FIELDS.forEach(k=>$('#'+k).value=d[k]??'');
+}
+function save(){const d={type:S.type};FIELDS.forEach(k=>d[k]=$('#'+k).value);try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}}
+function vals(){const g=k=>S.isSample?SAMPLE[k]:$('#'+k).value.trim();
+  return{T:g('topic')||'（主題）',A:g('aud')||'（對象）',P:g('pain')||'（煩惱）',M:g('method')||'（你的做法）',R:g('result')||'（結果）',D:g('dur'),rawT:g('topic')}}
+
+function renderTypes(){
+  $('#types').innerHTML=Object.entries(TYPES).map(([k,t])=>`<button type="button" class="type" data-type="${k}" aria-pressed="${S.type===k}"><b>${t.name}</b><span>${t.desc}</span></button>`).join('');
+  $('#flow').textContent=TYPES[S.type].flow.join(' → ');
+}
+function renderChips(){const p=$('#pain').value.trim();$('#chips').innerHTML=PAINS.map(x=>`<button type="button" class="chip" data-pain="${x}" aria-pressed="${p===x}">${x}</button>`).join('')}
+
+let OUT=null;let TAI=null,TBUSY=false;
+function build(){
+  const v=vals(),t=TYPES[S.type];
+  const segs=t.segs(v).map((s,i)=>({time:TIMES[i],stage:t.flow[i],tag:s[0],say:s[1],shot:s[2]}));
+  const hooks=[
+    ['好奇',`${v.A}都在偷偷做的一件事`],
+    ['恐懼',`${v.P}的人，這件事千萬別再做錯`],
+    ['反差',`我以為${v.T}很麻煩，結果完全相反`],
+    ['認同',`${v.A}，是不是常常${v.P}？`],
+    ['利益',`只要 3 個步驟，${v.R}`],
+    ['故事',`我以前天天${v.P}，直到我開始這樣做`]];
+  const when=v.D?v.D:'每天 10 分鐘';
+  const titles=[
+    ['數字',`${v.T}，3 個步驟就搞定`],
+    ['數字',`${when}，我只做了這件事`],
+    ['反差',`我以為${v.T}很麻煩，結果…`],
+    ['反差',`${v.P}的人，別再這樣做了`],
+    ['點名',`${v.A}，這支一定要看`],
+    ['點名',`給常常${v.P}的你`],
+    ['提問',`${v.P}怎麼辦？我這樣解決`],
+    ['提問',`為什麼我一直推薦${v.T}？`],
+    ['懸念',`${v.T}的小秘密，很少人知道`],
+    ['結果',`${v.R}，我是這樣做的`],
+    ['故事',`從${v.P}到${v.R}`],
+    ['收藏',`${v.T}懶人包｜先存起來`]];
+  const tag=v.rawT?'#'+v.rawT.replace(/\s+/g,'')+' ':'';
+  const caption=`${v.A}，是不是常常${v.P}？\n\n我以前也是，後來我試了：${v.M}\n現在${v.R} 🤍\n\n${v.D?`已經持續${v.D}了，`:''}這是我自己的真實經驗，不一定適合每個人\n你也有一樣的困擾嗎？留言跟我說\n\n${tag}#仙女日常 #真實分享`;
+  OUT={segs,hooks,titles,caption,name:t.name};
+}
+function scriptText(){return `【${OUT.name}｜60 秒腳本】\n\n`+OUT.segs.map(s=>`${s.time}｜${s.stage}（${s.tag}）\n${s.say}\n📱 ${s.shot}`).join('\n\n')}
+async function titleAI(){
+  const v=vals();TBUSY=true;renderOut();
+  const sm=await getSample();
+  if(sm){
+    const prompt=`你是台灣 IG 短影音標題高手，幫「仙女團隊」夥伴想封面標題。用台灣繁體中文、口語、有畫面感。
+這支要拍：${v.T}；拍給：${v.A}；他們的煩惱：${v.P}；做法：${v.M}；結果感受：${v.R}${v.D?`；持續：${v.D}`:''}。
+請給 10 個不同類型的標題，類型從這些挑：數字、反差、點名、提問、懸念、結果、故事、收藏、對比、清單。
+規則：每個 6–16 字；要讓人想停下來看；不可寫療效、醫療、保證、減重公斤數；不放連結；不寫價格優惠；不要跟這些重複：${OUT.titles.map(t=>t[1]).join('、')}。
+只回傳 JSON：{"titles":[{"type":"類型","text":"標題"}]}`;
+    try{TAI=await sm.json(prompt,{modelTier:'default',cache:false})}catch(e){if(e&&e.code==='rate_limited')toast('使用太頻繁，稍後再試');TAI={offline:true}}
+  }else TAI={offline:true};
+  TBUSY=false;renderOut();
+}
+function renderOut(){
+  if(!OUT){$('#out').hidden=true;return}
+  $('#out').hidden=false;
+  $('#out').innerHTML=`
+  <div class="sec"><div class="sechead"><h2>分段腳本${S.isSample?' <span class="tag">範例</span>':''}</h2><button class="btn ghost" type="button" data-copy="script">複製整份</button></div>
+  ${OUT.segs.map(s=>`<div class="seg"><div class="t"><b>${s.time}</b><span>${s.stage}</span><span class="tag">${s.tag}</span></div><div class="say">${esc(s.say)}<div class="shot">📱 ${esc(s.shot)}</div></div></div>`).join('')}</div>
+  <div class="sec"><div class="sechead"><h2>開頭 3 秒（挑一句最像你的）</h2></div>
+  ${OUT.hooks.map((h,i)=>`<div class="row"><span><span class="tag">${h[0]}</span>${esc(h[1])}</span><button class="btn ghost" type="button" data-copy="hook" data-i="${i}">複製</button></div>`).join('')}</div>
+  <div class="sec"><div class="sechead"><h2>吸睛標題</h2><button class="btn ghost" type="button" data-copy="titles">全部複製</button></div>
+  <p class="muted">封面放大字、貼文第一句都能用。挑一個最像你的，再改成自己的話。</p>
+  ${OUT.titles.map((h,i)=>`<div class="row"><span><span class="tag">${h[0]}</span>${esc(h[1])}</span><button class="btn ghost" type="button" data-copy="title" data-i="${i}">複製</button></div>`).join('')}
+  <button class="btn gold" type="button" id="t-ai" ${TBUSY?'disabled':''}>${TBUSY?'正在想標題…':TAI?'再想 10 個':'AI 再幫我想 10 個標題'}</button>
+  ${TAI?`${TAI.offline?'<p class="tip">目前無法連線 AI，先用上面的標題。</p>':(TAI.titles||[]).map((h,i)=>`<div class="row"><span>${h.type?`<span class="tag">${esc(h.type)}</span>`:''}${esc(h.text||h)}</span><button class="btn ghost" type="button" data-copy="aititle" data-i="${i}">複製</button></div>`).join('')}`:''}
+  <div class="preview" style="margin-top:14px;font-size:.86rem"><b>好標題 4 個小撇步</b>
+① 封面大字 6–14 個字，一眼看懂在講什麼
+② 能放數字就放數字：3 個步驟、10 分鐘、一個月
+③ 點名對象或說出煩惱，讓對的人停下來
+④ 不寫療效、保證、瘦幾公斤，用生活感受代替</div></div>
+  <div class="sec"><div class="sechead"><h2>貼文文案</h2><button class="btn ghost" type="button" data-copy="caption">複製</button></div>
+  <div class="pre">${esc(OUT.caption)}</div>
+  <p class="tip">不放連結、不寫療效，用你自己的真實經驗說就好。</p></div>`;
+}
+
+document.addEventListener('click',e=>{
+  const ty=e.target.closest('[data-type]');
+  if(ty){S.type=ty.dataset.type;renderTypes();save();return}
+  const ch=e.target.closest('[data-pain]');
+  if(ch){$('#pain').value=ch.dataset.pain;renderChips();save();return}
+  const c=e.target.closest('[data-copy]');
+  if(c&&OUT){const k=c.dataset.copy,i=+c.dataset.i;
+    copyText(k==='script'?scriptText():k==='hook'?OUT.hooks[i][1]:k==='title'?OUT.titles[i][1]:k==='titles'?OUT.titles.map(t=>t[1]).concat(TAI&&!TAI.offline?(TAI.titles||[]).map(t=>t.text||t):[]).join('\n'):k==='aititle'?(TAI.titles[i].text||TAI.titles[i]):OUT.caption);return}
+  if(e.target.closest('#t-ai')){titleAI();return}
+  if(e.target.closest('#go')){
+    if(!$('#topic').value.trim()){toast('先填這支要拍什麼');$('#topic').focus();return}
+    S.isSample=false;$('#sampleNote').hidden=true;save();TAI=null;build();renderOut();
+    $('#out').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'});return}
+  if(e.target.closest('#clear')){FIELDS.forEach(k=>$('#'+k).value='');S.isSample=false;$('#sampleNote').hidden=true;OUT=null;renderChips();renderOut();save();$('#topic').focus()}
+});
+document.addEventListener('input',e=>{if(FIELDS.includes(e.target.id)){save();if(e.target.id==='pain')renderChips()}});
+
+
+/* ===== shared for checkers ===== */
+let SAMPLER;async function getSample(){if(SAMPLER!==undefined)return SAMPLER;try{SAMPLER=window.claude&&window.claude.use?await window.claude.use('sample'):null}catch(e){SAMPLER=null}return SAMPLER}
+const cnt=(t,w)=>t.split(w).length-1;
+const anyOf=(t,arr)=>arr.filter(w=>t.includes(w));
+const HARD=['治療','治癒','療效','根治','藥效','醫生推薦','醫師推薦','抗癌','降血壓','降血糖','保證','100%','百分百','永久','第一名','最有效','無副作用','排毒','燃脂','溶脂','爆瘦','狂瘦','速瘦'];
+const HARD_RE=/\d+(\.\d+)?\s*(公斤|kg|KG|斤|cm|公分)/g;
+const SOFT=['瘦身','減重','減肥','變瘦','瘦了','改善','修復','調節','增強','代謝','消脂','抗老','美白','淡斑','生髮','掉髮','幫助消化','排便','體脂','腰圍','提升免疫'];
+const LINK_RE=/(https?:\/\/\S+|www\.\S+|\S+\.(com|tw|cc|me|ee|ly)(\/\S*)?)/gi;
+const SALES=['下單','購買','優惠','限時','團購','特價','免運','加購','匯款','價格','售價'];
+const scoreOf=items=>{let w=0,g=0;items.forEach(i=>{w+=i.w;g+=i.w*(i.st==='ok'?1:i.st==='warn'?.5:0)});return w?Math.round(g/w*100):0};
+const ST={ok:'很好',warn:'注意',bad:'要改'};
+const ringColor=v=>v>=85?'var(--ok)':v>=65?'var(--warn)':'var(--bad)';
+function itemsHTML(items){return `<div class="items">${items.map(i=>`<div class="it"><span class="pill ${i.st}">${ST[i.st]}</span><div><div class="nm">${esc(i.name)}</div><div class="ms">${esc(i.msg)}</div>${i.st!=='ok'&&i.fix?`<div class="fx">👉 ${esc(i.fix)}</div>`:''}</div></div>`).join('')}</div>`}
+function ringHTML(v,label){return `<div class="ring" style="--v:${v};--rc:${ringColor(v)}"><div><span>${v}<small>${label}</small></span></div></div>`}
+function seg3(el,opts,cur,attr){$(el).innerHTML=opts.map(([k,t,sm])=>`<button type="button" ${attr}="${k}" aria-pressed="${cur===k}">${t}${sm?`<small>${sm}</small>`:''}</button>`).join('')}
+function lsGet(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+/* ===== 文案健檢 ===== */
+const C_KEY='fairy-copy-v1';
+const C_SAMPLE={type:'post',light:'green',text:'今天跟大家分享我的早餐\n最近早上都很忙，所以我都吃小黃瓜海苔捲，真的很方便，而且吃了一個月瘦了3公斤！想要的可以私訊我，限時優惠中 https://lin.ee/abcd'};
+const CT={post:['貼文',60,350,'IG 貼文'],script:['Reels 腳本',80,400,'影片口白'],story:['限動',8,80,'短短幾句']};
+const C={type:'post',light:'green',isSample:false,res:null,ai:null,busy:false};
+function cLoad(){const d=lsGet(C_KEY);if(d){C.type=d.type||'post';C.light=d.light||'green';$('#c-text').value=d.text||''}else C.isSample=true}
+function cSave(){lsSet(C_KEY,{type:C.type,light:C.light,text:$('#c-text').value})}
+function cRenderOpts(){seg3('#c-type',Object.entries(CT).map(([k,v])=>[k,v[0],v[3]]),C.type,'data-ctype');seg3('#c-light',[['green','綠燈','無功效・最安全'],['yellow','黃燈','有功效・要用可用字']],C.light,'data-clight');$('#c-light').style.gridTemplateColumns='1fr 1fr'}
+function checkCopy(text,type,light){
+  const t=text.trim(),lines=t.split(/\n/).map(x=>x.trim()).filter(Boolean),first=lines[0]||'';
+  const len=t.replace(/\s/g,'').length,items=[];
+  const hookW=['你','妳','是不是','為什麼','怎麼','千萬','別再','原來','竟然','結果','其實','以前','終於','偷偷','？','?','！','!'];
+  const hasHook=anyOf(first,hookW).length>0||/\d/.test(first);
+  const short=first.length<=24;
+  items.push({name:'開頭 3 秒',w:15,st:hasHook&&short?'ok':(hasHook||short)?'warn':'bad',
+    msg:`第一句「${first.slice(0,30)}${first.length>30?'…':''}」${short?'':'太長，'}${hasHook?'有抓人的字':'比較像在陳述，沒有讓人想停下來的點'}`,
+    fix:'第一句控制在 20 字內，用問句、數字或反差開場，例如「你是不是也常常……？」'});
+  const you=cnt(t,'你')+cnt(t,'妳');
+  items.push({name:'讀者共鳴',w:10,st:you>=2?'ok':you===1?'warn':'bad',msg:you?`有對讀者說話 ${you} 次`:'整篇都在說自己，讀者比較難代入',fix:'多用「你」跟讀者說話，把他的困擾說出來'});
+  const me=cnt(t,'我');
+  items.push({name:'真實經驗',w:10,st:me>=2?'ok':me===1?'warn':'bad',msg:me?`有分享自己的經驗 ${me} 次`:'看不到你自己的經驗',fix:'加一段「我自己……」的真實畫面或心得，信任感會差很多'});
+  const longest=Math.max(0,...lines.map(l=>l.length));
+  const readSt=lines.length>=3&&longest<=60?'ok':(longest>120&&lines.length<=2)?'bad':'warn';
+  items.push({name:'排版好讀',w:10,st:readSt,msg:`共 ${lines.length} 行，最長一行 ${longest} 字`,fix:'一句一行、每 2–3 行空一行，手機上讀起來才不吃力'});
+  const [,mn,mx]=CT[type];
+  items.push({name:'長度',w:10,st:len>=mn&&len<=mx?'ok':(len<mn*.5||len>mx*1.6)?'bad':'warn',msg:`約 ${len} 字（${CT[type][0]}建議 ${mn}–${mx} 字）`,fix:len<mn?'再多寫一段經驗或細節，讓內容更完整':'刪掉重複的句子，留下最重要的 3 個重點'});
+  const cta=anyOf(t,['留言','私訊','收藏','分享','告訴我','跟我說','想知道','+1','回覆','標記']);
+  items.push({name:'行動引導',w:15,st:cta.length?'ok':'bad',msg:cta.length?`有引導讀者：${cta.slice(0,3).join('、')}`:'結尾沒有告訴讀者下一步要做什麼',fix:'結尾加一句，例如「你也有一樣的困擾嗎？留言跟我說」'});
+  const links=t.match(LINK_RE)||[];
+  items.push({name:'連結',w:10,st:links.length?'bad':'ok',msg:links.length?`有 ${links.length} 個連結，容易被判定成導購內容`:'沒有放連結',fix:'把連結全部拿掉，改成「想知道可以私訊我」'});
+  const hard=[...new Set([...anyOf(t,HARD),...(t.match(HARD_RE)||[])])],soft=anyOf(t,SOFT).filter(w=>!hard.includes(w));
+  let rs,rm;
+  if(hard.length){rs='bad';rm=`有不能用的字：${hard.join('、')}`}
+  else if(soft.length){rs=light==='green'?'bad':'warn';rm=light==='green'?`綠燈不能有功效字：${soft.join('、')}`:`有功效字：${soft.join('、')}，確認是不是可用功效文字`}
+  else{rs='ok';rm='沒有看到功效或醫療用字'}
+  items.push({name:'功效用字',w:15,st:rs,msg:rm,fix:hard.length?'拿掉療效、保證、數字減重這類字，改寫成生活感受，例如「吃完很清爽」':light==='green'?'綠燈只講生活和感受，不寫功效；要寫功效請改用黃燈，並只用公司可用功效文字':'只使用公司給的可用功效文字'});
+  const sales=anyOf(t,SALES).concat(/\d+\s*元|\$\s*\d+/.test(t)?['價格']:[]);
+  items.push({name:'推銷感',w:5,st:!sales.length?'ok':sales.length>=3?'bad':'warn',msg:sales.length?`有推銷用字：${[...new Set(sales)].join('、')}`:'讀起來不像在推銷',fix:'先分享、再引導私訊，價格和優惠留到私訊再說'});
+  if(type==='post'){const tags=(t.match(/#[^\s#]+/g)||[]).length;items.push({name:'Hashtag',w:5,st:tags>=1&&tags<=6?'ok':'warn',msg:tags?`有 ${tags} 個`:'沒有 hashtag',fix:tags?'控制在 3–5 個，選跟主題相關的':'加 3–5 個跟主題相關的 hashtag'})}
+  let mk=esc(t);
+  hard.forEach(w=>{mk=mk.split(esc(w)).join(`<mark>${esc(w)}</mark>`)});
+  soft.forEach(w=>{mk=mk.split(esc(w)).join(`<mark class="s">${esc(w)}</mark>`)});
+  links.forEach(w=>{mk=mk.split(esc(w)).join(`<mark>${esc(w)}</mark>`)});
+  return{items,score:scoreOf(items),preview:mk,hasRisk:hard.length||soft.length||links.length};
+}
+function cRun(fromSample){
+  const text=fromSample?C_SAMPLE.text:$('#c-text').value,type=fromSample?C_SAMPLE.type:C.type,light=fromSample?C_SAMPLE.light:C.light;
+  C.res=checkCopy(text,type,light);C.res.text=text;C.res.type=type;C.res.light=light;C.ai=null;cRender();
+}
+function cRender(){
+  const r=C.res;if(!r){$('#c-out').hidden=true;return}$('#c-out').hidden=false;
+  const g=r.score>=85?['可以發了 ✦','整體很完整，挑一個注意的地方修一下就更好。']:r.score>=65?['再修一下就很好','照下面標「要改」的地方調整，分數會明顯拉高。']:['建議大改','先處理「要改」的項目，尤其是連結和功效用字。'];
+  const bad=r.items.filter(i=>i.st==='bad').length;
+  $('#c-out').innerHTML=`<div class="result-top">${ringHTML(r.score,'分')}<div class="grade">${C.isSample?'<span class="tag">範例</span> ':''}<b>${g[0]}</b><span class="muted">${g[1]}${bad?` 有 ${bad} 項要改。`:''}</span></div></div>
+  ${itemsHTML(r.items)}
+  ${r.hasRisk?`<div class="sec"><h2>要注意的字</h2><p class="muted">紅色是建議拿掉的，黃色是功效用字。</p><div class="preview">${r.preview}</div></div>`:''}
+  <div class="sec"><h2>AI 幫我改寫</h2><p class="muted">照上面的問題改成一版新的文案，給你 3 個新開頭。</p>
+  <button class="btn gold" type="button" id="c-ai" ${C.busy?'disabled':''}>${C.busy?'正在改寫…':C.ai?'再改一版':'幫我改寫'}</button>
+  ${C.ai?`${C.ai.offline?'<p class="tip">目前無法連線 AI，先給你改寫方向。</p>':''}
+  ${C.ai.summary?`<p style="margin:14px 0 0">${esc(C.ai.summary)}</p>`:''}
+  <div class="sechead" style="margin-top:14px"><b>改寫後文案</b><button class="btn ghost" type="button" data-ccopy="rw">複製</button></div><div class="preview">${esc(C.ai.rewrite)}</div>
+  <div style="margin-top:14px"><b>新開頭</b>${(C.ai.hooks||[]).map((h,i)=>`<div class="row"><span>${esc(h)}</span><button class="btn ghost" type="button" data-ccopy="h" data-i="${i}">複製</button></div>`).join('')}</div>`:''}</div>`;
+}
+async function cAI(){
+  const r=C.res;if(!r)return;C.busy=true;cRender();
+  const issues=r.items.filter(i=>i.st!=='ok').map(i=>`${i.name}：${i.msg}`).join('；')||'沒有明顯問題';
+  const sm=await getSample();
+  if(sm){
+    const prompt=`你是台灣 IG 社群文案教練，幫「仙女團隊」夥伴優化文案。用台灣繁體中文、口語、親切，像朋友聊天。
+文案類型：${CT[r.type][0]}；燈號：${r.light==='green'?'綠燈（不能有任何功效字，只講生活與感受）':'黃燈（可提感受，但不可有療效、保證、數字減重等宣稱）'}
+健檢發現的問題：${issues}
+規則：不放任何連結；不可寫醫療、療效、保證、減重公斤數；不硬銷、不寫價格優惠；結尾引導留言或私訊；一句一行好讀；${r.type==='post'?'結尾 3–5 個 hashtag':'不需要 hashtag'}。
+原文：
+"""${r.text.slice(0,1500)}"""
+只回傳 JSON：{"summary":"一句話說明這版改了什麼","rewrite":"改寫後的完整文案","hooks":["3 個 20 字內的新開頭"]}`;
+    try{C.ai=await sm.json(prompt,{modelTier:'default',cache:false})}catch(e){if(e&&e.code==='rate_limited')toast('使用太頻繁，先給你改寫方向');C.ai=cOffline(r)}
+  }else C.ai=cOffline(r);
+  C.busy=false;cRender();
+}
+function cOffline(r){const body=r.text.replace(LINK_RE,'').replace(HARD_RE,'').trim();return{offline:true,summary:'先把連結、數字減重和推銷字拿掉，加上共鳴開頭和留言引導。',
+  rewrite:`你是不是也常常早上忙到沒時間好好吃？\n\n${body.split(/[，。！!]/).filter(x=>x.trim()&&!anyOf(x,[...HARD,...SOFT,...SALES,'私訊']).length).slice(0,3).join('\n')}\n\n這是我自己的真實做法，分享給你參考\n你也有一樣的困擾嗎？留言跟我說 🤍${r.type==='post'?'\n\n#仙女日常 #真實分享':''}`,
+  hooks:['你是不是也常常忙到忘記照顧自己？','我以前也這樣，直到我換了一個小習慣','30 秒，分享我每天都在做的一件事']}}
+
+/* ===== 帳號健檢 ===== */
+const A_KEY='fairy-acct-v1';
+const A_NUM=['followers','following','likes','comments','perweek','reels'];
+const A_CHECKS=[['avatar','頭像是清楚的本人照'],['highlight','精選動態有分類（關於我、心得、日常）'],['style','最近 9 篇看起來風格一致'],['series','有固定的系列單元'],['reply','留言和私訊都會回覆']];
+const A_SAMPLE={name:'小晴｜上班族的保養日常',bio:'台中上班族媽媽\n分享下班後 10 分鐘的保養和生活\n想知道我怎麼挑，歡迎私訊聊聊 👇',pos:'生活分享',goal:'引流私訊',followers:860,following:1200,likes:42,comments:3,perweek:3,reels:1,checks:{avatar:true,reply:true}};
+const A={isSample:false,res:null,ai:null,busy:false};
+function aRenderChecks(c){$('#a-checks').innerHTML=A_CHECKS.map(([k,t])=>`<label class="ck" for="ac-${k}"><input type="checkbox" id="ac-${k}" ${c&&c[k]?'checked':''}>${t}</label>`).join('')}
+function aRead(){const d={name:$('#a-name').value,bio:$('#a-bio').value,pos:$('#a-pos').value,goal:$('#a-goal').value,checks:{}};A_NUM.forEach(k=>d[k]=$('#a-'+k).value);A_CHECKS.forEach(([k])=>d.checks[k]=$('#ac-'+k).checked);return d}
+function aLoad(){const d=lsGet(A_KEY);aRenderChecks(d&&d.checks);if(!d){A.isSample=true;return}
+  ['name','bio'].forEach(k=>$('#a-'+k).value=d[k]||'');if(d.pos)$('#a-pos').value=d.pos;if(d.goal)$('#a-goal').value=d.goal;A_NUM.forEach(k=>$('#a-'+k).value=d[k]??'')}
+function aSave(){lsSet(A_KEY,aRead())}
+function checkAccount(d){
+  const n=k=>Number(d[k])||0,bio=(d.bio||'').trim(),items=[];
+  const F=n('followers'),FG=n('following'),L=n('likes'),CM=n('comments'),PW=n('perweek'),R=n('reels'),ck=d.checks||{};
+  const bioLines=bio.split(/\n/).filter(x=>x.trim()).length;
+  const idW=anyOf(bio,['我是','媽','上班族','女孩','老師','護理','仙女','歲','主婦','人妻','寶','孩子','創業','學生','設計師','工程師','業務','美容','保養','穿搭','料理','日常']);
+  items.push({g:'定位',name:'簡介：你是誰',w:10,st:!bio?'bad':idW.length?'ok':'warn',msg:!bio?'還沒有簡介':idW.length?`看得出身分：${idW.slice(0,3).join('、')}`:'看不太出你是誰',fix:'第一行寫身分，例如「台中上班族媽媽」，讓人一秒知道你是誰'});
+  const valW=anyOf(bio,['分享','教你','帶你','幫你','陪你','一起','記錄','提供','解決','整理']);
+  items.push({g:'定位',name:'簡介：能帶給人什麼',w:10,st:!bio?'bad':valW.length?'ok':'warn',msg:valW.length?'有寫出能給粉絲的價值':'看不出追蹤你能得到什麼',fix:'第二行寫你分享什麼，例如「分享下班後 10 分鐘的保養和生活」'});
+  const ctaW=anyOf(bio,['私訊','留言','點','👇','⬇','歡迎','找我','聊聊','諮詢','+1']);
+  items.push({g:'定位',name:'簡介：行動引導',w:10,st:ctaW.length?'ok':'bad',msg:ctaW.length?'有告訴人下一步':'沒有引導私訊或互動',fix:'最後一行加「想知道我怎麼挑，歡迎私訊聊聊 👇」'});
+  const bioRisk=[...anyOf(bio,HARD),...(bio.match(HARD_RE)||[])];
+  items.push({g:'定位',name:'簡介：排版與用字',w:5,st:bioRisk.length?'bad':bioLines>=2?'ok':'warn',msg:bioRisk.length?`有不能用的字：${bioRisk.join('、')}`:`簡介共 ${bioLines} 行`,fix:bioRisk.length?'拿掉療效、保證、數字減重這類字':'分 2–4 行寫，一行一個重點'});
+  const nm=(d.name||'').trim();
+  items.push({g:'定位',name:'名稱',w:5,st:!nm?'warn':/[｜|・\-_]/.test(nm)||nm.length>=6?'ok':'warn',msg:nm?`「${nm}」`:'沒有填名稱',fix:'名稱加上你分享的主題，例如「小晴｜上班族的保養日常」，搜尋得到也一看就懂'});
+  items.push({g:'定位',name:'頭像',w:5,st:ck.avatar?'ok':'warn',msg:ck.avatar?'是清楚的本人照':'還不是清楚的本人照',fix:'換成看得到臉、光線明亮的本人照，信任感最高'});
+  items.push({g:'定位',name:'精選動態',w:5,st:ck.highlight?'ok':'warn',msg:ck.highlight?'有分類':'還沒分類',fix:'做 3 個精選：關於我、真實心得、日常，新粉絲一進來就看得懂你'});
+  items.push({g:'內容',name:'發文頻率',w:10,st:PW>=5?'ok':PW>=3?'warn':'bad',msg:`每週 ${PW} 篇`,fix:'先穩定每週 5 篇，寧可短也不要斷'});
+  items.push({g:'內容',name:'Reels 數量',w:10,st:R>=3?'ok':R>=1?'warn':'bad',msg:`每週 ${R} 支 Reels`,fix:'Reels 是被新的人看到的主要管道，每週至少 3 支'});
+  items.push({g:'內容',name:'版面風格',w:5,st:ck.style?'ok':'warn',msg:ck.style?'風格一致':'風格還不統一',fix:'固定 2–3 種封面樣式和色調，整個版面看起來會很有質感'});
+  items.push({g:'內容',name:'系列單元',w:5,st:ck.series?'ok':'warn',msg:ck.series?'有固定系列':'還沒有固定系列',fix:'開一個固定系列，例如「每週一下班保養」，粉絲會期待下一集'});
+  const er=F?(L+CM)/F*100:0,cr=L?CM/L*100:0,fr=F?FG/F:0;
+  items.push({g:'互動',name:'互動率',w:10,st:!F?'warn':er>=3?'ok':er>=1?'warn':'bad',msg:F?`約 ${er.toFixed(1)}%（按讚＋留言 ÷ 粉絲）`:'沒有填粉絲數',fix:'多拍跟粉絲生活有關的內容，問句結尾，讓人想按讚留言'});
+  items.push({g:'互動',name:'留言比例',w:5,st:!L?'warn':cr>=5?'ok':cr>=2?'warn':'bad',msg:L?`每 100 個讚約 ${cr.toFixed(1)} 則留言`:'沒有填按讚數',fix:'每篇結尾丟一個好回答的問題，例如「你是 A 還是 B？」'});
+  items.push({g:'互動',name:'追蹤比例',w:5,st:!F?'warn':fr<=1.2?'ok':fr<=2?'warn':'bad',msg:F?`追蹤中是粉絲的 ${fr.toFixed(1)} 倍`:'沒有填粉絲數',fix:'慢慢整理追蹤清單，追蹤中太多看起來像互追帳號，會降低專業感'});
+  items.push({g:'互動',name:'回覆',w:5,st:ck.reply?'ok':'warn',msg:ck.reply?'會回覆留言和私訊':'還沒有每則回覆',fix:'發文後 1 小時內回覆留言，演算法會推給更多人'});
+  const groups=['定位','內容','互動'].map(g=>[g,scoreOf(items.filter(i=>i.g===g))]);
+  const stage=F<500?['起步期','先把定位和簡介做清楚，穩定日更，讓每個新粉絲都知道你在分享什麼。']:F<3000?['成長期','用 Reels 擴大曝光，找出成效最好的主題做成系列。']:F<10000?['穩定期','加強互動和信任內容，把粉絲轉成私訊和回購。']:['影響力期','建立個人品牌風格，可以開始帶夥伴一起做內容。'];
+  const goalTip={'引流私訊':'目標是私訊：每 3 篇內容至少 1 篇結尾引導「想知道可以私訊我」，簡介最後一行也要有。','漲粉曝光':'目標是漲粉：重心放在 Reels，開頭 3 秒用問句或反差，一週至少 3 支。','建立信任':'目標是信任：多分享真實使用心得、日常和你自己的故事，精選動態放「關於我」。'}[d.goal]||'';
+  const pri=items.filter(i=>i.st!=='ok').sort((a,b)=>(a.st==='bad'?0:1)-(b.st==='bad'?0:1)||b.w-a.w).slice(0,3);
+  return{items,groups,score:scoreOf(items),stage,goalTip,pri,er,cr,F,PW,R};
+}
+function aRun(fromSample){const d=fromSample?A_SAMPLE:aRead();A.res=checkAccount(d);A.res.d=d;A.ai=null;aRender()}
+function aRender(){
+  const r=A.res;if(!r){$('#a-out').hidden=true;return}$('#a-out').hidden=false;
+  $('#a-out').innerHTML=`<div class="result-top">${ringHTML(r.score,'分')}<div class="grade">${A.isSample?'<span class="tag">範例</span> ':''}<span class="stage">${r.stage[0]}</span><b style="margin-top:6px">${r.d.name?esc(r.d.name):'你的帳號'}</b><span class="muted">${r.stage[1]}</span></div></div>
+  <div class="metrics" style="margin-top:16px"><div class="metric"><b>${r.F?r.er.toFixed(1)+'%':'—'}</b><span>互動率</span></div><div class="metric"><b>${r.PW}</b><span>每週篇數</span></div><div class="metric"><b>${r.R}</b><span>每週 Reels</span></div></div>
+  <div class="bars" style="margin-top:16px">${r.groups.map(([g,v])=>`<div class="bar"><span>${g}</span><span class="tr"><i style="width:${v}%;background:${ringColor(v)}"></i></span><b>${v}</b></div>`).join('')}</div>
+  <div class="sec dir"><h2>成長方向：先做這 3 件事</h2>${r.pri.length?`<ol>${r.pri.map(i=>`<li><b>${esc(i.name)}</b>　${esc(i.fix)}</li>`).join('')}</ol>`:'<p class="muted">每一項都做得很好，維持現在的節奏，把成效最好的主題做成系列。</p>'}<p class="tip">${esc(r.goalTip)}</p></div>
+  ${['定位','內容','互動'].map(g=>`<div class="sec"><h2>${g}</h2>${itemsHTML(r.items.filter(i=>i.g===g))}</div>`).join('')}
+  <div class="sec"><h2>AI 幫我寫簡介</h2><p class="muted">依照你的定位和目標，寫 3 版個人簡介。</p>
+  <button class="btn gold" type="button" id="a-ai" ${A.busy?'disabled':''}>${A.busy?'正在寫…':A.ai?'再寫一版':'幫我寫簡介'}</button>
+  ${A.ai?`${A.ai.offline?'<p class="tip">目前無法連線 AI，先給你範本版本。</p>':''}${(A.ai.bios||[]).map((b,i)=>`<div class="sechead" style="margin-top:14px"><b>版本 ${i+1}</b><button class="btn ghost" type="button" data-acopy="${i}">複製</button></div><div class="preview">${esc(b)}</div>`).join('')}${A.ai.direction?`<p class="tip">${esc(A.ai.direction)}</p>`:''}`:''}</div>`;
+}
+async function aAI(){
+  const r=A.res;if(!r)return;A.busy=true;aRender();const d=r.d;
+  const sm=await getSample();
+  if(sm){
+    const prompt=`你是台灣 IG 帳號經營教練，幫「仙女團隊」夥伴寫 IG 個人簡介。用台灣繁體中文，親切有質感。
+名稱：${d.name||'未填'}；目前簡介：${(d.bio||'未填').slice(0,300)}；定位：${d.pos}；目標：${d.goal}；粉絲 ${Number(d.followers)||0}。
+規則：每版 3–4 行，150 字內；第一行身分、第二行能帶給粉絲什麼、最後一行行動引導（例如歡迎私訊）；可用少量 emoji；不可有療效、保證、減重數字；不放連結；不硬銷。
+只回傳 JSON：{"bios":["3 版不同風格的簡介，用 \\n 分行"],"direction":"一句話建議這個帳號的內容方向"}`;
+    try{A.ai=await sm.json(prompt,{modelTier:'default',cache:false})}catch(e){if(e&&e.code==='rate_limited')toast('使用太頻繁，先給你範本版本');A.ai=aOffline(d)}
+  }else A.ai=aOffline(d);
+  A.busy=false;aRender();
+}
+function aOffline(d){const who=(d.bio||'').split('\n')[0]||'認真生活的上班族';return{offline:true,bios:[`${who}\n分享真實的日常和好物心得\n想知道我怎麼挑，歡迎私訊聊聊 👇`,`🌿 ${who}\n每天 10 分鐘，陪你把生活過得更好\n有問題都可以私訊我`,`${who}｜真實分享\n不推銷，只分享我自己在用的\n留言或私訊，我都會回 🤍`],direction:'固定一個系列主題，每週至少 3 支 Reels。'}}
+
+document.addEventListener('click',e=>{
+  const t=e.target;
+  const ct=t.closest('[data-ctype]');if(ct){C.type=ct.dataset.ctype;cRenderOpts();cSave();return}
+  const cl=t.closest('[data-clight]');if(cl){C.light=cl.dataset.clight;cRenderOpts();cSave();return}
+  if(t.closest('#c-go')){if(!$('#c-text').value.trim()){toast('先貼上你的文案');$('#c-text').focus();return}C.isSample=false;$('#c-note').hidden=true;cSave();cRun(false);$('#c-out').scrollIntoView({block:'start'});return}
+  if(t.closest('#c-ai')){cAI();return}
+  const cc=t.closest('[data-ccopy]');if(cc&&C.ai){copyText(cc.dataset.ccopy==='rw'?C.ai.rewrite:C.ai.hooks[+cc.dataset.i]);return}
+  if(t.closest('#a-go')){if(!$('#a-followers').value&&!$('#a-bio').value.trim()){toast('先填簡介或粉絲數');$('#a-bio').focus();return}A.isSample=false;$('#a-note').hidden=true;aSave();aRun(false);$('#a-out').scrollIntoView({block:'start'});return}
+  if(t.closest('#a-ai')){aAI();return}
+  const ac=t.closest('[data-acopy]');if(ac&&A.ai){copyText(A.ai.bios[+ac.dataset.acopy]);return}
+});
+document.addEventListener('input',e=>{const id=e.target.id||'';if(id==='c-text')cSave();else if(id.startsWith('a-')||id.startsWith('ac-'))aSave()});
+document.addEventListener('change',e=>{const id=e.target.id||'';if(id.startsWith('a-')||id.startsWith('ac-'))aSave()});
+cLoad();cRenderOpts();cRun(C.isSample);if(!C.isSample)C.res=null,cRender();$('#c-note').hidden=!C.isSample;
+aLoad();aRun(A.isSample);if(!A.isSample)A.res=null,aRender();$('#a-note').hidden=!A.isSample;
+
+/* ===== 人設 ===== */
+const P_KEY='fairy-persona-v1';
+const PQ=[
+ {k:'who',q:'你現在的身分是？',sub:'可以選 1–2 個',max:2,min:1,opts:['上班族','媽媽','學生','創業老闆','自由工作者','家庭主婦','退休族','新手爸媽'],other:'其他身分，例如：護理師'},
+ {k:'like',q:'你平常最喜歡做什麼？',sub:'選 1–3 個，這會是你內容的主軸',max:3,min:1,opts:['料理','保養','穿搭','運動','旅遊','閱讀','手作','追劇','咖啡','毛孩','親子','理財','拍照','居家佈置','美食探店','音樂'],other:'其他興趣'},
+ {k:'ask',q:'朋友最常找你問什麼？',sub:'選 1–2 個，這是你的專長',max:2,min:1,opts:['保養怎麼挑','吃什麼','怎麼穿','帶小孩','工作職場','感情心事','存錢理財','去哪裡玩','買什麼好用','時間管理'],other:'其他'},
+ {k:'trait',q:'朋友會怎麼形容你？',sub:'選 1–3 個',max:3,min:1,opts:['溫柔','幽默','直率','細心','樂觀','文青','熱血','療癒','知性','可愛','自律','愛分享'],other:''},
+ {k:'story',q:'你有經歷過什麼改變嗎？',sub:'選 1 個最有感的，這會變成你的故事',max:1,min:1,opts:['從上班族到創業','當媽媽後找回自己','從不會打扮到愛上變美','從忙碌到有自己的時間','從零開始學一件事','還在努力改變中'],other:'用一句話寫你的故事（可以不填）',otherFree:true},
+ {k:'fan',q:'你最想吸引誰來看？',sub:'選 1 個',max:1,min:1,opts:['跟我一樣的上班族','忙碌的媽媽','小資女生','想創業的人','想變美的女生','想好好生活的人'],other:''},
+ {k:'show',q:'你喜歡怎麼出現在影片裡？',sub:'選 1 個',max:1,min:1,opts:['露臉說話','不露臉拍日常','用圖文分享'],other:''}];
+const P={step:0,ans:{},other:{},res:null,ai:null,busy:false};
+function pLoad(){const d=lsGet(P_KEY);if(d){P.ans=d.ans||{};P.other=d.other||{};P.step=Math.min(d.step||0,PQ.length-1);if(d.done)P.res=buildPersona()}}
+function pSave(){lsSet(P_KEY,{ans:P.ans,other:P.other,step:P.step,done:!!P.res})}
+function pPicked(k){const a=(P.ans[k]||[]).slice();const o=(P.other[k]||'').trim();const q=PQ.find(x=>x.k===k);if(o&&!q.otherFree)a.push(o);return a}
+function pValid(i){const q=PQ[i];return pPicked(q.k).length>=q.min}
+function pRenderQuiz(){
+  const q=PQ[P.step],sel=P.ans[q.k]||[],last=P.step===PQ.length-1,ok=pValid(P.step);
+  $('#p-quiz').innerHTML=`<div class="qprog"><span>第 ${P.step+1} / ${PQ.length} 題</span><span class="tr"><i style="width:${(P.step+1)/PQ.length*100}%"></i></span></div>
+  <div class="qtitle">${q.q}</div><p class="muted">${q.sub}</p>
+  <div class="chips">${q.opts.map(o=>`<button type="button" class="chip" data-pans="${esc(o)}" aria-pressed="${sel.includes(o)}">${esc(o)}</button>`).join('')}</div>
+  ${q.other?`<label for="p-other">${esc(q.other)}</label><input type="text" id="p-other" maxlength="40" value="${esc(P.other[q.k]||'')}" placeholder="${q.otherFree?'例：35 歲離開公司，開始經營自己的品牌':'自己填也可以'}">`:''}
+  <div class="qnav">${P.step>0?'<button class="btn ghost" type="button" id="p-prev">上一題</button>':''}<button class="btn" type="button" id="p-next" ${ok?'':'disabled'}>${last?'產出我的人設 ✦':'下一題'}</button></div>`;
+}
+const TRAIT={溫柔:'溫柔系',幽默:'搞笑系',直率:'直球系',細心:'細節控',樂觀:'元氣系',文青:'文青系',熱血:'熱血系',療癒:'療癒系',知性:'知性系',可愛:'可愛系',自律:'自律派',愛分享:'分享魂'};
+const TONE={溫柔:'說話輕輕慢慢的，像在跟好姊妹聊天',幽默:'多一點自嘲和誇張表情，讓人邊笑邊看完',直率:'第一句就講重點，不繞圈子',細心:'把步驟和小細節講清楚，讓人想收藏',樂觀:'語氣明亮有活力，結尾給人打氣',文青:'畫面乾淨、文字有感，像在寫日記',熱血:'用行動感染人，常說「我們一起」',療癒:'放慢節奏、配輕柔音樂，看完會想深呼吸',知性:'有條理地分享觀點，用 1、2、3 整理',可愛:'用語活潑、表情豐富，多一點小貼圖',自律:'分享固定習慣和打卡，給人想跟上的感覺',愛分享:'把自己的好東西大方分享，像朋友推坑'};
+const LIKE={料理:['愛下廚','10 分鐘下班料理'],保養:['保養控','睡前保養時間'],穿搭:['穿搭控','一週通勤穿搭'],運動:['運動派','在家動一動'],旅遊:['愛旅行','週末小旅行'],閱讀:['愛閱讀','一本書一句話'],手作:['手作控','週末手作日'],追劇:['追劇魂','追劇配什麼'],咖啡:['咖啡控','今天喝哪杯'],毛孩:['毛孩家長','毛孩日常'],親子:['親子日常','親子小日常'],理財:['小資理財','小資記帳日記'],拍照:['愛拍照','手機隨手拍'],居家佈置:['佈置控','小家佈置'],美食探店:['愛探店','今天吃這間'],音樂:['音樂控','今日歌單']};
+const ASKN={'保養怎麼挑':'保養','吃什麼':'飲食','怎麼穿':'穿搭','帶小孩':'育兒','工作職場':'職場','感情心事':'心事','存錢理財':'理財','去哪裡玩':'旅遊','買什麼好用':'好物','時間管理':'時間管理'};const an=a=>ASKN[a]||a;
+function idLabel(w){if(w.includes('上班族')&&w.includes('媽媽'))return'上班族媽媽';if(w.includes('媽媽')&&w.includes('創業老闆'))return'創業媽媽';return w.join('・')}
+function buildPersona(){
+  const who=pPicked('who'),like=pPicked('like'),ask=pPicked('ask'),trait=pPicked('trait'),fan=pPicked('fan')[0]||'',show=pPicked('show')[0]||'';
+  const story=(P.ans.story||[])[0]||'',storyTxt=(P.other.story||'').trim();
+  const id=idLabel(who),t0=trait[0]||'',l0=like[0]||'';
+  const name=`${TRAIT[t0]||t0}・${(LIKE[l0]||[l0])[0]}的${id}`;
+  const one=`一個${trait.slice(0,2).join('又')}的${id}，喜歡${like.join('、')}，常常幫朋友解決「${ask.join('、')}」的問題。`;
+  const pillars=[
+    {pct:40,t:'生活興趣',d:`${like.join('、')}的真實日常`},
+    {pct:40,t:'專長分享',d:`朋友最常問你的：${ask.join('、')}`},
+    {pct:20,t:'個人故事',d:storyTxt||story||'你的改變和心路歷程'}];
+  const series=like.map(l=>`「${(LIKE[l]||[0,l+'日記'])[1]}」`).concat(ask.slice(0,1).map(a=>`「${an(a)}小教室」`));
+  const topics=[
+    `我的一天：${id}的真實日常`,
+    ...like.slice(0,3).map(l=>`${l}新手最常問的 3 個問題`),
+    ...ask.slice(0,2).map(a=>`朋友最常問我「${a}」，一次回答`),
+    `我的故事：${storyTxt||story||'我為什麼開始改變'}`,
+    `${an(ask[0]||'生活')}的 3 個小撇步，我自己都在用`,
+    `一週${like[0]||'生活'}紀錄，跟我一起`,
+    `${fan||'你'}一定懂的 3 個瞬間`,
+    `我的${like[0]||'生活'}愛用清單，先存起來`,
+    `如果重來一次，我會給自己的 3 個建議`].slice(0,10);
+  const bio=`${TRAIT[t0]||''}${id}｜${like.slice(0,2).join(' × ')}\n分享${ask[0]?an(ask[0])+'和':''}真實生活，陪${fan.replace(/^跟我一樣的/,'')||'你'}一起變更好\n想聊聊歡迎私訊 👇`;
+  const showTip={露臉說話:'固定一個開場白和背景，露臉說話最容易建立信任。','不露臉拍日常':'用手部特寫、生活畫面加字幕，聲音和文字就是你的識別。','用圖文分享':'固定封面版型和顏色，一眼就認得是你的貼文。'}[show]||'';
+  return{name,one,pillars,series,topics,bio,tone:trait.map(t=>TONE[t]).filter(Boolean),showTip,fan,who,like,ask,trait,story:storyTxt||story,show};
+}
+function pRenderOut(){
+  const r=P.res;if(!r){$('#p-out').hidden=true;$('#p-quiz').hidden=false;return}
+  $('#p-quiz').hidden=true;$('#p-out').hidden=false;
+  const a=P.ai&&!P.ai.offline?P.ai:null;
+  const name=a&&a.name||r.name,one=a&&a.one||r.one;
+  $('#p-out').innerHTML=`<span class="stage">你的人設</span><div class="ptitle">${esc(name)}</div><p style="margin:0">${esc(one)}</p>
+  <div class="sec"><h2>內容主軸</h2><p class="muted">照這個比例發文，粉絲會記得你，也信任你。</p><div class="pill3">${r.pillars.map(p=>`<div><b>${p.pct}%</b><strong>${p.t}</strong><span>${esc(p.d)}</span></div>`).join('')}</div></div>
+  <div class="sec"><h2>說話風格</h2><ul class="plist">${r.tone.map(t=>`<li>${esc(t)}</li>`).join('')}${r.showTip?`<li>${esc(r.showTip)}</li>`:''}</ul></div>
+  <div class="sec"><h2>固定系列</h2><div class="chips">${r.series.map(x=>`<span class="chip" style="cursor:default">${esc(x)}</span>`).join('')}</div></div>
+  <div class="sec"><div class="sechead"><h2>先拍這 10 個主題</h2><button class="btn ghost" type="button" data-pcopy="topics">複製</button></div><ol class="plist">${(a&&a.topics||r.topics).map(t=>`<li>${esc(t)}</li>`).join('')}</ol></div>
+  <div class="sec"><div class="sechead"><h2>個人簡介</h2><button class="btn ghost" type="button" data-pcopy="bio">複製</button></div><div class="preview">${esc(a&&a.bio||r.bio)}</div></div>
+  ${a&&a.advice?`<div class="sec"><h2>AI 給你的建議</h2><p style="margin:0">${esc(a.advice)}</p></div>`:''}
+  <button class="btn gold" type="button" id="p-ai" ${P.busy?'disabled':''}>${P.busy?'AI 正在幫你寫…':a?'AI 再寫一版':'AI 幫我把人設寫得更完整'}</button>
+  ${P.ai&&P.ai.offline?'<p class="tip">目前無法連線 AI，先用上面的人設。</p>':''}
+  <button class="btn" type="button" id="p-saveip">存成我的個人 IP ✦</button>
+  <div class="qnav"><button class="btn ghost" type="button" id="p-redo">重新回答</button><button class="btn ghost" type="button" data-go="gen">用這個人設去寫腳本</button></div>`;
+}
+async function pAI(){
+  const r=P.res;if(!r)return;P.busy=true;pRenderOut();
+  const sm=await getSample();
+  if(sm){
+    const prompt=`你是台灣 IG 個人品牌教練，幫「仙女團隊」夥伴找出人設。用台灣繁體中文，親切、具體、有畫面。
+她的回答：身分 ${r.who.join('、')}；興趣 ${r.like.join('、')}；朋友常問她 ${r.ask.join('、')}；個性 ${r.trait.join('、')}；她的改變 ${r.story||'未填'}；想吸引 ${r.fan}；出現方式 ${r.show}。
+規則：人設要從她的興趣和個性出發，不要以賣產品為主軸；不可寫療效、保證、減重數字；不放連結；不硬銷。
+只回傳 JSON：{"name":"人設名稱，15 字內，好記","one":"一句話介紹這個人設，40 字內","topics":["10 個具體的短影音主題，每個 20 字內"],"bio":"IG 簡介 3 行，用 \\n 分行，最後一行引導私訊","advice":"一段 80 字內的經營建議"}`;
+    try{P.ai=await sm.json(prompt,{modelTier:'default',cache:false})}catch(e){if(e&&e.code==='rate_limited')toast('使用太頻繁，稍後再試');P.ai={offline:true}}
+  }else P.ai={offline:true};
+  P.busy=false;pRenderOut();
+}
+document.addEventListener('click',e=>{
+  const t=e.target;
+  const c=t.closest('[data-pans]');
+  if(c){const q=PQ[P.step],v=c.dataset.pans;let a=(P.ans[q.k]||[]).slice();
+    if(a.includes(v))a=a.filter(x=>x!==v);else if(q.max===1)a=[v];else if(a.length<q.max)a.push(v);else{toast(`最多選 ${q.max} 個`);return}
+    P.ans[q.k]=a;pSave();pRenderQuiz();return}
+  if(t.closest('#p-prev')){P.step--;pSave();pRenderQuiz();return}
+  if(t.closest('#p-next')){if(!pValid(P.step)){toast('先選一個答案');return}
+    if(P.step<PQ.length-1){P.step++;pSave();pRenderQuiz();window.scrollTo(0,0)}else{P.res=buildPersona();P.ai=null;pSave();pRenderOut();window.scrollTo(0,0)}return}
+  if(t.closest('#p-ai')){pAI();return}
+  if(t.closest('#p-redo')){P.res=null;P.ai=null;P.step=0;pSave();pRenderOut();pRenderQuiz();window.scrollTo(0,0);return}
+  const pc=t.closest('[data-pcopy]');if(pc&&P.res){const a=P.ai&&!P.ai.offline?P.ai:{};copyText(pc.dataset.pcopy==='bio'?(a.bio||P.res.bio):(a.topics||P.res.topics).map((x,i)=>`${i+1}. ${x}`).join('\n'));return}
+});
+document.addEventListener('input',e=>{if(e.target.id==='p-other'){P.other[PQ[P.step].k]=e.target.value;pSave();const b=$('#p-next');if(b)b.disabled=!pValid(P.step)}});
+pLoad();pRenderQuiz();pRenderOut();
+
+const pad=n=>String(n).padStart(2,'0');const _uid0=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+/* ================= 仙女短影音創作室 ================= */
+const SIX=['話題性','衝擊性','知識量','大眾性','帳號契合性','簡易性'];
+const FORMULAS={
+  A:['如果你正在型','痛點解決、實用教學','如果你正在＿＿，先＿＿'],
+  B:['真正的不是而是型','觀念反轉、女性成長','真正＿＿的，不是＿＿，而是＿＿'],
+  C:['越要型','反差金句、情緒共鳴','越＿＿，越要＿＿'],
+  D:['你是誰就會型','人際關係、價值觀','你是什麼樣的人，就會＿＿'],
+  E:['特徵列舉型','知識分享、經驗整理','＿＿的人，通常有這 3 個特徵'],
+  F:['我以前以為型','真實心得、故事分享','我以前以為＿＿，後來才發現＿＿'],
+  G:['卡住時先做型','問題解決、生活技巧','當你＿＿卡住時，先做這件事'],
+  H:['一句話送給型','療癒內容、生活旁白','這句話送給＿＿的你']};
+const TTYPES=['痛點型','反差型','好奇型','數字型','真實心得型','避雷型','情緒共鳴型','懸念型','懶人攻略型','故事型'];
+const IPF=[
+  ['nick','暱稱／人設名稱','text','例：小晴｜療癒系上班族媽媽'],
+  ['line','一句話定位','text','例：陪忙碌媽媽用 10 分鐘好好照顧自己'],
+  ['field','主要經營領域','text','例：下班料理、保養、生活日常'],
+  ['audience','目標受眾','text','例：25–40 歲、忙碌的上班族媽媽'],
+  ['mbti','MBTI','text','例：ENFJ（不知道可以不填）'],
+  ['traits','個人特質','text','例：細心、療癒、愛分享'],
+  ['values','價值觀','text','例：好好生活比完美更重要'],
+  ['pros','優點','text','例：很會把複雜的事講簡單'],
+  ['cons','缺點','text','例：常常拖到最後一刻才拍'],
+  ['pov','敘事視角','select',['第一人稱分享','像朋友聊天','旁白觀察','老師教學']],
+  ['tags','帳號主題標籤','text','例：#下班料理 #媽媽日常 #保養'],
+  ['type','帳號類型','select',['個人品牌','生活分享','知識教學','好物推薦','Vlog 日常']],
+  ['shoot','偏好拍攝方式','select',['露臉說話','不露臉拍日常','手部特寫＋旁白','Vlog 跟拍','圖文']],
+  ['tone','平常說話風格','text','例：輕鬆、會自嘲、句子短']];
+const VTYPES={
+  引流:['引流型','吸引陌生人認識你，擴大觸及與粉絲數','熱門話題、時事、生活趣事；實用知識、懶人技巧；有共鳴的日常生活分享；場景式 vlog、美食、旅遊、親子'],
+  信任:['信任型','讓網友更了解、喜歡、信任你','自我介紹、人生經歷、重要轉折；家庭生活、感情觀、友情觀；價值觀、興趣喜好、生活日常；真實反差、挫折低谷、成長蛻變；溫暖故事'],
+  變現:['變現型','介紹活動、合作機會，創造轉換','使用心得、前後對比（BA）；活動期間的改變分享；顧客真實回饋；常見問題解答、專業知識分享']};
+const LIFE={
+  食:['你平時的飲食狀態，日常怎麼吃？','為什麼你會這樣吃？','你瘦身之路的心態是怎麼建立的？','你是一個著重吃的人嗎？為什麼？','從小到大的飲食習慣','喜歡吃什麼、不喜歡吃什麼？','減重期間的心態調整','為什麼會想要瘦身？','現在的體態滿意嗎？'],
+  衣:['你的變美思路','穿搭、妝容、風格分享','為什麼會持續提升自己的外在？','你的變美價值觀','外在形象為什麼重要？','為什麼每天化妝打扮自己？','外在形象提升有什麼好處？','女為悅己者容'],
+  住:['從小到大的生活環境','你的家庭背景','租房、買房的價值觀','從小到大的成長心路歷程','你未來居住的目標','為什麼很渴望（或不渴望）有一個家？','未來希望達到什麼樣的里程碑？','為什麼想給孩子更好的生活品質？','你是什麼樣性格的人，所以想買房？','現在旅遊住宿選擇上的改變'],
+  行:['你每天怎麼通勤？路上都在想什麼？','開車或搭車時最常聽的歌','從不敢一個人出門到敢獨自出發','為了工作或家人跑過最遠的一趟','移動中最有感的一個瞬間','為什麼願意花時間跑去見一個人？'],
+  育:['課程結束後的有感而發','上完課程想到之前的故事','為什麼你現在熱愛學習、堅持學習？','讀書時期和出社會的轉變','課程中學到很有用的觀念','成長中，你是一個什麼樣性格的人？','團隊長的培訓理念','團隊長帶夥伴的模式','團隊長什麼人會更用力培訓？','團隊長成長心路歷程','你在經營的品牌和其他品牌的差異'],
+  樂:['出去玩消費模式的改變','出遊的有感而發（結合事業）','旅行的過程中發現自己是什麼樣的人','為什麼你會有這樣的心態？','這份事業帶給你的自由和底氣','在玩樂的過程中學到什麼？','在玩樂的過程中發現自己的成長','希望給未來自己或孩子的期許']};
+const MAKES={
+  配音:['文案配音型','完整文案＋後製旁白，搭配對應素材和音樂','撰寫文案 → 後製錄旁白 → 搭配對應照片或影片 → 選擇合適音樂','故事完整、情緒層次豐富，適合人生經歷、成長故事、價值觀'],
+  原音:['原音紀錄型','保留現場原音，剪出重點，加特效音效','拍攝時收錄現場聲音 → 剪輯精彩片段 → 加環境音、字幕音效 → 呈現自然互動','真實感強、更有活人感，適合日常紀錄、團隊互動、生活分享']};
+const MUSIC=[
+  {cat:'知識專業',tag:'抓耳、節奏感強',use:'知識分享、教學、好物介紹、專業信任型',songs:[
+    ['无限感官 Infinite Motion','Andromeda'],['尼古拉','平凡的修车工'],['虚空','VodKe'],['嘻哈酒廊','Energysound'],['Dough','Key Glock'],['乐观的Funk Disco','LuLu_Production'],['Get The Groove','松巴音乐'],['时尚热情魅力绽放 Funky Dance','RockEagle'],['热情放克 时尚创意 震感律动','废铁'],['时尚动感放克律动 Funk Caravan Main','MangoAudio'],['时尚动感放克节奏 Funk','Dmitry Khlynin'],['动感节奏','如期而至'],['Old School','Soriano'],['激昂节奏 IntenseRhythm','罗先生的猫'],['Fashion Modern Cool Funky Groove','dimmysad']]},
+  {cat:'搞笑轉折',tag:'戲劇化、反差大',use:'真實反差、翻車日常、前後對比的轉折點',songs:[
+    ['喜剧幽默搞笑古风 four','Angel'],['Si Tu Vois Ma Mere','Max Greger'],['搞笑滑稽搞怪','MrM'],['我和比奇堡的朋友们','热水澡'],['搞怪音效串串 Funny sound effects','Color Music'],['光头强又来砍树了','GreenStudio'],['老六专用曲','M.R.Y麦尔彦'],['Groovy hammond','Royaltyfreemusicforvideos'],['剧情搞怪诙谐幽默 The Giraffe Comedy','Stock Inventions'],['Monkeybiz超长版','GreenStudio'],['ほえKx97','我不买保险'],['喜剧幽默搞笑古风 three','Angel'],['滑稽 搞笑','MrM'],['捣蛋的一天专用配乐','点灯生活'],['古代滑稽琵琶','王港']]},
+  {cat:'情感感動',tag:'沉浸、有共鳴',use:'人生故事、低谷成長、價值觀、文案配音型信任影片',songs:[
+    ['同频才能共鸣','最爱Ling'],['我的无力成为了我的败笔','DAMN'],['爱在降临','Hu_uzzzZ'],['悲伤的背景短曲','michael lem'],['你失去了什么','MAMUSUONA'],['钢琴悲伤叙事沉重 I\'m Feeling Sad','BeardMusicStock'],['生活加油曲','云姐'],['感动回忆 背景音乐','LennonBach'],['抒情 伤感 煽情','Lance'],['永远不要停下脚步','浅笑SMILE'],['忙碌的生活人山人海BGM','黄靖轩']]},
+  {cat:'質感收尾',tag:'高級、意猶未盡',use:'生活 Vlog、穿搭保養、結尾留餘韻',songs:[
+    ['Countless','BCD Studio'],['晒着太阳的懒猫','21_chaeyoung'],['生活碎片','Quieet'],['好感觉 Good Feeling',''],['Go Groove FunkMain','MangoAudio'],['Pastel Dreams','JYMusic'],['Skipping Pebbles (vlog BGM)','Blaze Chan'],['Beauty vlog and fashion - 美妆视频与时尚','BLESKSOUND'],['22 22','DiCrow'],['More of My Time (Lofi)','Muspace Lofi'],['Quiet Success','Lofi Gemini & Lofi Beats for Work']]},
+  {cat:'爆款開頭',tag:'自帶流量、Vlog 片頭',use:'影片開頭 1–3 秒抓住注意力',songs:[
+    ['Got to Be Real','Cheryl Lynn'],['gracieabrams（…）','九磅'],['Spinning Wheels','Kobel Stevenson'],['Just Got Better','解忧电台'],['萨莉','平凡的修车工'],['Groovy hammond','Royaltyfreemusicforvideos']]}];
+const GOLD_TITLES=['大基數／小基數瘦【X】公斤變化能有多大？','為了這個轉場我整整用了【X】個月','【X】個月換一個自己','當你沒動力請反覆看','我的改變只需要【X】個月','減脂人的主打歌'];
+const COURSE=`仙女團隊的短影音觀念（請照這個方向寫）：
+・影片分三種：引流型（${VTYPES.引流[2]}）、信任型（${VTYPES.信任[2]}）、變現型（${VTYPES.變現[2]}）。引流的同時要建立足夠的信任度，才能變現成交。
+・信任型要讓陌生網友從「認識你 → 了解你 → 喜歡你 → 欣賞你 → 信任你」。
+・經營自媒體公式：生活六大面向（食、衣、住、行、育、樂）＋ 說故事 ＋ 價值觀。把平凡日常的細節放大，真誠分享跟自己有關的大小事。
+・療效不是信任，價值才是。不靠功效說服，而是被理解、看懂自己、知道怎麼選、看懂為何適合、放心相信、敢跨下一步、有人陪到底。
+・綠燈卡點影片：一定要有前後對比（BA），纖體、美肌、保健都可以；不要放產品、不要吃播、不提任何功效，單純講自己改變的心路歷程；影片 40 秒內，完播率才會高；音樂選小紅書、抖音觀看率高、節奏感強的流行音樂；活動期間發 2–3 支，不要只用一支定生死。
+・信任影片有兩種製作方式：文案配音型（${MAKES.配音[2]}；${MAKES.配音[3]}）、原音紀錄型（${MAKES.原音[2]}；${MAKES.原音[3]}）。信任影片不一定要拍得很精緻，重點是讓觀眾更認識真實的你；真實的分享＋持續的輸出，才能慢慢累積信任感。
+・2026 四大情境 BGM（剪映音樂庫可搜）：${MUSIC.map(g=>`【${g.cat}｜${g.tag}，適合${g.use}】${g.songs.slice(0,5).map(x=>x[0]).join('、')}`).join('；')}。剪輯建議提到音樂時，依影片情境從這份清單推薦 1–2 首。
+・吸金標題要有感、能引發好奇、讓人想點進來，範例：${GOLD_TITLES.join('／')}。數字一律用【X】讓使用者填自己的真實數字，不可以自己編。`;
+const RULES=`創作原則（一定要遵守）：
+1. 開頭 3 秒直擊主題，不要冗長鋪陳，不用「大家好，今天要分享」。
+2. 口吻自然口語，像真人在說話，不要官方、不要像 AI 寫的文章。
+3. 不用誇大、虛假或無法證實的說法，不為流量下過度誇張的標題。
+4. 不要強迫正能量，不把個人信念包裝成客觀真理。
+5. 絕對不能虛構使用者的親身經歷、產品使用結果或探店心得；缺少的資訊用【待補：說明要補什麼】標出來。
+6. 要有具體生活情境和拍攝畫面，寫出來可以直接拿去拍。
+7. 內容要符合使用者的個人 IP。
+8. 團隊規範：不寫療效、醫療、保證；不提產品名稱和功效；不放任何連結；不寫價格優惠、不硬銷。個人改變的數字（公斤、月數）只能用【X】讓使用者填自己的真實數字。`;
+const ST2={ip:{},items:[],mode:'local',uid:null,db:null,filter:'全部',
+  topic:{busy:false,res:null,edit:false,text:''},title:{busy:false,res:null,edit:false,text:''},
+  gen:{busy:false,res:null,edit:false,text:'',len:40,vtype:'',make:'配音'},check:{busy:false,res:null,edit:false,text:''},openId:null,histEdit:null};
+const IP_LS='fairy-studio-ip-v1',H_LS='fairy-studio-hist-v1';
+
+/* ---------- storage ---------- */
+async function stInit(){
+  try{
+    const db=window.claude&&window.claude.use?await window.claude.use('db'):null;
+    const us=window.claude&&window.claude.use?await window.claude.use('user'):null;
+    const uid=us?await us.id():null;
+    if(db&&uid){ST2.db=db;ST2.uid=uid;ST2.mode='db'}
+  }catch(e){}
+  if(ST2.mode==='db'){
+    try{const s=await ST2.db.doc(`data/users/${ST2.uid}/ip`).get();ST2.ip=s.exists?(s.data()||{}):{}}catch(e){ST2.ip={}}
+    try{const q=await ST2.db.doc(`data/users/${ST2.uid}/profile`).collection('scripts').orderBy('at','desc').limit(200).get();ST2.items=q.docs.map(d=>({id:d.id,...d.data()}))}catch(e){ST2.items=[]}
+  }else{ST2.ip=lsGet(IP_LS)||{};ST2.items=lsGet(H_LS)||[]}
+  renderIPCard();renderHist();renderIPForm();
+}
+async function saveIP(ip){
+  ST2.ip=ip;
+  if(ST2.mode==='db'){try{await ST2.db.doc(`data/users/${ST2.uid}/ip`).set(ip)}catch(e){toast(e&&e.code==='quota_exceeded'?'儲存空間滿了':'儲存沒有成功，請再試一次');return false}}
+  else lsSet(IP_LS,ip);
+  return true;
+}
+async function saveItem(kind,title,text){
+  const it={kind,title:String(title||'未命名').slice(0,80),text:String(text||'').slice(0,20000),at:Date.now()};
+  if(ST2.mode==='db'){try{const ref=ST2.db.doc(`data/users/${ST2.uid}/profile`).collection('scripts').doc();await ref.set(it);it.id=ref.id}catch(e){toast(e&&e.code==='quota_exceeded'?'紀錄空間滿了，先刪掉一些舊的':'儲存沒有成功，請再試一次');return}}
+  else{it.id=uid();lsSet(H_LS,[it,...ST2.items])}
+  ST2.items=[it,...ST2.items];renderHist();toast('已存到我的創作紀錄');
+}
+async function updateItem(id,text){
+  const it=ST2.items.find(x=>x.id===id);if(!it)return;it.text=text;
+  if(ST2.mode==='db'){try{await ST2.db.doc(`data/users/${ST2.uid}/profile`).collection('scripts').doc(id).set({kind:it.kind,title:it.title,text,at:it.at})}catch(e){toast('儲存沒有成功，請再試一次');return}}
+  else lsSet(H_LS,ST2.items);
+  toast('已更新');
+}
+async function deleteItem(id){
+  if(ST2.mode==='db'){try{await ST2.db.doc(`data/users/${ST2.uid}/profile`).collection('scripts').doc(id).delete()}catch(e){toast('刪除沒有成功，請再試一次');return}}
+  ST2.items=ST2.items.filter(x=>x.id!==id);if(ST2.mode!=='db')lsSet(H_LS,ST2.items);renderHist();toast('已刪除');
+}
+
+/* ---------- IP ---------- */
+function ipFilled(){return IPF.filter(([k])=>(ST2.ip[k]||'').trim()).length}
+function ipBlock(){
+  const lines=IPF.map(([k,l])=>(ST2.ip[k]||'').trim()?`${l}：${ST2.ip[k].trim()}`:'').filter(Boolean);
+  return lines.length?`使用者的個人 IP：\n${lines.join('\n')}`:'使用者還沒設定個人 IP，請用親切自然的一般生活分享口吻。';
+}
+function renderIPCard(){
+  const n=ipFilled(),ip=ST2.ip;
+  $('#ip-card').innerHTML=n?`<div class="sechead" style="margin:0"><span class="stage">我的個人 IP</span><button class="btn ghost" type="button" data-go="ip">編輯</button></div>
+    <div class="ptitle" style="font-size:1.3rem">${esc(ip.nick||'（還沒取名）')}</div><p class="muted" style="margin:0">${esc(ip.line||ip.field||'')}</p>
+    <p class="tip">已填 ${n} / ${IPF.length} 項，所有 AI 功能都會照這份人設寫。</p>`
+   :`<span class="stage">先設定個人 IP</span><p style="margin:10px 0 0">設定好你的人設，AI 寫出來的選題、標題和腳本才會像你。</p>
+    <div class="qnav"><button class="btn" type="button" data-go="ip">填寫個人 IP</button><button class="btn ghost" type="button" data-go="persona">用 7 題找人設</button></div>`;
+}
+function renderIPForm(){
+  $('#ip-form').innerHTML=IPF.map(([k,l,t,o])=>`<label for="ip-${k}">${l}</label>`+(t==='select'
+    ?`<select id="ip-${k}"><option value="">請選擇</option>${o.map(x=>`<option${ST2.ip[k]===x?' selected':''}>${x}</option>`).join('')}</select>`
+    :`<input type="text" id="ip-${k}" maxlength="80" placeholder="${esc(o)}" value="${esc(ST2.ip[k]||'')}">`)).join('');
+}
+function ipFromPersona(){
+  const r=P.res;if(!r)return;const a=P.ai&&!P.ai.offline?P.ai:{};
+  const shootMap={'露臉說話':'露臉說話','不露臉拍日常':'不露臉拍日常','用圖文分享':'圖文'};
+  ST2.ip={...ST2.ip,nick:a.name||r.name,line:a.one||r.one,field:r.like.join('、'),audience:r.fan,traits:r.trait.join('、'),
+    pros:r.ask.length?`朋友常找我問${r.ask.join('、')}`:'',tags:r.like.map(x=>'#'+x).join(' '),pov:ST2.ip.pov||'第一人稱分享',
+    type:ST2.ip.type||'生活分享',shoot:shootMap[r.show]||ST2.ip.shoot||'',tone:r.tone[0]||ST2.ip.tone||''};
+  renderIPForm();$('#ip-note').hidden=false;go('ip');
+}
+
+/* ---------- AI ---------- */
+async function askAI(task){
+  const sm=await getSample();
+  if(!sm)throw{code:'unavailable'};
+  return sm.json(`你是台灣短影音內容教練，替「仙女團隊」夥伴服務。全部使用台灣繁體中文。\n\n${ipBlock()}\n\n${COURSE}\n\n${RULES}\n\n${task}`,{modelTier:'default',cache:false});
+}
+function aiErr(e){return e&&e.code==='unavailable'?'AI 目前無法使用。請用登入 claude.ai 的帳號開啟，並允許這個頁面使用 AI。':e&&e.code==='not_granted'?'需要先允許這個頁面使用 AI，才能生成內容。':e&&e.code==='rate_limited'?'使用太頻繁了，休息一下再試。':'AI 這次沒有回應，請再按一次。'}
+const n10=x=>Math.max(0,Math.min(10,Math.round(Number(x)||0)));
+function normScores(sc){const o={};SIX.forEach(k=>{const v=sc&&sc[k];o[k]={s:n10(v&&typeof v==='object'?v.s??v.score:v),r:String(v&&typeof v==='object'?(v.r||v.reason||''):'')}});return o}
+const sumScores=o=>SIX.reduce((a,k)=>a+o[k].s,0);
+function scoresHTML(o){return `<div class="bars">${SIX.map(k=>`<div><div class="bar"><span style="white-space:nowrap">${k}</span><span class="tr"><i style="width:${o[k].s*10}%;background:${ringColor(o[k].s*10)}"></i></span><b>${o[k].s}</b></div>${o[k].r?`<div class="fx" style="margin:2px 0 0;font-size:.82rem;color:var(--soft)">${esc(o[k].r)}</div>`:''}</div>`).join('')}</div>`}
+function busyHTML(t){return `<section class="panel"><p class="muted" style="margin:0">${t}</p></section>`}
+function errHTML(m){return `<section class="panel"><p style="margin:0">${esc(m)}</p></section>`}
+
+/* shared action bar: 重新生成 / 複製 / 儲存 / 編輯 / 生成標題 / 腳本健檢 */
+function actBar(v){const s=ST2[v];return `<div class="chips" style="margin-top:16px">
+  <button class="chip" type="button" data-act="regen" data-v="${v}">重新生成</button>
+  <button class="chip" type="button" data-act="copy" data-v="${v}">複製內容</button>
+  <button class="chip" type="button" data-act="save" data-v="${v}">儲存腳本</button>
+  <button class="chip" type="button" data-act="edit" data-v="${v}" aria-pressed="${s.edit}">${s.edit?'完成編輯':'編輯內容'}</button>
+  ${v!=='title'?`<button class="chip" type="button" data-act="totitle" data-v="${v}">生成標題</button>`:''}
+  ${v!=='check'?`<button class="chip" type="button" data-act="tocheck" data-v="${v}">腳本健檢</button>`:''}</div>
+  ${s.edit?`<textarea id="edit-${v}" style="min-height:260px;margin-top:12px">${esc(s.text)}</textarea>`:''}`}
+
+/* ---------- ① 選題 ---------- */
+const QUICK=['我想拍美食','我最近想分享育兒','我不知道要拍什麼','我想拍一支有流量的影片','活動期間想拍綠燈卡點影片'];
+ST2.ttype='';
+function renderTType(){$('#t-type').innerHTML=[['','自動搭配'],['引流','引流型'],['信任','信任型'],['變現','變現型']].map(([k,t])=>`<button class="chip" type="button" data-ttype="${k}" aria-pressed="${ST2.ttype===k}">${t}</button>`).join('');
+  $('#t-typedesc').textContent=ST2.ttype?`${VTYPES[ST2.ttype][1]}。常見內容：${VTYPES[ST2.ttype][2]}`:'5 個主題會混合引流、信任、變現三種，讓你的版面更完整。'}
+async function runTopic(){
+  const q=$('#t-in').value.trim();if(!q){toast('先說說你的想法');$('#t-in').focus();return}
+  const s=ST2.topic;s.busy=true;s.edit=false;renderTopic();
+  try{
+    const r=await askAI(`任務：使用者說「${q.slice(0,300)}」。依照她的人設，產生 5 個不同的短影音主題。${ST2.ttype?`5 個都要是「${VTYPES[ST2.ttype][0]}影片」（${VTYPES[ST2.ttype][1]}）。`:'5 個主題要混合引流型、信任型、變現型，至少各 1 個。'}信任型主題優先用「生活面向（食衣住行育樂）＋說故事＋價值觀」來發想。
+腳本公式庫：${Object.entries(FORMULAS).map(([k,f])=>`${k} ${f[0]}（${f[1]}）`).join('；')}。5 個主題要用至少 3 種不同公式。
+六大評估（每項 0–10 分）：話題性、衝擊性、知識量、大眾性、帳號契合性、簡易性。評分要誠實、有高有低，每個主題至少 2 項低於 7 分，每項理由具體（20 字內），不可以全部給高分。
+封面標題 8–16 字。
+只回傳 JSON：{"topics":[{"vtype":"引流型／信任型／變現型","topic":"影片主題","title":"封面標題","angle":"切入角度，40 字內","formula":"A","scores":{"話題性":{"s":7,"r":"理由"},"衝擊性":{"s":5,"r":""},"知識量":{"s":6,"r":""},"大眾性":{"s":8,"r":""},"帳號契合性":{"s":9,"r":""},"簡易性":{"s":7,"r":""}},"length":"約 45 秒"}]}`);
+    s.res=(r.topics||[]).slice(0,5).map(t=>({...t,formula:FORMULAS[t.formula]?t.formula:'A',scores:normScores(t.scores)}));s.q=q;
+    s.text=topicText();
+  }catch(e){s.res=null;s.err=aiErr(e)}
+  s.busy=false;renderTopic();
+}
+function topicText(){return ST2.topic.res.map((t,i)=>`${i+1}. ${t.topic}\n封面標題：${t.title}\n切入角度：${t.angle}\n腳本公式：${t.formula} ${FORMULAS[t.formula][0]}\n六大評估：${SIX.map(k=>`${k} ${t.scores[k].s}`).join('、')}（總分 ${sumScores(t.scores)}/60）\n預估長度：${t.length||''}`).join('\n\n')}
+function renderTopic(){
+  const s=ST2.topic;
+  if(s.busy){$('#t-out').innerHTML=busyHTML('AI 正在依照你的人設想主題…');return}
+  if(!s.res){$('#t-out').innerHTML=s.err?errHTML(s.err):'';return}
+  $('#t-out').innerHTML=s.res.map((t,i)=>{const tot=sumScores(t.scores);return `<section class="panel">
+    <div class="result-top">${ringHTML(Math.round(tot/60*100),`${tot}/60`)}<div class="grade"><span class="stage">${esc(t.vtype||'主題 '+(i+1))}｜${esc(t.length||'')}</span><b style="margin-top:6px">${esc(t.topic)}</b></div></div>
+    <div class="row" style="margin-top:10px"><span><span class="tag">封面</span>${esc(t.title)}</span><button class="btn ghost" type="button" data-tcopy="${i}">複製</button></div>
+    <p style="margin:8px 0 0"><b>切入角度</b>　${esc(t.angle||'')}</p>
+    <p style="margin:6px 0 0"><b>腳本公式</b>　${t.formula}｜${FORMULAS[t.formula][0]}</p>
+    <div style="margin-top:12px">${scoresHTML(t.scores)}</div>
+    <button class="btn" type="button" data-tpick="${i}">用這個主題寫腳本</button></section>`}).join('')+`<section class="panel">${actBar('topic')}</section>`;
+}
+
+/* ---------- ② 標題 ---------- */
+async function runTitle(){
+  const q=$('#ti-in').value.trim();if(!q){toast('先輸入主題或貼上腳本');$('#ti-in').focus();return}
+  const s=ST2.title;s.busy=true;s.edit=false;renderTitle();
+  try{
+    const r=await askAI(`任務：替這支短影音產生 10 個封面標題，10 種類型各一個，依序是：${TTYPES.join('、')}。
+影片主題或原始腳本：
+"""${q.slice(0,2500)}"""
+標題規則：簡短有記憶點，主要標題 8–16 個中文字；看到就知道影片重點；不用「大家好，今天要分享」；不誇大、不虛假；10 個不要用相同句型；要符合她的人設。
+吸引力評分 1–10，要誠實有高有低；推薦原因 25 字內。
+只回傳 JSON：{"titles":[{"type":"痛點型","text":"標題","score":8,"reason":"推薦原因"}]}`);
+    s.res=(r.titles||[]).slice(0,10).map(t=>({type:String(t.type||''),text:String(t.text||''),score:n10(t.score),reason:String(t.reason||'')}));s.q=q;s.text=titleText();
+  }catch(e){
+    s.err=aiErr(e);
+    s.res=null;
+  }
+  s.busy=false;renderTitle();
+}
+function titleText(){return ST2.title.res.map((t,i)=>`${i+1}. ${t.text}（${t.type}｜吸引力 ${t.score}/10）\n   ${t.reason}`).join('\n')}
+function renderTitle(){
+  const s=ST2.title;
+  if(s.busy){$('#ti-out').innerHTML=busyHTML('AI 正在想 10 個不同風格的標題…');return}
+  if(!s.res){$('#ti-out').innerHTML=s.err?errHTML(s.err):'';return}
+  $('#ti-out').innerHTML=`<section class="panel"><h2>10 個封面標題</h2><p class="muted">點「寫腳本」會帶著這個標題去生成完整腳本。</p>
+  ${s.res.map((t,i)=>`<div class="it"><span class="pill ${t.score>=8?'ok':t.score>=6?'warn':'bad'}">${t.score}/10</span><div><div class="nm" style="font-size:1.05rem">${esc(t.text)}</div><div class="fx"><span class="tag" style="margin:0 6px 0 0">${esc(t.type)}</span>${esc(t.reason)}</div>
+  <div class="chips" style="margin-top:6px"><button class="chip" type="button" data-ticopy="${i}">複製</button><button class="chip" type="button" data-tipick="${i}">用這個標題寫腳本</button></div></div></div>`).join('')}
+  ${actBar('title')}</section>`;
+}
+
+/* ---------- ③ 腳本 ---------- */
+function renderGenOpts(){
+  seg3('#g-len',[[30,'30 秒',''],[40,'40 秒','完播率最好'],[60,'60 秒','']].map(([k,t,s])=>[String(k),t,s]),String(ST2.gen.len),'data-glen');
+  $('#g-makewrap').hidden=ST2.gen.vtype!=='信任';seg3('#g-make',Object.entries(MAKES).map(([k,v])=>[k,v[0],v[1]]),ST2.gen.make,'data-gmake');$('#g-makedesc').textContent=`${MAKES[ST2.gen.make][2]}。${MAKES[ST2.gen.make][3]}。`;
+  $('#g-vtype').innerHTML=[['','自動'],['引流','引流型'],['信任','信任型'],['變現','變現型']].map(([k,t])=>`<button class="chip" type="button" data-gvt="${k}" aria-pressed="${ST2.gen.vtype===k}">${t}</button>`).join('');
+  $('#g-formula').innerHTML=`<option value="">自動推薦</option>`+Object.entries(FORMULAS).map(([k,f])=>`<option value="${k}">公式 ${k}｜${f[0]}（${f[1]}）</option>`).join('');
+}
+async function runGen(){
+  const topic=$('#g-topic').value.trim();if(!topic){toast('先填影片主題');$('#g-topic').focus();return}
+  const s=ST2.gen;s.busy=true;s.edit=false;renderGen();
+  const mk=s.vtype==='信任'?s.make:'';const f=$('#g-formula').value,green=$('#g-green').checked,len=green?Math.min(s.len,40):s.len,words=len<=30?'110–140':len<=40?'140–170':'220–250';
+  try{
+    const r=await askAI(`任務：寫一支 ${len} 秒短影音的完整腳本。
+影片主題：${topic}
+${$('#g-cover').value.trim()?`封面標題請直接用：${$('#g-cover').value.trim()}\n`:''}影片重點：${$('#g-point').value.trim()||'【使用者沒填】'}
+想傳達的感受：${$('#g-feel').value.trim()||'【使用者沒填】'}
+拍攝方式：${$('#g-shoot').value}
+影片類型：${s.vtype?VTYPES[s.vtype][0]+'影片（'+VTYPES[s.vtype][1]+'）':'依主題判斷引流、信任或變現'}
+${mk==='配音'?'製作方式：文案配音型。script 寫成完整旁白（後製錄音用），每一段後面用［素材：…］標出要搭配的照片或影片；edit 裡要寫旁白的語氣、情緒起伏，以及適合情境的背景音樂。\n':''}${mk==='原音'?'製作方式：原音紀錄型。不要寫成一整段旁白。script 改寫成「片段順序＋字幕」：每一行是一個要保留原音的現場片段，用［原音：要拍到的真實對話或聲音］標出，再寫上螢幕字幕；可以少量加入短旁白串場。shots 寫拍攝時要收到聲音的時刻；edit 寫怎麼剪出精彩片段，以及環境音、字幕音效等特效音效建議，讓影片有活人感。\n':''}${green?'這是「綠燈卡點影片」：一定要有前後對比（BA）畫面；不放產品、不吃播、不提任何功效；只講自己改變的心路歷程；40 秒內；剪輯要卡音樂節拍，shots 裡標出卡點的位置；edit 裡要建議節奏感強的流行音樂類型，並提醒活動期間發 2–3 支。\n':''}腳本公式：${f?`公式 ${f}｜${FORMULAS[f][0]}（句型參考：${FORMULAS[f][2]}，不要照抄句型）`:`從這些公式挑最適合的一個：${Object.entries(FORMULAS).map(([k,x])=>`${k} ${x[0]}（${x[1]}）`).join('；')}`}
+腳本核心結構：狀態辨識（開頭直接說出觀眾的問題或需求）→ 重新解釋（不同的理解角度）→ 具體行動（1–3 個實際做法）→ 個人故事（生活經驗或具體例子；沒有提供就用【待補】）→ 互動結尾（讓人想留言、收藏或分享）。料理、開箱、探店類可以改成：實際體驗、操作步驟、真實心得，不必硬套心靈成長公式。
+完整口白約 ${words} 字，要能在 ${len} 秒內自然說完。
+只回傳 JSON：{"title":"封面標題 8–16 字","hook":"前 3 秒開場那一句","script":"完整口白（或片段順序＋字幕），分段用 \\n","formula":"A","shots":["拍攝畫面建議，依順序 4–6 個，標秒數"],"edit":["剪輯節奏建議 3–4 個"],"cta":"結尾互動句","seconds":${len},"todo":["需要使用者補的真實資訊，沒有就給空陣列"]}`);
+    s.res={title:String(r.title||''),hook:String(r.hook||''),script:String(r.script||''),formula:FORMULAS[r.formula]?r.formula:(f||'A'),shots:(r.shots||[]).map(String),edit:(r.edit||[]).map(String),cta:String(r.cta||''),seconds:Number(r.seconds)||len,todo:(r.todo||[]).map(String)};
+    s.res.make=mk;s.topic=topic;s.text=genText();
+  }catch(e){s.res=null;s.err=aiErr(e)}
+  s.busy=false;renderGen();
+}
+function genText(){const r=ST2.gen.res;return `${r.make?`【製作方式】${MAKES[r.make][0]}\n`:''}【封面標題】${r.title}\n【前 3 秒】${r.hook}\n\n【完整口白】\n${r.script}\n\n【腳本公式】${r.formula}｜${FORMULAS[r.formula][0]}\n\n【拍攝畫面】\n${r.shots.map((x,i)=>`${i+1}. ${x}`).join('\n')}\n\n【剪輯節奏】\n${r.edit.map(x=>'・'+x).join('\n')}\n\n【結尾互動】${r.cta}\n【預估秒數】約 ${r.seconds} 秒${r.todo.length?`\n\n【待補資訊】\n${r.todo.map(x=>'・'+x).join('\n')}`:''}`}
+function hiTodo(t){return esc(t).replace(/【待補[^】]*】/g,m=>`<mark class="s">${m}</mark>`).replace(/［(素材|原音)：[^］]*］/g,m=>`<b style="color:var(--gold-ink)">${m}</b>`)}
+function renderGen(){
+  const s=ST2.gen;
+  if(s.busy){$('#g-out').innerHTML=busyHTML('AI 正在依照你的人設寫腳本…');return}
+  if(!s.res){$('#g-out').innerHTML=s.err?errHTML(s.err):'';return}
+  const r=s.res,chars=r.script.replace(/\s/g,'').length;
+  $('#g-out').innerHTML=`<section class="panel">
+  <span class="stage">${r.make?MAKES[r.make][0]+'・':''}公式 ${r.formula}｜${FORMULAS[r.formula][0]}　約 ${r.seconds} 秒・${chars} 字</span>
+  <div class="ptitle" style="font-size:1.35rem">${esc(r.title)}</div>
+  <div class="sec"><h2>前 3 秒開場</h2><p style="margin:0;font-size:1.05rem">${esc(r.hook)}</p></div>
+  <div class="sec"><div class="sechead"><h2>${r.make==='原音'?'片段順序與字幕':r.make==='配音'?'旁白文案與素材':'完整口白'}</h2><button class="btn ghost" type="button" data-gcopy="script">複製</button></div><div class="preview">${hiTodo(r.script)}</div></div>
+  <div class="sec"><h2>拍攝畫面建議</h2><ol class="plist">${r.shots.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>
+  <div class="sec"><h2>剪輯節奏建議</h2><ul class="plist">${r.edit.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
+  <div class="sec"><h2>結尾互動</h2><p style="margin:0">${esc(r.cta)}</p></div>
+  ${r.todo.length?`<div class="sec"><h2>拍之前要補的真實資訊</h2><p class="muted">AI 不會幫你編經歷，這些請換成你自己的。</p><ul class="plist">${r.todo.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
+  ${actBar('gen')}</section>`;
+}
+
+/* ---------- ④ 健檢 ---------- */
+async function runCheck(){
+  const q=$('#k-in').value.trim();if(!q){toast('先貼上你的腳本');$('#k-in').focus();return}
+  const s=ST2.check;s.busy=true;s.edit=false;renderCheck();
+  try{
+    const r=await askAI(`任務：替這支短影音腳本做健檢並優化。
+原始腳本：
+"""${q.slice(0,4000)}"""
+六大評估（每項 0–10 分，誠實、有高有低，理由具體 25 字內）：話題性、衝擊性、知識量、大眾性、帳號契合性、簡易性。
+另外檢查：
+⑦ 個人特質是否透過具體行為呈現，而不是直接自我宣稱（例如寫「我很細心」就是自我宣稱）。
+⑧ 標題與開場是否過度照搬公式範例，缺乏個人特色。
+優化後口白：保留她原本的真實經歷，不新增沒提供的經歷或產品效果，缺的用【待補】；字數 130–250 字。
+只回傳 JSON：{"scores":{"話題性":{"s":6,"r":"理由"},"衝擊性":{"s":5,"r":""},"知識量":{"s":7,"r":""},"大眾性":{"s":6,"r":""},"帳號契合性":{"s":8,"r":""},"簡易性":{"s":7,"r":""}},"persona":{"ok":false,"r":"說明"},"formulaCopy":{"ok":true,"r":"說明"},"problems":["最需要改善的 3 個問題"],"suggestions":["具體修改建議 3–5 個"],"titles":["3 個更吸引人的封面標題"],"optimized":"優化後完整口白，分段用 \\n","shoot":["拍攝建議 2–3 個"],"edit":["剪輯建議 2–3 個"]}`);
+    const ch=(x,d)=>({ok:!!(x&&x.ok),r:String(x&&x.r||d)});
+    s.res={scores:normScores(r.scores),persona:ch(r.persona,''),fc:ch(r.formulaCopy,''),problems:(r.problems||[]).map(String).slice(0,3),suggestions:(r.suggestions||[]).map(String),titles:(r.titles||[]).map(String).slice(0,3),optimized:String(r.optimized||''),shoot:(r.shoot||[]).map(String),edit:(r.edit||[]).map(String)};
+    s.orig=q;s.text=checkText();
+  }catch(e){s.res=null;s.err=aiErr(e)}
+  s.busy=false;renderCheck();
+}
+function checkText(){const r=ST2.check.res;return `【健檢總分】${sumScores(r.scores)}/60\n${SIX.map(k=>`${k} ${r.scores[k].s}/10：${r.scores[k].r}`).join('\n')}\n個人特質呈現：${r.persona.ok?'通過':'要改'}｜${r.persona.r}\n開場是否照搬公式：${r.fc.ok?'通過':'要改'}｜${r.fc.r}\n\n【最需要改善】\n${r.problems.map((x,i)=>`${i+1}. ${x}`).join('\n')}\n\n【修改建議】\n${r.suggestions.map(x=>'・'+x).join('\n')}\n\n【更吸引人的標題】\n${r.titles.map(x=>'・'+x).join('\n')}\n\n【優化後口白】\n${r.optimized}\n\n【拍攝建議】\n${r.shoot.map(x=>'・'+x).join('\n')}\n【剪輯建議】\n${r.edit.map(x=>'・'+x).join('\n')}`}
+function renderCheck(){
+  const s=ST2.check;
+  if(s.busy){$('#k-out').innerHTML=busyHTML('AI 正在幫你的腳本健檢…');return}
+  if(!s.res){$('#k-out').innerHTML=s.err?errHTML(s.err):'';return}
+  const r=s.res,tot=sumScores(r.scores);
+  const pf=(x,n)=>`<div class="it"><span class="pill ${x.ok?'ok':'bad'}">${x.ok?'通過':'要改'}</span><div><div class="nm">${n}</div><div class="ms">${esc(x.r)}</div></div></div>`;
+  $('#k-out').innerHTML=`<section class="panel">
+  <div class="result-top">${ringHTML(Math.round(tot/60*100),`${tot}/60`)}<div class="grade"><b>原始腳本 ${tot} 分</b><span class="muted">${tot>=48?'很有潛力，修一下細節就能拍。':tot>=36?'方向對了，照下面 3 個問題改，會好很多。':'建議用下面的優化版重拍。'}</span></div></div>
+  <div style="margin-top:14px">${scoresHTML(r.scores)}</div>
+  <div class="items" style="margin-top:10px">${pf(r.persona,'⑦ 個人特質是用行為呈現，不是自我宣稱')}${pf(r.fc,'⑧ 標題和開場有自己的特色，不是照搬公式')}</div>
+  <div class="sec"><h2>最需要改善的 3 個問題</h2><ol class="plist">${r.problems.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>
+  <div class="sec"><h2>具體修改建議</h2><ul class="plist">${r.suggestions.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
+  <div class="sec"><h2>更吸引人的封面標題</h2>${r.titles.map((x,i)=>`<div class="row"><span>${esc(x)}</span><button class="btn ghost" type="button" data-kcopy="t${i}">複製</button></div>`).join('')}</div>
+  <div class="sec"><div class="sechead"><h2>優化後完整口白</h2><button class="btn ghost" type="button" data-kcopy="opt">複製</button></div><div class="preview">${hiTodo(r.optimized)}</div>
+  <button class="btn gold" type="button" id="k-apply">一鍵套用優化版本</button></div>
+  <div class="sec"><h2>拍攝與剪輯建議</h2><ul class="plist">${r.shoot.concat(r.edit).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
+  ${actBar('check')}</section>`;
+}
+
+/* ---------- 紀錄 ---------- */
+const KINDS=['全部','選題','標題','腳本','健檢','限動'];
+function renderHist(){
+  const c=$('#hist-count');if(c)c.textContent=ST2.items.length?`${ST2.items.length} 篇`:'查看';
+  const w=$('#hist-where');if(w)w.textContent=ST2.mode==='db'?'紀錄存在你的帳號裡，換手機登入一樣看得到。':'紀錄存在這支手機的瀏覽器裡。';
+  if(!$('#h-list'))return;
+  $('#h-filter').innerHTML=KINDS.map(k=>`<button class="chip" type="button" data-hf="${k}" aria-pressed="${ST2.filter===k}">${k}</button>`).join('');
+  const list=ST2.items.filter(x=>ST2.filter==='全部'||x.kind===ST2.filter);
+  $('#h-list').innerHTML=list.length?list.map(it=>{const open=ST2.openId===it.id,ed=ST2.histEdit===it.id,d=new Date(it.at);return `<section class="panel">
+    <button type="button" data-hopen="${it.id}" style="all:unset;cursor:pointer;display:block;width:100%"><span class="tag" style="margin:0 6px 0 0">${esc(it.kind)}</span><span class="muted">${d.getMonth()+1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}</span><div class="nm" style="font-weight:700;margin-top:4px">${esc(it.title)}</div></button>
+    ${open?(ed?`<textarea id="h-edit" style="min-height:240px;margin-top:12px">${esc(it.text)}</textarea>`:`<div class="preview">${esc(it.text)}</div>`)+`<div class="chips" style="margin-top:12px">
+      <button class="chip" type="button" data-hact="copy" data-id="${it.id}">複製內容</button>
+      <button class="chip" type="button" data-hact="${ed?'saveedit':'edit'}" data-id="${it.id}">${ed?'儲存修改':'編輯內容'}</button>
+      <button class="chip" type="button" data-hact="totitle" data-id="${it.id}">生成標題</button>
+      <button class="chip" type="button" data-hact="tocheck" data-id="${it.id}">腳本健檢</button>
+      <button class="chip" type="button" data-hact="del" data-id="${it.id}" style="color:var(--bad)">刪除</button></div>`:''}</section>`}).join('')
+   :`<section class="panel empty" style="text-align:center"><p class="muted" style="margin:0">還沒有紀錄。生成內容後按「儲存腳本」，就會出現在這裡。</p></section>`;
+}
+
+/* ---------- events ---------- */
+const KIND_OF={topic:'選題',title:'標題',gen:'腳本',check:'健檢'};
+function curTitle(v){const s=ST2[v];return v==='topic'?`選題：${s.q}`:v==='title'?`標題：${(s.q||'').slice(0,30)}`:v==='gen'?(s.res.title||s.topic):`健檢：${(s.orig||'').slice(0,30)}`}
+function rerender(v){({topic:renderTopic,title:renderTitle,gen:renderGen,check:renderCheck})[v]()}
+function toTitle(text){$('#ti-in').value=text;ST2.title.res=null;ST2.title.err=null;renderTitle();go('title')}
+function toCheck(text){$('#k-in').value=text;ST2.check.res=null;ST2.check.err=null;renderCheck();go('check')}
+function onlyScript(v){const s=ST2[v];if(v==='gen'&&s.res&&!s.edit)return s.res.script;if(v==='check'&&s.res&&!s.edit)return s.res.optimized;return s.text}
+document.addEventListener('click',e=>{
+  const t=e.target;
+  if(t.closest('[data-go="ip"]')){renderIPForm();$('#ip-note').hidden=true}
+  if(t.closest('#ip-save')){const ip={};IPF.forEach(([k])=>ip[k]=($('#ip-'+k).value||'').trim());saveIP(ip).then(ok=>{if(ok){toast('個人 IP 已儲存');renderIPCard();go('inspire')}});return}
+  if(t.closest('#p-saveip')){ipFromPersona();return}
+  const q=t.closest('[data-tq]');if(q){$('#t-in').value=q.dataset.tq;return}
+  if(t.closest('#t-go')){runTopic();return}
+  if(t.closest('#ti-go')){runTitle();return}
+  if(t.closest('#g-go')){runGen();return}
+  if(t.closest('#k-go')){runCheck();return}
+  const tt=t.closest('[data-ttype]');if(tt){ST2.ttype=tt.dataset.ttype;renderTType();return}
+  const gm=t.closest('[data-gmake]');if(gm){ST2.gen.make=gm.dataset.gmake;renderGenOpts();return}
+  const gv=t.closest('[data-gvt]');if(gv){ST2.gen.vtype=gv.dataset.gvt;renderGenOpts();return}
+  const gd=t.closest('[data-gold]');if(gd){copyText(gd.dataset.gold);return}
+  const lf=t.closest('[data-life]');if(lf){ST2.life=lf.dataset.life;renderLife();return}
+  const lq=t.closest('[data-lq]');if(lq){const q=LIFE[ST2.life][+lq.dataset.lq];$('#g-topic').value=`${ST2.life}＋價值觀：${q}`;$('#g-cover').value='';$('#g-point').value='';$('#g-feel').value='';$('#g-green').checked=false;ST2.gen.vtype='信任';renderGenOpts();ST2.gen.res=null;ST2.gen.err=null;renderGen();go('gen');return}
+  const gl=t.closest('[data-glen]');if(gl){ST2.gen.len=Number(gl.dataset.glen);renderGenOpts();return}
+  const tp=t.closest('[data-tpick]');if(tp){const x=ST2.topic.res[+tp.dataset.tpick];$('#g-topic').value=x.topic;$('#g-cover').value=x.title;$('#g-point').value=x.angle||'';$('#g-formula').value=x.formula;const vt=Object.keys(VTYPES).find(k=>(x.vtype||'').includes(k));if(vt){ST2.gen.vtype=vt;renderGenOpts()}ST2.gen.res=null;ST2.gen.err=null;renderGen();go('gen');return}
+  const tc=t.closest('[data-tcopy]');if(tc){copyText(ST2.topic.res[+tc.dataset.tcopy].title);return}
+  const tic=t.closest('[data-ticopy]');if(tic){copyText(ST2.title.res[+tic.dataset.ticopy].text);return}
+  const tip=t.closest('[data-tipick]');if(tip){const x=ST2.title.res[+tip.dataset.tipick];const src=ST2.title.q||'';$('#g-cover').value=x.text;if(!$('#g-topic').value.trim()||src.length<=60)$('#g-topic').value=src.length<=60?src:x.text;if(src.length>60)$('#g-point').value=src.slice(0,500);ST2.gen.res=null;ST2.gen.err=null;renderGen();go('gen');return}
+  const gc=t.closest('[data-gcopy]');if(gc&&ST2.gen.res){copyText(ST2.gen.res.script);return}
+  const kc=t.closest('[data-kcopy]');if(kc&&ST2.check.res){const k=kc.dataset.kcopy;copyText(k==='opt'?ST2.check.res.optimized:ST2.check.res.titles[+k.slice(1)]);return}
+  if(t.closest('#k-apply')&&ST2.check.res){$('#k-in').value=ST2.check.res.optimized;toast('已套用優化版本，可以再健檢一次');$('#k-in').scrollIntoView({block:'center'});return}
+  const a=t.closest('[data-act]');
+  if(a){const v=a.dataset.v,s=ST2[v],act=a.dataset.act;if(!s.res&&act!=='regen')return;
+    if(act==='regen'){({topic:runTopic,title:runTitle,gen:runGen,check:runCheck})[v]();return}
+    if(s.edit){const ta=$('#edit-'+v);if(ta)s.text=ta.value}
+    if(act==='copy'){copyText(s.text);return}
+    if(act==='save'){saveItem(KIND_OF[v],curTitle(v),s.text);return}
+    if(act==='edit'){s.edit=!s.edit;rerender(v);if(s.edit){const ta=$('#edit-'+v);if(ta)ta.focus()}return}
+    if(act==='totitle'){toTitle(onlyScript(v));return}
+    if(act==='tocheck'){toCheck(onlyScript(v));return}
+  }
+  const hf=t.closest('[data-hf]');if(hf){ST2.filter=hf.dataset.hf;renderHist();return}
+  const ho=t.closest('[data-hopen]');if(ho){ST2.openId=ST2.openId===ho.dataset.hopen?null:ho.dataset.hopen;ST2.histEdit=null;renderHist();return}
+  const ha=t.closest('[data-hact]');
+  if(ha){const it=ST2.items.find(x=>x.id===ha.dataset.id);if(!it)return;const act=ha.dataset.hact;
+    if(act==='copy'){copyText(it.text);return}
+    if(act==='edit'){ST2.histEdit=it.id;renderHist();return}
+    if(act==='saveedit'){const v=$('#h-edit').value;ST2.histEdit=null;updateItem(it.id,v).then(renderHist);return}
+    if(act==='totitle'){toTitle(it.text);return}
+    if(act==='tocheck'){toCheck(it.text);return}
+    if(act==='del'){if(ha.dataset.sure){deleteItem(it.id)}else{ha.dataset.sure='1';ha.textContent='再按一次確定刪除'}return}
+  }
+});
+document.addEventListener('change',e=>{if(e.target.id==='g-green'&&e.target.checked){if(ST2.gen.len>40){ST2.gen.len=40}ST2.gen.vtype='變現';renderGenOpts()}});
+document.addEventListener('input',e=>{const m=/^edit-(\w+)$/.exec(e.target.id||'');if(m&&ST2[m[1]])ST2[m[1]].text=e.target.value});
+$('#t-quick').innerHTML=QUICK.map(x=>`<button class="chip" type="button" data-tq="${x}">${x}</button>`).join('');
+ST2.life='食';
+function renderLife(){
+  $('#l-tabs').innerHTML=Object.keys(LIFE).map(k=>`<button class="chip" type="button" data-life="${k}" aria-pressed="${ST2.life===k}" style="font-size:1.05rem;padding:6px 18px">${k}</button>`).join('');
+  $('#l-list').innerHTML=`<h2>${ST2.life}＋價值觀</h2><p class="muted">點一題，直接帶去寫信任型腳本。</p>`+LIFE[ST2.life].map((q,i)=>`<div class="row"><span>${esc(q)}</span><button class="btn ghost" type="button" data-lq="${i}">寫腳本</button></div>`).join('');
+  $('#l-makes').innerHTML=Object.entries(MAKES).map(([k,v],i)=>`<div class="it"><span class="pill ${i?'warn':'ok'}">0${i+1}</span><div><div class="nm">${v[0]}</div><div class="ms">${v[2]}</div><div class="fx">特色：${v[3]}</div></div></div>`).join('');
+  $('#l-types').innerHTML=Object.values(VTYPES).map(v=>`<div class="it"><span class="pill ok">${v[0]}</span><div><div class="nm">${v[1]}</div><div class="fx">${v[2]}</div></div></div>`).join('');
+}
+$('#ti-gold').innerHTML=GOLD_TITLES.map(x=>`<button class="chip" type="button" data-gold="${esc(x)}">${esc(x)}</button>`).join('');
+renderTType();renderLife();
+renderGenOpts();renderIPCard();renderHist();
+stInit().then(()=>{if(ST2.ip.shoot&&[...$('#g-shoot').options].some(o=>o.text===ST2.ip.shoot))$('#g-shoot').value=ST2.ip.shoot});
+
+
+/* ================= 限動經營室 ================= */
+const SCAT={
+  生活:['生活價值型',50,'建立個人特色、增加親近感','日常生活、家庭與育兒、美食與旅遊、穿搭與保養、人生經歷、個人成長、興趣與喜好、價值觀分享',['今天發生什麼事情？','這件事情讓我想到什麼？','我希望觀眾透過這件事情認識我什麼？']],
+  信任:['專業信任型',30,'展現專業能力、累積信任','專業知識分享、產品使用經驗、體態管理觀念、保養與美妝知識、真實成果分享、客戶回饋、學習與培訓、問題解答、團隊成長故事',['我可以提供觀眾什麼幫助？','這個內容可以解決什麼問題？','為什麼觀眾可以信任我的建議？']],
+  變現:['產品變現型',20,'創造詢問、引導成交','產品介紹、產品開箱、真實使用心得、活動優惠、客戶見證、產品常見問題、加盟機會、團隊資源介紹、明確行動引導',['觀眾有什麼需求？','這項產品或服務可以提供什麼價值？','有興趣的人下一步可以怎麼做？']]};
+const SFORM={
+  生活感受型:['日常、家庭、美食、旅遊','今天發生什麼事 → 當下有什麼感受 → 讓我想到什麼 → 分享自己的想法','今天帶女兒出去玩。\n以前總覺得努力工作，就是為了讓生活過得更好。\n當了媽媽之後才發現，除了經濟能力，能夠自由安排時間陪伴孩子，也是我很珍惜的事情。\n現在的我，更希望工作和生活可以找到適合自己的平衡。'],
+  過去現在型:['成長、蛻變、價值觀','以前的自己 → 經歷什麼事情 → 現在的改變 → 得到什麼體悟','以前的我很害怕拍影片。\n總覺得自己不夠好，也不知道別人會怎麼看。\n後來開始慢慢練習，才發現很多事情不是準備好了才開始。\n而是開始之後，才會越來越好。'],
+  問題解決型:['專業知識、產品分享','提出常見問題 → 分享自身經驗 → 提供解決方向 → 引導互動','很多人問我，減重是不是一定不能吃澱粉？\n其實比起完全不吃，更重要的是整體飲食搭配與長期習慣。\n我自己也會正常吃澱粉，只是更注意份量與營養均衡。\n你們減重最困擾的是飲食還是運動？'],
+  反差成長型:['人生故事、成果分享','以前的困難 → 當時的想法 → 做了什麼改變 → 現在的成果 → 自己的體悟',''],
+  價值觀共鳴型:['個人品牌、團隊經營','一句有共鳴的觀點 → 分享真實經歷 → 說明為什麼這樣認為 → 留下值得思考的觀念','我一直覺得，學習最重要的不是上過多少課。\n而是學完之後，有沒有真的運用在生活和工作裡。\n因為知道跟做到，永遠是兩回事。\n真正能改變自己的，是持續行動。']};
+const CHAIN=[['生活切入','分享照片、影片或當下發生的事情','今天早餐吃這個！'],['故事延伸','分享過去經驗、遇到的問題或心情','以前減肥時，我真的很害怕吃澱粉。'],['價值觀','說明自己的想法、改變與體悟','後來才發現，比起一直限制自己，找到能長期維持的飲食習慣更重要。'],['專業價值','提供知識、經驗、方法或真實成果','現在我會注意蛋白質、蔬菜和整體營養搭配。'],['互動引導','利用投票、問答、私訊與觀眾互動','你們減重最害怕吃什麼？A. 澱粉　B. 甜食']];
+const STAGES=[['更認識你','自我介紹、個性與興趣、生活背景、家庭與工作','讓觀眾知道你是誰'],['更了解你','人生經歷、重要轉折、成長故事、過去的困難','讓觀眾理解你的故事'],['更喜歡你','生活日常、真實個性、興趣喜好、共同經驗','讓觀眾找到共鳴'],['更欣賞你','學習態度、努力過程、專業能力、人生價值觀、真實成長','讓觀眾看見你的態度與能力'],['更信任你','真實成果、專業知識、服務過程、客戶回饋、長期經營的態度','讓觀眾知道你是值得信任的人']];
+const CTAS=['想了解可以私訊我','有一樣困擾的人可以留言','想知道我的使用方式可以問我','想了解活動內容可以傳訊息','想知道加盟方式可以找我聊聊','不知道怎麼選擇，我可以協助你了解'];
+const DAY7=[['自我介紹','分享自己的個性、背景與特色','生活','今天想好好介紹一下我自己'],['生活價值觀','從食衣住行育樂選一個主題','生活',''],['人生故事','分享一段過去經歷與成長','生活','分享一段我過去的經歷：'],['學習成長','分享最近學到的事情','信任','最近我學到一件事：'],['專業信任','分享一個有幫助的知識或經驗','信任','很多人問我：'],['產品分享','分享真實使用心得與產品資訊','變現','我最近在用的東西和真實心得：'],['數據回顧','找出互動較好的內容，分析原因並調整','','']];
+const STORY_RULES=`限動經營原則（一定要遵守）：
+・經營公式：生活素材＋個人故事＋價值觀＋專業分享＋互動引導；目標是讓陌生人 → 認識 → 喜歡 → 欣賞 → 信任 → 詢問 → 成交 → 回購。
+・不是每天發很多限動就叫經營，每一則都要有分享的目的。不是說服，是服務；不要每一則都急著成交，CTA 不需要每張都放。
+・生活六大面向（食衣住行育樂）＋說故事＋價值觀。同樣一張照片，可以透過不同故事呈現不同的個人特色。
+・文案風格：口語自然、真誠有溫度、不官方、不像廣告、避免空泛雞湯、避免過度推銷、適合 IG 限動閱讀、文字簡短、每則聚焦一個重點、保留使用者自己的個性。
+・真實性：不可編造使用者的人生經歷；不可虛構客戶回饋與成交成果；不可誇大產品功效；不可把個人經驗說成人人適用；涉及產品與健康資訊要有依據、符合規範；不寫療效、醫療、保證；不放任何連結。資訊不足時用【待補：…】讓使用者自己填。`;
+const SS={type:'',ask:'ai',n:'auto',gen:{busy:false,res:null,edit:false,text:''},check:{busy:false,res:null},days:{}};
+const D7_LS='fairy-story-d7-v1';
+async function askStory(task,images){
+  const sm=await getSample();if(!sm)throw{code:'unavailable'};
+  const opts={modelTier:'default',cache:false};if(images&&images.length)opts.images=images;
+  return sm.json(`你是台灣 IG 限動經營教練，替「仙女團隊」夥伴服務。全部使用台灣繁體中文。\n\n${ipBlock()}\n\n${STORY_RULES}\n\n${task}`,opts);
+}
+
+/* --- hub: 7 days --- */
+function renderD7(){
+  const done=DAY7.filter((_,i)=>SS.days[i]).length;$('#d7-count').textContent=`${done} / 7`;
+  $('#d7-list').innerHTML=DAY7.map(([t,d,c,seed],i)=>`<div class="row"><label class="ck" for="d7-${i}" style="flex:1;min-width:0"><input type="checkbox" id="d7-${i}" data-d7="${i}" ${SS.days[i]?'checked':''}><span><b>Day ${i+1}｜${t}</b><br><span class="muted">${d}</span></span></label>${i<6?`<button class="btn ghost" type="button" data-d7go="${i}">生成</button>`:`<button class="btn ghost" type="button" data-go="sdata">診斷</button>`}</div>`).join('');
+}
+
+/* --- A 生成 --- */
+function renderSgOpts(){
+  $('#sg-type').innerHTML=[['','自動判斷'],...Object.entries(SCAT).map(([k,v])=>[k,v[0]])].map(([k,t])=>`<button class="chip" type="button" data-sgt="${k}" aria-pressed="${SS.type===k}">${t}</button>`).join('');
+  $('#sg-formula').innerHTML='<option value="">自動選擇</option>'+Object.entries(SFORM).map(([k,v])=>`<option value="${k}">${k}（${v[0]}）</option>`).join('');
+  $('#sg-prod').hidden=SS.type!=='變現';seg3('#sg-ask',[['ai','讓 AI 判斷',''],['yes','要',''],['no','不要','']],SS.ask,'data-sgask');
+  seg3('#sg-n',[['auto','自動','看內容決定'],['2','2 則','生活小事'],['3','3 則',''],['4','4 則',''],['5','5 則','完整串聯']],String(SS.n),'data-sgn');$('#sg-n').style.gridTemplateColumns='repeat(5,minmax(0,1fr))';
+}
+async function runSg(){
+  const q=$('#sg-in').value.trim();if(!q){toast('先寫下今天發生的事');$('#sg-in').focus();return}
+  let prod='';
+  if(SS.type==='變現'){const pv=[1,2,3,4].map(i=>$('#sg-p'+i).value.trim());
+    if(!pv[0]||!pv[1]){$('#sg-out').innerHTML=errHTML('先填產品心得引導的第 1、2 題：什麼時候用、用起來的感覺。有你的畫面和感受，寫出來才不會像廣告。');$((!pv[0]?'#sg-p1':'#sg-p2')).focus();return}
+    prod=`\n使用者的真實情境（一定要用這些內容來寫，不要寫成廣告）：
+・什麼時候、在哪裡用：${pv[0]}
+・用起來的感覺：${pv[1]}
+・為什麼會用它：${pv[2]||'（沒填）'}
+・客人說的話：${pv[3]?`「${pv[3]}」（只能用這句，不可改寫成更誇張的說法）`:'（沒填：完全不要寫客人說了什麼，不可以自己編客人回饋）'}
+・引導詢問：${SS.ask==='yes'?'最後一則用一句自然的話引導私訊詢問':SS.ask==='no'?'不要引導詢問，不放 CTA，ctas 給空陣列':'由你判斷，不一定要放'}
+寫法：從生活畫面切入，用她自己的感受說話；不要用「超好喝」「必買」「回購率超高」這種廣告詞；不寫功效；不寫價格優惠。`}
+  const s=SS.gen;s.busy=true;s.edit=false;renderSg();
+  const f=$('#sg-formula').value;
+  try{
+    const r=await askStory(`任務：把使用者今天的生活，寫成一組${SS.n==='auto'?' 2–5 則（依內容份量決定）':` ${SS.n} 則`}有連貫性的 IG 限動。
+使用者輸入：
+"""${q.slice(0,1500)}"""${prod}
+步驟：
+1. 判斷內容分類：${SS.type?`使用者指定「${SCAT[SS.type][0]}」`:'生活價值型（50%）／專業信任型（30%）／產品變現型（20%）選一個最適合的'}。
+2. 判斷生活面向：食、衣、住、行、育、樂。
+3. 故事公式：${f?`使用「${f}」：${SFORM[f][1]}`:`從這些挑最適合的：${Object.entries(SFORM).map(([k,v])=>`${k}（${v[1]}）`).join('；')}`}。
+4. 則數：${SS.n==='auto'?'依內容份量決定 2–5 則。單純的生活小事 2 則就夠（例如生活切入＋感受或想法），不要硬湊；有過去故事、價值觀或專業內容時，才延伸到 3–5 則。':SS.n===2?'只寫 2 則：第 1 則生活切入，第 2 則感受、想法或小價值觀。不需要專業價值，互動和 CTA 可以省略。':`剛好 ${SS.n} 則。`}
+5. 串聯：參考五則公式「生活切入 → 故事延伸 → 價值觀 → 專業價值 → 互動引導」，但不用每個角色都湊滿，則數少就挑最需要的；每則聚焦一個重點、文字簡短（每則 15–45 字）。
+6. 生活價值型不必每組都放互動或 CTA，自然就好；沒有適合的，interaction 給空字串、ctas 給空陣列。
+7. 產品變現型的流程是：需求問題 → 分享經驗 → 提供解決方向 → 介紹適合的產品或服務 → 引導詢問。
+只回傳 JSON：{"topic":"限動主題","category":"生活價值型","face":"食","formula":"生活感受型","frames":[{"role":"生活切入","text":"限動文字","media":"建議搭配的照片或影片"}],"interaction":"適合的互動方式（投票、問答、私訊…），寫出具體題目和選項","ctas":["2–3 個可選擇的 CTA"],"tip":"一句話提醒這組限動的目的","todo":["需要使用者補的真實資訊，沒有就空陣列"]}`);
+    s.res={topic:String(r.topic||''),category:String(r.category||''),face:String(r.face||''),formula:String(r.formula||''),frames:(r.frames||[]).map(x=>({role:String(x.role||''),text:String(x.text||''),media:String(x.media||'')})),interaction:String(r.interaction||''),ctas:(r.ctas||[]).map(String),tip:String(r.tip||''),todo:(r.todo||[]).map(String)};
+    s.q=q;s.text=sgText();
+  }catch(e){s.res=null;s.err=aiErr(e)}
+  s.busy=false;renderSg();
+}
+function sgText(){const r=SS.gen.res;return `【限動主題】${r.topic}\n【分類】${r.category}｜${r.face}｜${r.formula}\n\n${r.frames.map((f,i)=>`第 ${i+1} 則｜${f.role}\n${f.text}\n📷 ${f.media}`).join('\n\n')}${r.interaction?`\n\n【互動方式】${r.interaction}`:''}${r.ctas.length?`\n【可選 CTA】\n${r.ctas.map(x=>'・'+x).join('\n')}`:''}${r.todo.length?`\n\n【待補資訊】\n${r.todo.map(x=>'・'+x).join('\n')}`:''}`}
+function renderSg(){
+  const s=SS.gen;
+  if(s.busy){$('#sg-out').innerHTML=busyHTML('AI 正在把你的生活排成一組限動…');return}
+  if(!s.res){$('#sg-out').innerHTML=s.err?errHTML(s.err):'';return}
+  const r=s.res;
+  $('#sg-out').innerHTML=`<section class="panel">
+  <span class="stage">${esc(r.category)}・${esc(r.face)}・${esc(r.formula)}</span>
+  <div class="ptitle" style="font-size:1.3rem">${esc(r.topic)}</div>${r.tip?`<p class="muted" style="margin:0">${esc(r.tip)}</p>`:''}
+  <div class="items" style="margin-top:8px">${r.frames.map((f,i)=>`<div class="it"><span class="pill ok">第 ${i+1} 則</span><div><div class="fx" style="margin:0">${esc(f.role)}</div><div class="pre" style="font-size:1.05rem;margin:2px 0">${hiTodo(f.text)}</div><div class="fx">📷 ${esc(f.media)}</div><button class="btn ghost" type="button" data-sgcopy="${i}" style="margin-top:6px">複製這則</button></div></div>`).join('')}</div>
+  ${r.interaction?`<div class="sec"><h2>互動方式</h2><p style="margin:0">${esc(r.interaction)}</p></div>`:''}
+  ${r.ctas.length?`<div class="sec"><h2>可選擇的 CTA</h2><p class="muted">CTA 不需要每張都放，依內容目的自然安排。</p>${r.ctas.map((c,i)=>`<div class="row"><span>${esc(c)}</span><button class="btn ghost" type="button" data-sgcta="${i}">複製</button></div>`).join('')}</div>`:''}
+  ${r.todo.length?`<div class="sec"><h2>發之前要補的真實資訊</h2><ul class="plist">${r.todo.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
+  <div class="chips" style="margin-top:16px">
+    <button class="chip" type="button" data-sga="regen">重新生成</button>
+    <button class="chip" type="button" data-sga="copy">複製全部</button>
+    <button class="chip" type="button" data-sga="save">儲存</button>
+    <button class="chip" type="button" data-sga="edit" aria-pressed="${s.edit}">${s.edit?'完成編輯':'編輯內容'}</button>
+    <button class="chip" type="button" data-sga="check">限動健檢</button></div>
+  ${s.edit?`<textarea id="sg-edit" style="min-height:260px;margin-top:12px">${esc(s.text)}</textarea>`:''}</section>`;
+}
+
+/* --- B 健檢 --- */
+let SC_IMG_OK=false;
+async function initScImg(){const sm=await getSample();if(!sm)return;try{const l=await sm.limits();if(l&&l.images){SC_IMG_OK=l.images;$('#sc-imgwrap').hidden=false;$('#sc-img').accept=(l.images.mediaTypes||['image/*']).join(',');$('#sc-imgnote').textContent=`最多 ${l.images.maxCount} 張。截圖只會送給 AI 分析，不會存起來。`}}catch(e){}}
+async function runSc(){
+  const q=$('#sc-in').value.trim();const files=[...($('#sc-img').files||[])].slice(0,SC_IMG_OK?SC_IMG_OK.maxCount:0);
+  if(!q&&!files.length){toast('先貼上限動文字或上傳截圖');$('#sc-in').focus();return}
+  const s=SS.check;s.busy=true;renderSc();
+  try{
+    const r=await askStory(`任務：替使用者已經發布的限動做健檢。${files.length?`附上 ${files.length} 張限動截圖，請讀出上面的文字和畫面一起分析。`:''}
+限動文字：
+"""${(q||'（看截圖）').slice(0,3000)}"""
+健檢原則：不要為了修改而修改；先肯定有效的地方，再指出具體問題；提供可以立即執行的建議。
+分析 6 項，每項給 good（做得好）或 improve（可加強），並寫 30 字內的具體說明：
+① 內容分類：屬於生活、信任還是變現？ ② 內容目的：希望觀眾看完產生什麼感受或行動？ ③ 故事完整度：是否有事件、感受、觀點？ ④ 價值觀呈現：是否能讓觀眾更了解使用者？ ⑤ 信任建立：是否提供真實經驗或有用資訊？ ⑥ 互動設計：是否適合加入投票、問答或私訊引導？
+只回傳 JSON：{"category":"生活價值型","purpose":"這組限動的目的","checks":[{"name":"內容分類","status":"good","note":"說明"}],"praise":["2–3 個做得好的地方"],"mainIssue":"最需要調整的一件事","suggestions":["3 個可以立即執行的建議"],"optimized":"優化後的完整限動文案，每則之間用空一行分開，保留她原本的經歷，缺的用【待補】"}`,files);
+    s.res={category:String(r.category||''),purpose:String(r.purpose||''),checks:(r.checks||[]).map(c=>({name:String(c.name||''),ok:c.status==='good',note:String(c.note||'')})),praise:(r.praise||[]).map(String),main:String(r.mainIssue||''),sug:(r.suggestions||[]).map(String),opt:String(r.optimized||'')};
+  }catch(e){s.res=null;s.err=e&&e.code==='images_unavailable'?'這裡沒辦法送截圖，請改貼文字。':aiErr(e)}
+  s.busy=false;renderSc();
+}
+function renderSc(){
+  const s=SS.check;
+  if(s.busy){$('#sc-out').innerHTML=busyHTML('AI 正在看你的限動…');return}
+  if(!s.res){$('#sc-out').innerHTML=s.err?errHTML(s.err):'';return}
+  const r=s.res,good=r.checks.filter(c=>c.ok).length;
+  $('#sc-out').innerHTML=`<section class="panel">
+  <div class="result-top">${ringHTML(Math.round(good/Math.max(1,r.checks.length)*100),`${good}/${r.checks.length}`)}<div class="grade"><span class="stage">${esc(r.category)}</span><b style="margin-top:6px">目的：${esc(r.purpose)}</b></div></div>
+  ${r.praise.length?`<div class="sec"><h2>先肯定：這些做得很好</h2><ul class="plist">${r.praise.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
+  <div class="sec"><h2>六項分析</h2><div class="items">${r.checks.map(c=>`<div class="it"><span class="pill ${c.ok?'ok':'warn'}">${c.ok?'很好':'可加強'}</span><div><div class="nm">${esc(c.name)}</div><div class="ms">${esc(c.note)}</div></div></div>`).join('')}</div></div>
+  <div class="sec"><h2>最需要調整</h2><p style="margin:0">${esc(r.main)}</p><ol class="plist" style="margin-top:8px">${r.sug.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>
+  <div class="sec"><div class="sechead"><h2>優化後文案</h2><button class="btn ghost" type="button" id="sc-copy">複製</button></div><div class="preview">${hiTodo(r.opt)}</div>
+  <div class="chips" style="margin-top:12px"><button class="chip" type="button" id="sc-apply">套用到輸入框</button><button class="chip" type="button" id="sc-save">儲存</button></div></div></section>`;
+}
+
+/* --- C 數據 --- */
+function runSd(){
+  const n=k=>Number($('#sd-'+k).value)||0;
+  const V=n('view'),L=n('like'),R=n('reply'),P=n('poll'),LV=n('lifev'),PV=n('prodv'),DM=n('dm'),D=n('deal'),c1=n('c1'),c2=n('c2'),c3=n('c3');
+  if(!V){toast('至少填觀看數');$('#sd-view').focus();return}
+  const out=[],lr=L/V*100,rr=R/V*100,pr=P/V*100;
+  const m=(st,t,msg,fix)=>out.push({st,name:t,msg,fix});
+  m(lr>=3?'ok':lr>=1.5?'warn':'bad','愛心率',`約 ${lr.toFixed(1)}%（愛心 ÷ 觀看）`,'多放有共鳴的生活細節和價值觀，觀眾才會想按愛心');
+  m(rr>=0.5||P/V>=0.05?'ok':'bad','觀看高、互動低？',`回覆率 ${rr.toFixed(2)}%，投票參與率 ${pr.toFixed(1)}%`,'檢查內容是否缺少共鳴或互動引導；每組限動最後一則加投票或問答');
+  if(LV&&PV)m(PV>=LV*0.7?'ok':'warn','生活觀看 vs 產品觀看',`產品限動約是生活限動的 ${Math.round(PV/LV*100)}%`,'產品內容可能太生硬或太密集；先用生活故事切入，再帶產品經驗');
+  m(DM>0?'ok':(R+P)>0?'bad':'warn','有互動、沒有詢問？',`這週私訊詢問 ${DM} 則`,'有互動卻沒人問，代表專業價值或詢問方式不夠清楚；在專業信任型限動加一句「想知道可以問我」');
+  if(DM>0)m(D>0?'ok':'bad','有詢問、沒有成交？',`這週成交與回購 ${D} 筆`,'回頭檢查需求了解、產品介紹和後續服務；不是說服，是服務');
+  const tot=c1+c2+c3;
+  if(tot){const pc=[c1,c2,c3].map(x=>Math.round(x/tot*100));const far=Math.max(Math.abs(pc[0]-50),Math.abs(pc[1]-30),Math.abs(pc[2]-20));
+    m(far<=10?'ok':far<=20?'warn':'bad','三大分類比例',`生活 ${pc[0]}%・信任 ${pc[1]}%・變現 ${pc[2]}%（建議 50／30／20）`,pc[2]>30?'變現型太多了，先多發生活和專業信任，讓觀眾有時間認識你':pc[0]<40?'生活價值型太少，多分享日常和想法，親近感才會出來':'照 50／30／20 微調，活動期間可以讓變現多一點');}
+  const pri=out.filter(x=>x.st!=='ok').sort((a,b)=>(a.st==='bad'?0:1)-(b.st==='bad'?0:1));
+  $('#sd-out').hidden=false;
+  $('#sd-out').innerHTML=`<h2>診斷結果</h2><div class="metrics" style="margin-top:8px"><div class="metric"><b>${lr.toFixed(1)}%</b><span>愛心率</span></div><div class="metric"><b>${rr.toFixed(2)}%</b><span>回覆率</span></div><div class="metric"><b>${DM}</b><span>私訊詢問</span></div></div>
+  ${pri.length?`<div class="sec dir"><h2>先調整這裡</h2><ol class="plist">${pri.slice(0,2).map(x=>`<li><b>${esc(x.name)}</b>　${esc(x.fix)}</li>`).join('')}</ol></div>`:'<p style="margin-top:12px">每一項都很健康，維持現在的節奏，把互動最好的主題多延伸幾組。</p>'}
+  ${itemsHTML(out)}<p class="tip">比例是初期經營參考，可依帳號定位、活動期間和實際數據調整。數據只是觀察線索。</p>`;
+  $('#sd-out').scrollIntoView({block:'start'});
+}
+
+/* --- D 教學 --- */
+function renderTeach(){
+  $('#st-body').innerHTML=`
+  <section class="panel"><h2>進階：從生活紀錄到價值觀輸出</h2><p class="muted">限動不是把生活拍給別人看，而是讓別人透過生活看見你。</p>${UPCASES.map(c=>`<div class="sec"><b style="font-family:var(--serif)">${c[0]}</b>${caseHTML(c)}</div>`).join('')}<div class="preview" style="margin-top:12px">不是生活不夠精彩，而是還沒學會從生活中找到值得分享的故事。</div></section>
+  <section class="panel"><h2>限動三大內容分類</h2>${Object.values(SCAT).map(v=>`<div class="sec"><div class="sechead" style="margin:0"><b style="font-family:var(--serif);font-size:1.1rem">${v[0]}</b><span class="stage">建議 ${v[1]}%</span></div><p class="muted" style="margin:4px 0">目的：${v[2]}</p><p style="margin:0;font-size:.92rem">${v[3]}</p><p class="tip">核心問題：${v[4].join('　')}</p></div>`).join('')}<p class="tip">比例為初期經營參考，可依帳號定位、活動期間及實際數據調整。</p></section>
+  <section class="panel"><h2>限動故事表達公式</h2>${Object.entries(SFORM).map(([k,v])=>`<div class="sec"><b style="font-family:var(--serif);font-size:1.05rem">${k}</b><span class="muted">　適合：${v[0]}</span><p style="margin:4px 0 0;font-size:.92rem">${v[1]}</p>${v[2]?`<div class="preview">${esc(v[2])}</div>`:''}</div>`).join('')}</section>
+  <section class="panel"><h2>限動串聯技巧</h2><p class="muted">不要只發單張沒有關聯的限動，同一個主題延伸成 3～5 則。範例：早餐限動。</p><div class="items">${CHAIN.map((c,i)=>`<div class="it"><span class="pill ok">第 ${i+1} 則</span><div><div class="nm">${c[0]}</div><div class="fx" style="margin:0">${c[1]}</div><div class="ms">「${c[2]}」</div></div></div>`).join('')}</div></section>
+  <section class="panel"><h2>限動信任建立五階段</h2><div class="items">${STAGES.map((s,i)=>`<div class="it"><span class="pill ${i<2?'warn':'ok'}">${i+1}</span><div><div class="nm">${s[0]}</div><div class="ms">${s[1]}</div><div class="fx">${s[2]}</div></div></div>`).join('')}</div></section>
+  <section class="panel"><h2>限動變現引導技巧</h2><p style="margin:0"><b>不是說服，是服務。</b>先理解需求，再提供適合的資訊與服務。</p><p class="tip">需求問題 → 分享經驗 → 提供解決方向 → 介紹適合的產品或服務 → 引導詢問</p><h3 style="margin-top:12px">常見 CTA</h3>${CTAS.map((c,i)=>`<div class="row"><span>${c}</span><button class="btn ghost" type="button" data-cta="${i}">複製</button></div>`).join('')}<p class="tip">CTA 不需要每張都放，依照內容目的自然安排。</p></section>
+  <section class="panel"><h2>仙女團隊經營核心價值</h2><div class="preview">不是說服，是服務。
+錯了可以調整。不夠好可以升級。但不能不開始。
+
+真正的經營，不是每天為了交作業而發限動，
+而是開始學會觀察生活、整理想法、分享經驗，並持續提供價值。
+
+讓分享成為習慣，讓信任慢慢累積。</div></section>`;
+}
+
+/* --- events --- */
+document.addEventListener('click',e=>{
+  const t=e.target;
+  const sgt=t.closest('[data-sgt]');if(sgt){SS.type=sgt.dataset.sgt;renderSgOpts();return}
+  const sga5=t.closest('[data-sgask]');if(sga5){SS.ask=sga5.dataset.sgask;renderSgOpts();return}
+  const sgn=t.closest('[data-sgn]');if(sgn){SS.n=sgn.dataset.sgn==='auto'?'auto':Number(sgn.dataset.sgn);renderSgOpts();return}
+  if(t.closest('#sg-go')){runSg();return}
+  const sgc=t.closest('[data-sgcopy]');if(sgc&&SS.gen.res){copyText(SS.gen.res.frames[+sgc.dataset.sgcopy].text);return}
+  const sgct=t.closest('[data-sgcta]');if(sgct&&SS.gen.res){copyText(SS.gen.res.ctas[+sgct.dataset.sgcta]);return}
+  const sga=t.closest('[data-sga]');
+  if(sga&&SS.gen.res){const a=sga.dataset.sga,s=SS.gen;if(s.edit){const ta=$('#sg-edit');if(ta)s.text=ta.value}
+    if(a==='regen')runSg();else if(a==='copy')copyText(s.text);else if(a==='save')saveItem('限動',`限動：${s.res.topic||s.q.slice(0,30)}`,s.text);
+    else if(a==='edit'){s.edit=!s.edit;renderSg()}else if(a==='check'){$('#sc-in').value=s.edit?s.text:s.res.frames.map(f=>f.text).join('\n\n');SS.check.res=null;renderSc();go('scheck')}return}
+  if(t.closest('#sc-go')){runSc();return}
+  if(t.closest('#sc-copy')&&SS.check.res){copyText(SS.check.res.opt);return}
+  if(t.closest('#sc-apply')&&SS.check.res){$('#sc-in').value=SS.check.res.opt;toast('已套用，可以再健檢一次');$('#sc-in').scrollIntoView({block:'center'});return}
+  if(t.closest('#sc-save')&&SS.check.res){saveItem('限動',`限動健檢：${($('#sc-in').value||SS.check.res.purpose).slice(0,30)}`,SS.check.res.opt);return}
+  if(t.closest('#sd-go')){runSd();return}
+  const ct=t.closest('[data-cta]');if(ct){copyText(CTAS[+ct.dataset.cta]);return}
+  const dg=t.closest('[data-d7go]');if(dg){const d=DAY7[+dg.dataset.d7go];SS.type=d[2];$('#sg-in').value=d[3];if(+dg.dataset.d7go===1){$('#sg-in').value='（從食衣住行育樂選一個，寫下今天發生的事）'}renderSgOpts();SS.gen.res=null;renderSg();go('sgen');$('#sg-in').focus();return}
+});
+document.addEventListener('change',e=>{const m=e.target.dataset&&e.target.dataset.d7;if(m!==undefined){SS.days[m]=e.target.checked;lsSet(D7_LS,SS.days);renderD7()}});
+document.addEventListener('input',e=>{if(e.target.id==='sg-edit')SS.gen.text=e.target.value});
+SS.days=lsGet(D7_LS)||{};
+renderD7();renderSgOpts();initScImg();
+
+/* --- 價值觀升級 --- */
+const UPCASES=[
+ ['上課學習','今天上課好累。','為什麼我做了八年，還是願意繼續學習？\n因為我一直覺得，經驗可以累積，但觀念也需要不斷更新。\n學習不是因為自己不夠好，而是希望自己可以變得更好。','持續成長、自我投資'],
+ ['帶孩子出門','今天帶小孩出去玩。','以前努力工作，是希望自己有能力選擇生活。\n當了媽媽之後才發現，能自由安排時間陪伴孩子成長，是我現在很珍惜的事情。\n賺錢很重要，但能陪伴家人的時間也一樣珍貴。','家庭陪伴、時間自由'],
+ ['分享產品','今天優惠最後一天！','為什麼一個產品我願意持續使用，也願意分享給有需要的人？\n因為我一直覺得，推薦不是只為了成交。\n而是自己真正了解產品，也認同它的價值，才有底氣介紹給別人。','真誠分享、專業服務'],
+ ['日常化妝','今天的妝好好看。','有人問我，為什麼在家工作還要化妝？\n其實不是每天都要打扮得多漂亮。\n只是我發現，當自己整理好狀態，整個人的心情也會不一樣。\n對我來說，打扮自己也是一種生活儀式感。','自我照顧、生活態度'],
+ ['出去旅遊','今天的飯店好漂亮！','以前旅行，我最在意的是價格。\n現在除了預算，也會更重視住宿體驗和舒適度。\n不是一定要住多貴，而是開始懂得把錢花在自己真正重視的事情上。','生活品質、消費觀念'],
+ ['努力工作','今天工作到好晚。','以前總覺得，努力就是把時間全部投入工作。\n後來慢慢發現，真正想追求的不是永遠忙不完。\n而是有一天，可以自己決定什麼時候工作、什麼時候休息。\n所以現在的努力，是為了未來有更多選擇。','自由、目標、成長']];
+const SU={c:-1,busy:false,res:null,ask:null};
+function caseHTML(c){return `<div class="items" style="margin-top:10px"><div class="it"><span class="pill bad">普通</span><div><div class="ms">「${esc(c[1])}」</div></div></div><div class="it"><span class="pill ok">價值觀</span><div><div class="pre">${esc(c[2])}</div><div class="fx">傳達價值觀：${esc(c[3])}</div></div></div></div>`}
+function renderSuCases(){$('#su-cases').innerHTML=UPCASES.map((c,i)=>`<button class="chip" type="button" data-suc="${i}" aria-pressed="${SU.c===i}">${c[0]}</button>`).join('');$('#su-case').innerHTML=SU.c>=0?caseHTML(UPCASES[SU.c]):''}
+async function runSu(){
+  const v=[1,2,3,4,5].map(i=>$('#su-'+i).value.trim());if(!v[0]){toast('先寫發生什麼事情');$('#su-1').focus();return}
+  SU.busy=true;SU.res=null;SU.ask=null;renderSu();
+  const ans=SU.answers&&SU.answers.length?`\n使用者補充回答：\n${SU.answers.map(a=>`Q：${a.q}\nA：${a.a||'（沒回答）'}`).join('\n')}`:'';
+  try{
+    const r=await askStory(`任務：把使用者的普通生活紀錄，升級成「價值觀限動」。
+生成公式：生活事件＋真實感受＋個人故事＋價值觀。
+① 發生什麼事情：${v[0]}
+② 為什麼想分享：${v[1]||'（沒填）'}
+③ 這件事讓她想到什麼：${v[2]||'（沒填）'}
+④ 相關的過去經歷：${v[3]||'（沒填）'}
+⑤ 想讓觀眾了解的價值觀：${v[4]||'（沒填）'}${ans}
+參考範例（只學寫法，不要照抄內容）：
+${UPCASES.slice(0,3).map(c=>`普通「${c[1]}」→ 價值觀版「${c[2].replace(/\n/g,'')}」（${c[3]}）`).join('\n')}
+注意：不需要寫成長篇故事（3–5 句、80–150 字）；不要強迫小事加入人生大道理；避免空泛、說教、雞湯；優先保留她原本的語氣；不可編造她沒提供的經歷或想法。
+如果 ③ 和 ⑤ 都沒填、也沒有補充回答，無法知道她的真實想法，就不要寫，改成問她 2–3 個簡短問題。
+只回傳 JSON，二選一：
+需要先問：{"ask":["問題1","問題2"]}
+可以寫：{"original":"原始生活紀錄","upgraded":"價值觀升級版本，分句用 \\n","value":"傳達的個人價值觀（2–3 個詞）","media":"建議搭配的照片或影片","interaction":"適合的互動引導（選用，沒有就空字串）"}`);
+    if(r.ask&&r.ask.length){SU.ask=r.ask.map(String).slice(0,3)}
+    else SU.res={original:String(r.original||v[0]),up:String(r.upgraded||''),value:String(r.value||''),media:String(r.media||''),inter:String(r.interaction||'')};
+  }catch(e){SU.err=aiErr(e)}
+  SU.busy=false;renderSu();
+}
+function renderSu(){
+  if(SU.busy){$('#su-out').innerHTML=busyHTML('AI 正在幫你找出值得分享的故事…');return}
+  if(SU.ask){$('#su-out').innerHTML=`<section class="panel"><span class="stage">先問你幾題</span><p style="margin:10px 0 0">我還不知道你真正的想法，不想幫你亂編。回答這幾題，寫出來才會是你自己的話。</p>${SU.ask.map((q,i)=>`<label for="su-a${i}">${esc(q)}</label><input type="text" id="su-a${i}" maxlength="200">`).join('')}<button class="btn" type="button" id="su-again">回答好了，幫我升級</button></section>`;return}
+  if(!SU.res){$('#su-out').innerHTML=SU.err?errHTML(SU.err):'';return}
+  const r=SU.res;
+  $('#su-out').innerHTML=`<section class="panel">
+  <div class="items"><div class="it"><span class="pill bad">原始</span><div><div class="ms">「${esc(r.original)}」</div></div></div>
+  <div class="it"><span class="pill ok">升級</span><div><div class="pre" style="font-size:1.05rem">${hiTodo(r.up)}</div></div></div></div>
+  <div class="sec"><h2>傳達的價值觀</h2><p style="margin:0">${esc(r.value)}</p></div>
+  <div class="sec"><h2>建議搭配</h2><p style="margin:0">📷 ${esc(r.media)}</p></div>
+  ${r.inter?`<div class="sec"><h2>互動引導（選用）</h2><p style="margin:0">${esc(r.inter)}</p></div>`:''}
+  <div class="chips" style="margin-top:16px"><button class="chip" type="button" data-sua="copy">複製升級版</button><button class="chip" type="button" data-sua="regen">再寫一版</button><button class="chip" type="button" data-sua="save">儲存</button><button class="chip" type="button" data-sua="chain">延伸成一組限動</button><button class="chip" type="button" data-sua="check">限動健檢</button></div></section>`;
+}
+document.addEventListener('click',e=>{
+  const t=e.target;
+  const c=t.closest('[data-suc]');if(c){SU.c=SU.c===+c.dataset.suc?-1:+c.dataset.suc;renderSuCases();return}
+  if(t.closest('#su-go')){SU.answers=null;runSu();return}
+  if(t.closest('#su-again')){SU.answers=SU.ask.map((q,i)=>({q,a:($('#su-a'+i).value||'').trim()}));if(!SU.answers.some(a=>a.a)){toast('至少回答一題');return}runSu();return}
+  const a=t.closest('[data-sua]');
+  if(a&&SU.res){const k=a.dataset.sua,r=SU.res;
+    if(k==='copy')copyText(r.up);else if(k==='regen')runSu();
+    else if(k==='save')saveItem('限動',`價值觀升級：${r.original.slice(0,30)}`,`【原始】${r.original}\n\n【價值觀升級】\n${r.up}\n\n【傳達價值觀】${r.value}\n【建議搭配】${r.media}${r.inter?`\n【互動】${r.inter}`:''}`);
+    else if(k==='chain'){$('#sg-in').value=`${r.original}\n${r.up}`;SS.gen.res=null;renderSg();go('sgen')}
+    else if(k==='check'){$('#sc-in').value=r.up;SS.check.res=null;renderSc();go('scheck')}}
+});
+renderSuCases();renderTeach();
+
+/* --- 原文排限動 --- */
+const SP_CASE={
+ orig:'今天帶兒子去看牙醫 本來很怕他會哭鬧\n結果醫生很有耐心 一直跟他聊天\n他竟然自己躺上去張嘴\n回家路上一直說下次還要來\n我覺得小孩的勇敢 有時候是大人給的\n以前我也很怕看牙醫 就是因為小時候被嚇過',
+ frames:[['發生什麼事','今天帶兒子去看牙醫\n本來很怕他會哭鬧\n\n結果醫生很有耐心 一直跟他聊天\n他竟然自己躺上去張嘴','診間門口、兒子坐在診療椅上的背影'],
+         ['我的感受與想法','回家路上一直說下次還要來\n\n以前我也很怕看牙醫\n就是因為小時候被嚇過\n\n我覺得小孩的勇敢 有時候是大人給的','回家路上牽手的畫面']],
+ note:'第 2 則把「以前我也很怕看牙醫」移到前面，先說自己的經歷，最後一句的想法才會更有力量。',
+ extra:'所以現在的我，也提醒自己多一點耐心，少一點催促。'};
+const SP={n:'auto',busy:false,res:null};
+function spFramesHTML(fr,live){return `<div class="items" style="margin-top:8px">${fr.map((f,i)=>`<div class="it"><span class="pill ok">第 ${i+1} 則</span><div><div class="fx" style="margin:0">${esc(f[0])}</div><div class="pre" style="font-size:1.02rem;margin:2px 0">${esc(f[1])}</div>${f[2]?`<div class="fx">📷 ${esc(f[2])}</div>`:''}${live?`<button class="btn ghost" type="button" data-spcopy="${i}" style="margin-top:6px">複製這則</button>`:''}</div></div>`).join('')}</div>`}
+function renderSpCase(){const c=SP_CASE;
+  $('#sp-case').innerHTML=`<p class="muted" style="margin-top:10px">原文（一整段）</p><div class="preview">${esc(c.orig)}</div>
+  <p class="muted" style="margin-top:14px">排好之後（一個字都沒刪）</p>${spFramesHTML(c.frames)}
+  <p class="tip">${esc(c.note)}</p><p class="tip">可以選擇補一句：「${esc(c.extra)}」</p>`}
+function renderSpOpts(){seg3('#sp-n',[['auto','自動','看內容決定'],['2','2 則','最常用'],['3','3 則','內容比較多']],String(SP.n),'data-spn')}
+const spNorm=x=>String(x).replace(/[\s，。、！？!?,.：:；;（）()「」『』…~～\-—]/g,'');
+function spMissing(orig,frames){const all=spNorm(frames.map(f=>f[1]).join(''));
+  return orig.split(/\n/).map(x=>x.trim()).filter(Boolean).filter(l=>{const n=spNorm(l);if(!n||all.includes(n))return false;let hit=0;for(const ch of n)if(all.includes(ch))hit++;return hit/n.length<.9})}
+async function runSp(){
+  const q=$('#sp-in').value.trim();if(!q){toast('先貼上你寫好的文字');$('#sp-in').focus();return}
+  SP.busy=true;SP.res=null;SP.err=null;renderSp();const extra=$('#sp-extra').checked;
+  try{
+    const r=await askStory(`任務：使用者自己寫好了一段生活文字，請幫她排成 IG 限動。
+最重要的規則：不刪原文、不改她的語氣。原文每一句都要完整出現在限動裡。
+你只能做：① 斷句、換行、空行 ② 調整句子順序，讓故事更清楚 ③ 修正明顯錯字（例如「捏得」→「捏的」），修了什麼要列在 fixes。
+你不能做：刪掉任何句子、改寫成你的說法、加入她沒說的事情、把句子換成更漂亮的詞。
+則數：${SP.n==='auto'?'依內容決定 2 或 3 則，生活小事通常 2 則就夠，不要硬湊':`剛好 ${SP.n} 則`}。常見分法：第 1 則「發生什麼事」，第 2 則「我的感受與想法」；3 則時可以多一則「後續或細節」。
+${extra?'另外可以建議一句「選擇性補充」的價值觀句子（20–30 字，口語、不說教，只根據她原文裡已經表達的態度），放在 extra，不要放進 frames。沒有適合的就給空字串。':'不要建議補充句子，extra 給空字串。'}
+互動：分享個人或敏感的事情，不需要投票或 CTA，interaction 給空字串；只有很適合時才給。
+tips：最多 2 個發布前的小提醒，例如隱私（他人、學校、孩子能不能被認出來）、照片要不要拍到別人、敏感內容的語氣。沒有就空陣列。
+原文：
+"""${q.slice(0,2000)}"""
+只回傳 JSON：{"frames":[{"role":"發生什麼事","text":"這則的文字，用 \\n 換行","media":"建議搭配的照片或影片"}],"note":"一句話說明你怎麼分、有沒有調順序","fixes":["捏得 → 捏的"],"extra":"","interaction":"","tips":[]}`);
+    const fr=(r.frames||[]).map(x=>[String(x.role||''),String(x.text||''),String(x.media||'')]).filter(x=>x[1]);
+    SP.res={orig:q,frames:fr,note:String(r.note||''),fixes:(r.fixes||[]).map(String),extra:String(r.extra||''),inter:String(r.interaction||''),tips:(r.tips||[]).map(String).slice(0,2)};
+    SP.res.missing=spMissing(q,fr);
+  }catch(e){SP.err=aiErr(e)}
+  SP.busy=false;renderSp();
+}
+function spText(){const r=SP.res;return r.frames.map((f,i)=>`第 ${i+1} 則｜${f[0]}\n${f[1]}${f[2]?`\n📷 ${f[2]}`:''}`).join('\n\n')+(r.extra?`\n\n（可選擇補充）${r.extra}`:'')}
+function renderSp(){
+  if(SP.busy){$('#sp-out').innerHTML=busyHTML('正在幫你排版，原文一個字都不會刪…');return}
+  if(!SP.res){$('#sp-out').innerHTML=SP.err?errHTML(SP.err):'';return}
+  const r=SP.res;
+  $('#sp-out').innerHTML=`<section class="panel"><span class="stage">原文保留・${r.frames.length} 則</span>${r.note?`<p class="muted" style="margin:8px 0 0">${esc(r.note)}</p>`:''}
+  ${r.missing.length?`<div class="preview" style="margin-top:12px"><b>這幾句沒有排進去，記得自己補回：</b>\n${r.missing.map(x=>'・'+esc(x)).join('\n')}</div>`:''}
+  ${spFramesHTML(r.frames,true)}
+  ${r.fixes.length?`<div class="sec"><h2>順手修正的錯字</h2><ul class="plist">${r.fixes.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
+  ${r.extra?`<div class="sec"><div class="sechead"><h2>可以選擇補一句</h2><button class="btn ghost" type="button" data-spa="extra">複製</button></div><p style="margin:0">「${esc(r.extra)}」</p><p class="tip">放在最後一則的結尾。不加也很完整。</p></div>`:''}
+  ${r.inter?`<div class="sec"><h2>互動（選用）</h2><p style="margin:0">${esc(r.inter)}</p></div>`:''}
+  ${r.tips.length?`<div class="sec"><h2>發之前的小提醒</h2><ul class="plist">${r.tips.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
+  <div class="chips" style="margin-top:16px"><button class="chip" type="button" data-spa="copy">複製全部</button><button class="chip" type="button" data-spa="regen">換個分法</button><button class="chip" type="button" data-spa="save">儲存</button><button class="chip" type="button" data-spa="check">限動健檢</button></div></section>`;
+}
+document.addEventListener('click',e=>{
+  const t=e.target;
+  const n=t.closest('[data-spn]');if(n){SP.n=n.dataset.spn==='auto'?'auto':Number(n.dataset.spn);renderSpOpts();return}
+  if(t.closest('#sp-go')){runSp();return}
+  const c=t.closest('[data-spcopy]');if(c&&SP.res){copyText(SP.res.frames[+c.dataset.spcopy][1]);return}
+  const a=t.closest('[data-spa]');
+  if(a&&SP.res){const k=a.dataset.spa;
+    if(k==='copy')copyText(spText());else if(k==='extra')copyText(SP.res.extra);else if(k==='regen')runSp();
+    else if(k==='save')saveItem('限動',`原文排限動：${SP.res.orig.slice(0,24)}`,spText());
+    else if(k==='check'){$('#sc-in').value=SP.res.frames.map(f=>f[1]).join('\n\n');SS.check.res=null;renderSc();go('scheck')}}
+});
+renderSpCase();renderSpOpts();
+
+let MTAB=0;
+function renderMusic(){const g=MUSIC[MTAB];
+  $('#m-list').innerHTML=`<span class="stage">2026 四大情境 BGM 挑選指南</span><div class="chips" style="margin-top:12px">${MUSIC.map((x,i)=>`<button class="chip" type="button" data-mtab="${i}" aria-pressed="${MTAB===i}">${esc(x.cat)}</button>`).join('')}</div>
+  <div class="sec"><h2>${esc(g.cat)}｜${esc(g.tag)}</h2><p class="muted" style="margin:0 0 6px">適合：${esc(g.use)}</p>
+  ${g.songs.map((x,i)=>`<div class="row"><span><b>${esc(x[0])}</b>${x[1]?`<br><span class="muted">${esc(x[1])}</span>`:''}</span><button class="btn ghost" type="button" data-mcopy="${i}">複製歌名</button></div>`).join('')}</div>`}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-mtab]');if(t){MTAB=+t.dataset.mtab;renderMusic();return}
+  const m=e.target.closest('[data-mcopy]');if(m){const x=MUSIC[MTAB].songs[+m.dataset.mcopy];copyText(x[0].replace(/（…）/g,'').trim())}});
+renderMusic();
+
+function go(v){['home','inspire','persona','script','copy','account','ip','topic','title','gen','check','history','life','story','sgen','scheck','sdata','steach','sup','music','ssplit'].forEach(k=>$('#v-'+k).hidden=v!==k);window.scrollTo(0,0);try{history.replaceState(null,'',v==='home'?location.pathname+location.search:'#'+v)}catch(e){}}
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)go(g.dataset.go)});
+go(['#script','#inspire','#persona','#copy','#account','#ip','#topic','#title','#gen','#check','#history','#life','#story','#sgen','#scheck','#sdata','#steach','#sup','#music','#ssplit'].includes(location.hash)?location.hash.slice(1):'home');
+load();renderTypes();renderChips();build();renderOut();
+$('#sampleNote').hidden=!S.isSample;
+</script>
+
+</body></html>
