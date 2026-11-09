@@ -1246,13 +1246,14 @@ function mkScores(a){const o={};SIX.forEach((k,i)=>o[k]={s:a[i],r:''});return o}
 const MORE_LS='fairy-topic-more-v1';
 ST2.more=lsGet(MORE_LS)||{job:'',hobby:'',recent:''};
 function moreBlock(){const m=ST2.more;const l=[m.job&&`工作或身分：${m.job}`,m.hobby&&`興趣：${m.hobby}`,m.recent&&`最近發生的小事：${m.recent}`].filter(Boolean);return l.length?`\n她補充的資訊（主題要優先用這些，讓內容更像她；最近的小事至少要有 1 個主題用到）：\n${l.join('\n')}\n`:''}
-function TP_MORE(){const m=ST2.more,j=(m.job||'').trim(),h=(m.hobby||'').trim().split(/[、,，\s]/)[0],e=(m.recent||'').trim(),o=[];
+function TP_MORE(){const m=ST2.more,j=(m.job||'').trim().replace(/^(在|做)/,'').replace(/的?工作$/,''),h=(m.hobby||'').trim().split(/[、,，\s]/)[0],e=(m.recent||'').trim(),o=[];
   const T=(a)=>{a.mine=true;o.push(a)};
-  if(j){T(['引流型',`${j}的一天，跟你想的不一樣`,`當${j}的一天`,`從早到晚的真實片段快剪，讓人看見${j}的日常`,'H',[7,6,4,8,9,8],'約 30 秒']);
+  if(j){T(['引流型',`${j}的真實一天，跟你想的不一樣`,`我的一天｜${j}`,`從早到晚的真實片段快剪，讓人看見${j}的日常`,'H',[7,6,4,8,9,8],'約 30 秒']);
     T(['信任型',`以前的我 vs 現在的我：${j}篇`,`當${j}這幾年，我變了`,'說出這份工作帶給你的改變','F',[7,7,4,7,9,7],'約 40 秒']);
     T(['變現型',`${j}也能好好照顧自己：我的小習慣`,`忙碌的${j}，我都這樣照顧自己`,'先說忙碌的煩惱，再分享你的做法，結尾邀請私訊聊聊','G',[6,6,6,8,9,7],'約 40 秒'])}
   if(h){T(['引流型',`${h}新手最常問的 3 個問題`,`想開始${h}？先看這支`,'用你的經驗回答新手問題，好收藏','E',[6,5,8,8,8,8],'約 40 秒']);
     T(['信任型',`為什麼我一直堅持${h}？`,`${h}，是我留給自己的時間`,'帶出你重視的價值：生活、自我照顧','B',[6,6,4,7,9,8],'約 35 秒'])}
+  const ind=findInd(`${j} ${m.job||''}`);if(ind){T(['引流型',`${ind.name}有哪些服務？一次帶你看`,`${ind.name}到底在做什麼？`,`介紹 3 個服務項目，每個配一個動作畫面`,'A',[7,6,8,8,9,7],'約 45 秒']);T(['信任型',`${ind.name}前 vs 後，差在哪裡`,`${ind.name}前後差這麼多`,ind.ba,'C',[8,9,5,8,9,7],'約 30 秒']);T(['變現型',`${ind.name}最常被問的 3 個問題`,`做${ind.name}前，一定要知道的事`,ind.tips[0],'E',[6,6,9,7,9,8],'約 45 秒'])}
   if(j&&h)T(['引流型',`${j}下班後，我都在${h}`,`下班後的我，都在做這件事`,`工作和${h}的反差，最容易讓人停下來`,'C',[8,7,4,8,9,8],'約 30 秒']);
   if(e){T(['信任型',`最近發生一件小事：${e.slice(0,18)}`,'最近發生一件小事，讓我想了很久','把這件小事說成故事，最後說出你的想法或價值觀','F',[7,7,4,8,9,8],'約 40 秒']);
     T(['引流型',`${e.slice(0,14)}，你也遇過嗎？`,'這件事，你是不是也遇過','用提問開場，讓觀眾留言分享自己的經驗','A',[7,6,4,9,8,8],'約 30 秒'])}
@@ -1273,13 +1274,22 @@ function offTopics(q){
     ['信任型','減脂路上，陪我最久的一首歌','減脂人的主打歌','用音樂帶出這段時間的日常片段','H',[7,5,3,8,7,8],'約 30 秒']].map(t=>({vtype:t[0],topic:t[1],title:t[2],angle:t[3],formula:t[4],scores:mkScores(t[5]),length:t[6]}));
   const raw=String(q||'').replace(/\s/g,'');const noSub=/不知道|流量|什麼/.test(raw)&&!/美食|料理|育兒|小孩|孩子|保養|穿搭|化妝|車/.test(raw);
   const x=subjOf(q);
-  const PACK=noSub?TP_TRAFFIC:/美食|料理|吃|早餐|晚餐|便當/.test(raw)?TP_FOOD:/育兒|小孩|孩子|寶寶|媽媽|親子/.test(raw)?TP_KID:TP_GEN(x);
+  const qi=findInd(raw);const PACK=qi?TP_IND(qi):noSub?TP_TRAFFIC:/美食|料理|吃|早餐|晚餐|便當/.test(raw)?TP_FOOD:/育兒|小孩|孩子|寶寶|媽媽|親子/.test(raw)?TP_KID:TP_GEN(x);
   const pick=[...TP_MORE(),...(ST2.ttype?PACK.filter(t=>t[0]===VTYPES[ST2.ttype][0]):[...PACK])].filter(t=>!ST2.ttype||t[0]===VTYPES[ST2.ttype][0]);const nMore=TP_MORE().length;
   const sh=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
   if(nMore){const mine=sh(pick.filter(t=>t.mine)),rest=sh(pick.filter(t=>!t.mine));pick.length=0;pick.push(...mine,...rest)}else sh(pick);
   let out=pick;if(!ST2.ttype){const by=k=>pick.filter(t=>t[0]===k);out=[...by('引流型').slice(0,2),...by('信任型').slice(0,2),...by('變現型').slice(0,1)];if(nMore)out.sort((a,b)=>(b.mine?1:0)-(a.mine?1:0))}
   return out.slice(0,5).map(t=>({vtype:t[0],topic:t[1],title:t[2],angle:t[3],formula:t[4],scores:mkScores(t[5]),length:t[6]}));
 }
+const TP_IND=ind=>[
+  ['引流型',`${ind.name}有哪些服務？一次帶你看`,`${ind.name}到底在做什麼？`,'介紹 3 個服務項目，每個配一個動作畫面','A',[7,6,8,8,9,7],'約 45 秒'],
+  ['引流型',`${ind.name}的 3 個冷知識`,`做${ind.name}這麼久，很多人不知道這件事`,ind.tips[0],'E',[7,7,9,8,9,8],'約 35 秒'],
+  ['引流型',`${ind.who}最常做錯的一件事`,`${ind.ask}這樣做，其實不太好`,ind.tips[1]||ind.tips[0],'E',[7,7,8,8,9,8],'約 35 秒'],
+  ['信任型',`${ind.name}前 vs 後，差在哪裡`,`${ind.name}前後差這麼多`,ind.ba,'C',[8,9,5,8,9,7],'約 30 秒'],
+  ['信任型',`我為什麼會開始做${ind.name}`,`我為什麼選擇${ind.name}這一行`,'說出你的起點和堅持的原因','F',[6,7,4,6,9,7],'約 45 秒'],
+  ['信任型',`${ind.name}的真實一天`,`我的一天｜${ind.name}`,'從開門到收店的片段快剪','H',[7,6,4,8,9,8],'約 30 秒'],
+  ['變現型',`${ind.name}最常被問的 3 個問題`,`做${ind.name}前，一定要知道的事`,'用問答回覆客人最常問的問題，結尾邀請私訊','E',[6,6,9,7,9,8],'約 45 秒'],
+  ['變現型',`如果你的${ind.ask}也有這個狀況，可以來找我`,`你的${ind.ask}也這樣嗎？`,'先說常見狀況，再介紹適合的服務','G',[6,6,7,7,9,7],'約 40 秒']];
 const TP_GEN=x=>[
   ['引流型',`我以前以為${x}很難，後來才發現…`,`原來${x}沒有我想的那麼難`,'用你自己觀念轉變的過程開場，【待補：你以前卡在哪】','F',[7,7,5,8,8,7],'約 40 秒'],
   ['引流型',`${x}新手最常犯的 3 個錯`,`${x}，別再這樣做了`,'整理你自己踩過的雷，實用又好收藏','E',[7,6,8,8,7,6],'約 45 秒'],
@@ -1330,12 +1340,49 @@ function offGen(topic,len,f,mk,green){
     shots:['0–3 秒：Before 畫面，同角度、同類型衣服','3–5 秒：轉場動作，卡在音樂節拍','5–15 秒：After 畫面，跟 Before 同角度','15–30 秒：3–4 個 1 秒的生活片段快剪','最後 3 秒：定格在最喜歡的畫面'],
     edit:['全片 40 秒內，BA 放在音樂最強的那一拍','不放產品、不吃播、不提功效',`音樂可以試：${mus}`,'活動期間發 2–3 支，不要只用一支定生死'],
     cta:'你也在努力改變嗎？留言給我一個 💪',todo:['Before／After 的照片或影片','這段時間的真實時間【X】','你自己的心路歷程']};
-  return{make:mk,title:cover||`${topic}，我是這樣做的`,hook:`你是不是也覺得${topic}很難？`,formula:f||'F',seconds:len,
-    script:[`你是不是也覺得${topic}很難？`,'我以前也是這樣，【待補：你以前的真實狀況】',`後來我才發現，重點不是做得多完美，而是${feel||'找到適合自己的方式'}。`,point?`我現在的做法是：${point}`:'我現在的做法是：【待補：你的 1–3 個實際做法】','【待補：一個你自己的小故事或畫面】','你也有一樣的經驗嗎？留言跟我說'].join('\n'),
-    shots:['0–3 秒：特寫或一個動作開場，配合第一句話','3–10 秒：中景，對鏡頭說出觀眾的煩惱',`10–${len-10} 秒：特寫拍你的做法過程，每 2–3 秒換一個畫面`,`${len-10}–${len-3} 秒：生活畫面或前後對比`,'最後 3 秒：看鏡頭說結尾互動句'],
-    edit:['每個畫面只留 2–3 秒，切換卡在音樂節拍','開頭 1 秒就讓音樂進來，重點句放大字幕',`音樂可以試：${mus}`],
+  const cam='用後鏡頭（外鏡頭）拍，請別人幫你拍或用腳架，不要用前鏡頭自拍';
+  const isAngle=point&&point===ST2.gen.angle,pt=isAngle?'':point;
+  const ind=findInd(`${topic} ${pt} ${ST2.more.job||''}`);
+  if(ind){const sv=ind.services.slice(0,3),tip=ind.tips[Math.floor(Math.random()*ind.tips.length)];
+    return{make:mk,title:cover||`${ind.name}有哪些服務？一次帶你看`,hook:ind.hook,formula:f||'A',seconds:len,
+    script:[ind.hook,`我是【待補：你的名字】，做${ind.name}【待補：幾年】了`,`今天帶你看看，${ind.who}來找我們，我們會做哪些事`,
+      ...sv.map((x,i)=>`${['第一','第二','第三'][i]}，${x[0]}：${x[1]}`),`很多人不知道：${tip}`,'【待補：一位客人的真實情況，不寫名字】',
+      `你的${ind.ask}最近有什麼狀況？留言問我`].join('\n'),
+    shots:[`0–2 秒｜遠景：${ind.open}`,'2–4 秒｜中景：你對鏡頭說第一句話',
+      ...sv.flatMap((x,i)=>[`${4+i*6}–${7+i*6} 秒｜中景：${x[0]}的動作過程`,`${7+i*6}–${10+i*6} 秒｜特寫：${x[2]}`]),
+      ...(len-8>23?[`22–${len-8} 秒｜特寫：說「很多人不知道」時，拍對應的細節或工具，每 2–3 秒換一顆`]:[]),`${len-8}–${len-4} 秒｜前後對比：${ind.ba}`,`最後 4 秒｜中景：${ind.end}，你看鏡頭說結尾`],
+    edit:['每 2–3 秒換一個畫面，不要一鏡到底',cam,'每個服務項目上一行大字幕（例：第一｜'+sv[0][0]+'）',ind.privacy,`音樂可以試：${mus}`],
+    cta:`你的${ind.ask}最近有什麼狀況？留言問我`,todo:['你的名字和做幾年','一位客人的真實情況（不寫名字）','你自己最想提醒大家的專業建議']}}
+  const hooks=[`關於${topic}，很多人都問過我`,`${topic}，我想分享我的真實經驗`,`如果你也在想${topic}，先聽我說`];
+  const hook=hooks[Math.floor(Math.random()*hooks.length)];
+  return{make:mk,title:cover||`${topic}，我是這樣做的`,hook,formula:f||'F',seconds:len,
+    script:[hook,'我一開始也是【待補：你以前的真實狀況】',`後來我發現，${feel||'最重要的是找到適合自己的方式'}`,
+      pt?`我現在的做法是：${pt}`:'我現在會這樣做：\n① 【待補：第一個做法】\n② 【待補：第二個做法】\n③ 【待補：第三個做法】',
+      '【待補：一個你自己的小故事或畫面】','你也有一樣的經驗嗎？留言跟我說'].join('\n'),
+    shots:['0–2 秒｜特寫：一個動作開場（倒水、開門、拿東西），配第一句話','2–5 秒｜中景：你對鏡頭說話','5–8 秒｜遠景：交代你在哪裡',
+      '8–14 秒｜特寫：說到「以前」時，放以前的照片或畫面','14–20 秒｜中景：你在做這件事的樣子','20–30 秒｜特寫：每個做法各拍一顆手部或細節',
+      `30–${len-4} 秒｜空鏡或生活片段：配你的小故事`,`最後 4 秒｜中景：看鏡頭說結尾`],
+    edit:['每 2–3 秒換一個畫面，不要一鏡到底',cam,'重點句放大字幕',...(isAngle?[`這支的方向：${point}`]:[]),`音樂可以試：${mus}`],
     cta:'你也有一樣的經驗嗎？留言跟我說',todo:['你以前的真實狀況','你的實際做法','一個你自己的小故事']};
 }
+const INDUSTRY=[
+ {re:/車|洗車|鍍膜|打蠟|機油|輪胎|保養廠/,name:'車子保養',who:'車主',ask:'車',hook:'你的車多久沒好好保養了？',open:'車子開進店裡',end:'交車、車主開走（車牌打馬賽克）',
+  services:[['洗車','泡沫、輪框、縫隙都要洗乾淨，不是沖水就好','泡沫覆蓋車身、刷輪框'],['打蠟／鍍膜','讓烤漆更亮、之後比較好清洗','手在車身拋光，反光的漆面'],['換機油','依車款和里程定期更換，時間以原廠手冊為準','機油倒入的瞬間'],['輪胎檢查','看胎紋和胎壓，胎紋太淺就要注意更換','量胎紋、打氣'],['內裝清潔','座椅、腳踏墊、冷氣出風口都會清','吸塵、擦出風口']],
+  tips:['洗車不要在正中午大太陽下洗，水乾太快容易留下水痕','胎紋深度低於 1.6 公釐就該換胎，可以請師傅幫你量','冷氣有異味，常常是冷氣濾網該換了','機油不是只看月份，也要看里程和開車習慣'],
+  ba:'保養前後同一個角度：漆面亮度、輪框、內裝',privacy:'車牌、客人的臉要打馬賽克，拍之前先問過車主'},
+ {re:/美甲|指甲|凝膠|光療/,name:'美甲',who:'客人',ask:'指甲',hook:'你的指甲多久沒好好整理了？',open:'客人坐下、手放上桌',end:'完成的手部特寫，客人開心的手勢',
+  services:[['單色凝膠','顏色乾淨好搭，上班族最常選','刷凝膠的手部特寫'],['造型設計','依你的穿搭和場合設計','彩繪、貼飾品的細節'],['卸甲','用正確方式卸，比較不傷甲面','卸甲的過程'],['手部保養','修指緣、擦指緣油，手看起來更乾淨','修指緣、擦油']],
+  tips:['凝膠不要自己硬撕，容易傷到甲面','做完美甲後，手部和指緣多擦護手霜和指緣油','指甲邊翹起要早點回來補，避免卡髒東西'],
+  ba:'做之前和做完同一個角度的手',privacy:'客人的手可以拍，臉要先問過'},
+ {re:/睫毛|美睫|嫁接/,name:'美睫',who:'客人',ask:'睫毛',hook:'每天早上畫眼妝很花時間嗎？',open:'客人躺上美睫床',end:'客人睜眼看鏡子的那一刻',
+  services:[['自然款嫁接','看起來像天生的睫毛，上班也適合','鑷子夾睫毛的特寫'],['濃密款','眼妝感比較重，拍照很上相','完成的眼睛特寫'],['補睫','掉了一部分就回來補，維持整齊','補睫的過程'],['卸睫','用專用的方式卸除，不要自己拔','卸睫的過程']],
+  tips:['嫁接後 24 小時盡量不要碰水','卸眼妝避免用油性卸妝品，睫毛比較容易掉','不要自己拔嫁接的睫毛，會連自己的睫毛一起拔掉'],
+  ba:'做之前和做完同一個角度的眼睛',privacy:'客人的臉要先問過，或只拍眼睛'},
+ {re:/美髮|剪髮|染髮|燙髮|護髮|髮廊|髮型/,name:'美髮',who:'客人',ask:'頭髮',hook:'你的頭髮最近是不是很難整理？',open:'客人坐上椅子、圍上圍巾',end:'完成後客人轉頭看鏡子',
+  services:[['剪髮','依臉型和生活習慣剪，好整理最重要','剪刀剪下的瞬間'],['染髮','依膚色和喜好調顏色','上染膏、調色'],['燙髮','讓頭髮有型，早上省時間','上捲子'],['護髮','讓髮絲比較好梳理','塗護髮、梳開']],
+  tips:['染完頭髮，前 1–2 天先不要洗','吹頭髮先從髮根吹乾，再吹髮尾','每個人頭皮狀況不同，選洗髮精可以先問設計師'],
+  ba:'做之前和做完同一個角度的頭髮',privacy:'客人的臉要先問過，或只拍背面'}];
+function findInd(t){return INDUSTRY.find(x=>x.re.test(t||''))}
 
 /* shared action bar: 重新生成 / 複製 / 儲存 / 編輯 / 生成標題 / 腳本健檢 */
 function actBar(v){const s=ST2[v];return `<div class="chips" style="margin-top:16px">
@@ -1428,6 +1475,7 @@ ${$('#g-cover').value.trim()?`封面標題請直接用：${$('#g-cover').value.t
 拍攝方式：${$('#g-shoot').value}
 影片類型：${s.vtype?VTYPES[s.vtype][0]+'影片（'+VTYPES[s.vtype][1]+'）':'依主題判斷引流、信任或變現'}
 ${mk==='配音'?'製作方式：文案配音型。script 寫成完整旁白（後製錄音用），每一段後面用［素材：…］標出要搭配的照片或影片；edit 裡要寫旁白的語氣、情緒起伏，以及適合情境的背景音樂。\n':''}${mk==='原音'?'製作方式：原音紀錄型。不要寫成一整段旁白。script 改寫成「片段順序＋字幕」：每一行是一個要保留原音的現場片段，用［原音：要拍到的真實對話或聲音］標出，再寫上螢幕字幕；可以少量加入短旁白串場。shots 寫拍攝時要收到聲音的時刻；edit 寫怎麼剪出精彩片段，以及環境音、字幕音效等特效音效建議，讓影片有活人感。\n':''}${green?'這是「綠燈卡點影片」：一定要有前後對比（BA）畫面；不放產品、不吃播、不提任何功效；只講自己改變的心路歷程；40 秒內；剪輯要卡音樂節拍，shots 裡標出卡點的位置；edit 裡要建議節奏感強的流行音樂類型，並提醒活動期間發 2–3 支。\n':''}腳本公式：${f?`公式 ${f}｜${FORMULAS[f][0]}（句型參考：${FORMULAS[f][2]}，不要照抄句型）`:`從這些公式挑最適合的一個：${Object.entries(FORMULAS).map(([k,x])=>`${k} ${x[0]}（${x[1]}）`).join('；')}`}
+分鏡規則：shots 要拆成 6–10 個分鏡，每個 2–3 秒，標出秒數和鏡頭（遠景、中景、特寫），不要一鏡到底；edit 要提醒用後鏡頭（外鏡頭）拍，請別人幫拍或用腳架，不要用前鏡頭自拍。如果主題是一種行業或服務（例如車子保養、美甲），口白要介紹 2–3 個具體服務項目，並分享 1–2 個正確、實用的專業小知識，拍攝畫面要對應每個服務項目。
 腳本核心結構：狀態辨識（開頭直接說出觀眾的問題或需求）→ 重新解釋（不同的理解角度）→ 具體行動（1–3 個實際做法）→ 個人故事（生活經驗或具體例子；沒有提供就用【待補】）→ 互動結尾（讓人想留言、收藏或分享）。料理、開箱、探店類可以改成：實際體驗、操作步驟、真實心得，不必硬套心靈成長公式。
 完整口白約 ${words} 字，要能在 ${len} 秒內自然說完。
 只回傳 JSON：{"title":"封面標題 8–16 字","hook":"前 3 秒開場那一句","script":"完整口白（或片段順序＋字幕），分段用 \\n","formula":"A","shots":["拍攝畫面建議，依順序 4–6 個，標秒數"],"edit":["剪輯節奏建議 3–4 個"],"cta":"結尾互動句","seconds":${len},"todo":["需要使用者補的真實資訊，沒有就給空陣列"]}`);
@@ -1538,7 +1586,7 @@ document.addEventListener('click',e=>{
   const lf=t.closest('[data-life]');if(lf){ST2.life=lf.dataset.life;renderLife();return}
   const lq=t.closest('[data-lq]');if(lq){const q=LIFE[ST2.life][+lq.dataset.lq];$('#g-topic').value=`${ST2.life}＋價值觀：${q}`;$('#g-cover').value='';$('#g-point').value='';$('#g-feel').value='';$('#g-green').checked=false;ST2.gen.vtype='信任';renderGenOpts();ST2.gen.res=null;ST2.gen.err=null;renderGen();go('gen');return}
   const gl=t.closest('[data-glen]');if(gl){ST2.gen.len=Number(gl.dataset.glen);renderGenOpts();return}
-  const tp=t.closest('[data-tpick]');if(tp){const x=ST2.topic.res[+tp.dataset.tpick];$('#g-topic').value=x.topic;$('#g-cover').value=x.title;$('#g-point').value=x.angle||'';$('#g-formula').value=x.formula;const vt=Object.keys(VTYPES).find(k=>(x.vtype||'').includes(k));if(vt){ST2.gen.vtype=vt;renderGenOpts()}ST2.gen.res=null;ST2.gen.err=null;renderGen();go('gen');return}
+  const tp=t.closest('[data-tpick]');if(tp){const x=ST2.topic.res[+tp.dataset.tpick];$('#g-topic').value=x.topic;$('#g-cover').value=x.title;$('#g-point').value=x.angle||'';ST2.gen.angle=x.angle||'';$('#g-formula').value=x.formula;const vt=Object.keys(VTYPES).find(k=>(x.vtype||'').includes(k));if(vt){ST2.gen.vtype=vt;renderGenOpts()}ST2.gen.res=null;ST2.gen.err=null;renderGen();go('gen');return}
   const tc=t.closest('[data-tcopy]');if(tc){copyText(ST2.topic.res[+tc.dataset.tcopy].title);return}
   const tic=t.closest('[data-ticopy]');if(tic){copyText(ST2.title.res[+tic.dataset.ticopy].text);return}
   const tip=t.closest('[data-tipick]');if(tip){const x=ST2.title.res[+tip.dataset.tipick];const src=ST2.title.q||'';$('#g-cover').value=x.text;if(!$('#g-topic').value.trim()||src.length<=60)$('#g-topic').value=src.length<=60?src:x.text;if(src.length>60)$('#g-point').value=src.slice(0,500);ST2.gen.res=null;ST2.gen.err=null;renderGen();go('gen');return}
@@ -1907,7 +1955,7 @@ document.addEventListener('click',e=>{
 renderSpCase();renderSpOpts();
 
 /* --- 拍攝教學 --- */
-const SH_PRE=['手機直拍（9:16），不要橫拍','鏡頭用衛生紙擦一下','面向窗戶或光源，不要背光','背景收乾淨，雜物移出畫面','關掉美顏或調低，看起來比較自然','要說話就靠近手機，或戴耳機麥克風收音','手機放穩：腳架、靠在杯子或書上都可以'];
+const SH_PRE=['用後鏡頭（外鏡頭）拍，畫質比前鏡頭好很多','請別人幫你拍，或用腳架，不要自己拿著自拍','手機直拍（9:16），不要橫拍','鏡頭用衛生紙擦一下','面向窗戶或光源，不要背光','背景收乾淨，雜物移出畫面','關掉美顏或調低，看起來比較自然','要說話就靠近手機，或戴耳機麥克風收音','手機放穩：腳架、靠在杯子或書上都可以'];
 const SH_BASIC=[
  ['遠景','交代你在哪裡','整個空間都拍進來：客廳、公園、教室門口。放在開頭或換場景時。'],
  ['中景','拍你在做什麼','拍到腰或半身，最適合說話、做動作。露臉說話就用這個。'],
@@ -1925,7 +1973,7 @@ const SH_SCENE={
 const SH_TIP={'產品分享':'綠燈影片不要拍產品、不要吃播；黃燈分享也不拍價目表、不說功效。','綠燈卡點 BA':'不放產品、不吃播、不提功效，40 秒內。BA 對比放在音樂最強的那一拍。','上課學習':'拍到別人時，先問過再發，或只拍背影和手。','帶小孩日常':'孩子的學校名稱、制服、門牌不要拍得太清楚。'};
 const SH_FLOW=[['開場 1–3 秒','用特寫或一個動作開始，不要先說「大家好」'],['中間','中景和特寫交替，每 2–3 秒換一個畫面'],['結尾','看鏡頭說一句話、空鏡，或定格'],['剪輯','每顆畫面只留最好的 2–3 秒，切換卡在音樂節拍上']];
 const SH_NOFACE=['拍手：做菜、寫字、拿杯子、塗保養品','拍背影：走路、看窗外、牽小孩','拍腳步：出門、走在路上','俯拍桌面：早餐、筆記、工作桌','鏡子反射，用手機擋住臉','配旁白或字幕，你的聲音和文字就是你的特色'];
-const SH_OOPS=[['畫面太暗','面向窗戶拍，晚上開大燈或用補光燈'],['一顆鏡頭拍太久','一個畫面 3–5 秒就換，剪的時候只留 2–3 秒'],['手機一直晃','手肘夾緊身體，或把手機靠在東西上'],['只拍一種角度','同一件事拍遠景＋中景＋特寫，剪起來才有節奏'],['背景很亂','拍之前花 30 秒收一下，或拍特寫避開'],['收音很糊','靠近手機說話，關掉電視和風扇']];
+const SH_OOPS=[['一鏡到底','同一個角度拍到完，觀眾很快就滑走。每 2–3 秒換一個畫面：遠景、中景、特寫輪流'],['用前鏡頭自拍','畫質差、角度單一，改用後鏡頭，請人拍或架腳架'],['畫面太暗','面向窗戶拍，晚上開大燈或用補光燈'],['一顆鏡頭拍太久','一個畫面 3–5 秒就換，剪的時候只留 2–3 秒'],['手機一直晃','手肘夾緊身體，或把手機靠在東西上'],['只拍一種角度','同一件事拍遠景＋中景＋特寫，剪起來才有節奏'],['背景很亂','拍之前花 30 秒收一下，或拍特寫避開'],['收音很糊','靠近手機說話，關掉電視和風扇']];
 let SHTAB='料理早餐';
 function renderShoot(){
   $('#sh-pre').innerHTML=SH_PRE.map((t,i)=>`<label class="ck" for="shp-${i}"><input type="checkbox" id="shp-${i}">${esc(t)}</label>`).join('');
