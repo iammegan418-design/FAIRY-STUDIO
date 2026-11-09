@@ -1229,13 +1229,55 @@ async function askAI(task){
   if(!sm)throw{code:'unavailable'};
   return sm.json(`你是台灣短影音內容教練，替「仙女團隊」夥伴服務。全部使用台灣繁體中文。\n\n${ipBlock()}\n\n${COURSE}\n\n${RULES}\n\n${task}`,{modelTier:'default',cache:false});
 }
-function aiErr(e){return e&&e.code==='unavailable'?'AI 目前無法使用。請用登入 claude.ai 的帳號開啟，並允許這個頁面使用 AI。':e&&e.code==='not_granted'?'需要先允許這個頁面使用 AI，才能生成內容。':e&&e.code==='rate_limited'?'使用太頻繁了，休息一下再試。':'AI 這次沒有回應，請再按一次。'}
+function aiErr(e){return e&&e.code==='unavailable'?'這個網址沒辦法使用 AI，AI 功能只能在 claude.ai 的 AI 版使用。':e&&e.code==='not_granted'?'需要先允許這個頁面使用 AI，才能生成內容。':e&&e.code==='rate_limited'?'使用太頻繁了，休息一下再試。':'AI 這次沒有回應，請再按一次。'}
 const n10=x=>Math.max(0,Math.min(10,Math.round(Number(x)||0)));
 function normScores(sc){const o={};SIX.forEach(k=>{const v=sc&&sc[k];o[k]={s:n10(v&&typeof v==='object'?v.s??v.score:v),r:String(v&&typeof v==='object'?(v.r||v.reason||''):'')}});return o}
 const sumScores=o=>SIX.reduce((a,k)=>a+o[k].s,0);
 function scoresHTML(o){return `<div class="bars">${SIX.map(k=>`<div><div class="bar"><span style="white-space:nowrap">${k}</span><span class="tr"><i style="width:${o[k].s*10}%;background:${ringColor(o[k].s*10)}"></i></span><b>${o[k].s}</b></div>${o[k].r?`<div class="fx" style="margin:2px 0 0;font-size:.82rem;color:var(--soft)">${esc(o[k].r)}</div>`:''}</div>`).join('')}</div>`}
 function busyHTML(t){return `<section class="panel"><p class="muted" style="margin:0">${t}</p></section>`}
-function errHTML(m){return `<section class="panel"><p style="margin:0">${esc(m)}</p></section>`}
+const AI_URL='https://claude.ai/artifact/8bgwrhS5aWAZvTXFCBzp6C';
+const ON_CLAUDE=/claude\.ai$|claudeusercontent|claude\.site/.test(location.hostname);
+function aiLinkHTML(){return ON_CLAUDE?'':`<a class="btn" href="${AI_URL}" target="_blank" rel="noopener" style="text-decoration:none;margin-top:12px">開啟 AI 版（要登入 claude.ai）</a>`}
+function errHTML(m){return `<section class="panel"><p style="margin:0">${esc(m)}</p>${/AI 版/.test(m)?aiLinkHTML():''}</section>`}
+function offNote(v){return ST2[v]&&ST2[v].offline?`<section class="panel" style="background:var(--gold-soft);border-color:var(--gold)"><b>這是範本版</b><p class="muted" style="margin:4px 0 0">這個網址不能用 AI，先給你範本，【待補】的地方換成你自己的。想要依你的人設量身寫，請開 AI 版。</p>${aiLinkHTML()}</section>`:''}
+function subjOf(q){let x=String(q||'').split('\n')[0].replace(/[。！!？?，,\s]/g,'').replace(/^(我|你)?(最近)?(想要|想|要)?(拍|分享|做|寫|聊)?(一支|一個|一些)?/,'').replace(/(有流量)?的?(影片|短影音|內容)$/,'').replace(/^(關於|有關)/,'').replace(/的?主題/g,'');
+  if(!x||/不知道|^流量|什麼/.test(x))x=(ST2.ip.field||'').split(/[、,，\s]/)[0]||'我的日常';return x.slice(0,12)}
+function mkScores(a){const o={};SIX.forEach((k,i)=>o[k]={s:a[i],r:''});return o}
+function offTopics(q){
+  if(/綠燈|卡點/.test(q))return [
+    ['變現型','我的改變只花了【X】個月','我的改變只需要【X】個月','前後對比＋這段時間的心路歷程，不放產品、不提功效','F',[8,8,4,7,9,6],'約 30 秒'],
+    ['變現型','【X】個月換一個自己','【X】個月換一個自己','同角度 BA 對比，卡在音樂最強的那一拍','F',[7,9,3,7,8,7],'約 25 秒'],
+    ['信任型','以前的我，最怕的是什麼','當你沒動力請反覆看','從低谷說到現在，讓人想收藏','F',[6,7,4,8,9,6],'約 40 秒'],
+    ['引流型','為了這個轉場，我拍了好幾次','為了這個轉場我整整用了【X】個月','用有趣的轉場吸引人看到最後','C',[8,7,2,8,6,5],'約 20 秒'],
+    ['信任型','減脂路上，陪我最久的一首歌','減脂人的主打歌','用音樂帶出這段時間的日常片段','H',[7,5,3,8,7,8],'約 30 秒']].map(t=>({vtype:t[0],topic:t[1],title:t[2],angle:t[3],formula:t[4],scores:mkScores(t[5]),length:t[6]}));
+  const x=subjOf(q);
+  return [
+    ['引流型',`我以前以為${x}很難，後來才發現…`,`我以前以為${x}很難`,`用你自己觀念轉變的過程開場，【待補：你以前卡在哪】`,'F',[7,7,5,8,8,7],'約 40 秒'],
+    ['引流型',`${x}新手最常犯的 3 個錯`,`${x}，別再這樣做了`,'整理你自己踩過的雷，實用又好收藏','E',[7,6,8,8,7,6],'約 45 秒'],
+    ['信任型',`${x}這件事，讓我改變最多的是…`,`${x}讓我改變最多的一件事`,'說一個真實畫面，讓人更認識你','F',[5,6,4,7,9,8],'約 40 秒'],
+    ['信任型',`為什麼我一直願意花時間在${x}上？`,`為什麼我一直堅持${x}`,'帶出你的價值觀，不是說教，是分享','B',[6,5,4,6,9,7],'約 35 秒'],
+    ['變現型',`如果你也在為${x}煩惱，先做這件事`,`${x}卡住時，先做這件事`,'先說觀眾的煩惱，再分享你的做法，最後引導私訊','G',[6,6,7,7,8,7],'約 45 秒']].map(t=>({vtype:t[0],topic:t[1],title:t[2],angle:t[3],formula:t[4],scores:mkScores(t[5]),length:t[6]}));
+}
+function offTitles(q){const x=subjOf(q.length>40?q.split('\n')[0]:q);return [
+  ['痛點型',`${x}總是做不好？問題可能在這`,7,'直接說出觀眾的困擾'],['反差型',`我以為${x}很難，結果…`,8,'前後反差讓人想看結局'],
+  ['好奇型',`${x}的這件事，很少人知道`,7,'製造資訊落差'],['數字型',`${x}，我只做了這 3 件事`,8,'數字讓人覺得簡單好學'],
+  ['真實心得型',`【X】個月${x}，我的真實心得`,7,'真實時間感增加信任'],['避雷型',`${x}別再這樣做了`,8,'怕踩雷的心理很強'],
+  ['情緒共鳴型',`${x}的時候，你是不是也這樣`,6,'讓人覺得被說中'],['懸念型',`${x}的最後一步，我差點放棄`,6,'留懸念拉完播率'],
+  ['懶人攻略型',`${x}懶人包，先存起來`,7,'鼓勵收藏'],['故事型',`那一天，我開始${x}`,6,'用故事開場有溫度']].map(t=>({type:t[0],text:t[1],score:t[2],reason:t[3]}))}
+function offGen(topic,len,f,mk,green){
+  const cover=$('#g-cover').value.trim(),point=$('#g-point').value.trim(),feel=$('#g-feel').value.trim();
+  const mus=MUSIC[green?0:(ST2.gen.vtype==='信任'?2:3)].songs.slice(0,2).map(x=>x[0]).join('、');
+  if(green)return{make:mk,title:cover||'我的改變只需要【X】個月',hook:'（不說話，直接放 Before 畫面）',formula:f||'F',seconds:len,
+    script:`［Before］【待補：以前的照片或影片】\n字幕：以前的我，【待補：當時的狀態或心情】\n［轉場］手遮鏡頭／轉身\n［After］【待補：現在同角度的畫面】\n字幕：${feel||'【待補：這段時間最大的改變是什麼（不寫功效）】'}\n字幕：這【X】個月，我學會的是【待補】`,
+    shots:['0–3 秒：Before 畫面，同角度、同類型衣服','3–5 秒：轉場動作，卡在音樂節拍','5–15 秒：After 畫面，跟 Before 同角度','15–30 秒：3–4 個 1 秒的生活片段快剪','最後 3 秒：定格在最喜歡的畫面'],
+    edit:['全片 40 秒內，BA 放在音樂最強的那一拍','不放產品、不吃播、不提功效',`音樂可以試：${mus}`,'活動期間發 2–3 支，不要只用一支定生死'],
+    cta:'你也在努力改變嗎？留言給我一個 💪',todo:['Before／After 的照片或影片','這段時間的真實時間【X】','你自己的心路歷程']};
+  return{make:mk,title:cover||`${topic}，我是這樣做的`,hook:`你是不是也覺得${topic}很難？`,formula:f||'F',seconds:len,
+    script:[`你是不是也覺得${topic}很難？`,'我以前也是這樣，【待補：你以前的真實狀況】',`後來我才發現，重點不是做得多完美，而是${feel||'找到適合自己的方式'}。`,point?`我現在的做法是：${point}`:'我現在的做法是：【待補：你的 1–3 個實際做法】','【待補：一個你自己的小故事或畫面】','你也有一樣的經驗嗎？留言跟我說'].join('\n'),
+    shots:['0–3 秒：特寫或一個動作開場，配合第一句話','3–10 秒：中景，對鏡頭說出觀眾的煩惱',`10–${len-10} 秒：特寫拍你的做法過程，每 2–3 秒換一個畫面`,`${len-10}–${len-3} 秒：生活畫面或前後對比`,'最後 3 秒：看鏡頭說結尾互動句'],
+    edit:['每個畫面只留 2–3 秒，切換卡在音樂節拍','開頭 1 秒就讓音樂進來，重點句放大字幕',`音樂可以試：${mus}`],
+    cta:'你也有一樣的經驗嗎？留言跟我說',todo:['你以前的真實狀況','你的實際做法','一個你自己的小故事']};
+}
 
 /* shared action bar: 重新生成 / 複製 / 儲存 / 編輯 / 生成標題 / 腳本健檢 */
 function actBar(v){const s=ST2[v];return `<div class="chips" style="margin-top:16px">
@@ -1254,7 +1296,7 @@ function renderTType(){$('#t-type').innerHTML=[['','自動搭配'],['引流','�
   $('#t-typedesc').textContent=ST2.ttype?`${VTYPES[ST2.ttype][1]}。常見內容：${VTYPES[ST2.ttype][2]}`:'5 個主題會混合引流、信任、變現三種，讓你的版面更完整。'}
 async function runTopic(){
   const q=$('#t-in').value.trim();if(!q){toast('先說說你的想法');$('#t-in').focus();return}
-  const s=ST2.topic;s.busy=true;s.edit=false;renderTopic();
+  const s=ST2.topic;s.busy=true;s.offline=false;s.err=null;s.edit=false;renderTopic();
   try{
     const r=await askAI(`任務：使用者說「${q.slice(0,300)}」。依照她的人設，產生 5 個不同的短影音主題。${ST2.ttype?`5 個都要是「${VTYPES[ST2.ttype][0]}影片」（${VTYPES[ST2.ttype][1]}）。`:'5 個主題要混合引流型、信任型、變現型，至少各 1 個。'}信任型主題優先用「生活面向（食衣住行育樂）＋說故事＋價值觀」來發想。
 腳本公式庫：${Object.entries(FORMULAS).map(([k,f])=>`${k} ${f[0]}（${f[1]}）`).join('；')}。5 個主題要用至少 3 種不同公式。
@@ -1263,7 +1305,7 @@ async function runTopic(){
 只回傳 JSON：{"topics":[{"vtype":"引流型／信任型／變現型","topic":"影片主題","title":"封面標題","angle":"切入角度，40 字內","formula":"A","scores":{"話題性":{"s":7,"r":"理由"},"衝擊性":{"s":5,"r":""},"知識量":{"s":6,"r":""},"大眾性":{"s":8,"r":""},"帳號契合性":{"s":9,"r":""},"簡易性":{"s":7,"r":""}},"length":"約 45 秒"}]}`);
     s.res=(r.topics||[]).slice(0,5).map(t=>({...t,formula:FORMULAS[t.formula]?t.formula:'A',scores:normScores(t.scores)}));s.q=q;
     s.text=topicText();
-  }catch(e){s.res=null;s.err=aiErr(e)}
+  }catch(e){if(e&&e.code==='unavailable'){s.res=offTopics(q);s.offline=true;s.q=q;s.text=topicText()}else{s.res=null;s.err=aiErr(e)}}
   s.busy=false;renderTopic();
 }
 function topicText(){return ST2.topic.res.map((t,i)=>`${i+1}. ${t.topic}\n封面標題：${t.title}\n切入角度：${t.angle}\n腳本公式：${t.formula} ${FORMULAS[t.formula][0]}\n六大評估：${SIX.map(k=>`${k} ${t.scores[k].s}`).join('、')}（總分 ${sumScores(t.scores)}/60）\n預估長度：${t.length||''}`).join('\n\n')}
@@ -1271,7 +1313,7 @@ function renderTopic(){
   const s=ST2.topic;
   if(s.busy){$('#t-out').innerHTML=busyHTML('AI 正在依照你的人設想主題…');return}
   if(!s.res){$('#t-out').innerHTML=s.err?errHTML(s.err):'';return}
-  $('#t-out').innerHTML=s.res.map((t,i)=>{const tot=sumScores(t.scores);return `<section class="panel">
+  $('#t-out').innerHTML=offNote('topic')+s.res.map((t,i)=>{const tot=sumScores(t.scores);return `<section class="panel">
     <div class="result-top">${ringHTML(Math.round(tot/60*100),`${tot}/60`)}<div class="grade"><span class="stage">${esc(t.vtype||'主題 '+(i+1))}｜${esc(t.length||'')}</span><b style="margin-top:6px">${esc(t.topic)}</b></div></div>
     <div class="row" style="margin-top:10px"><span><span class="tag">封面</span>${esc(t.title)}</span><button class="btn ghost" type="button" data-tcopy="${i}">複製</button></div>
     <p style="margin:8px 0 0"><b>切入角度</b>　${esc(t.angle||'')}</p>
@@ -1283,7 +1325,7 @@ function renderTopic(){
 /* ---------- ② 標題 ---------- */
 async function runTitle(){
   const q=$('#ti-in').value.trim();if(!q){toast('先輸入主題或貼上腳本');$('#ti-in').focus();return}
-  const s=ST2.title;s.busy=true;s.edit=false;renderTitle();
+  const s=ST2.title;s.busy=true;s.offline=false;s.err=null;s.edit=false;renderTitle();
   try{
     const r=await askAI(`任務：替這支短影音產生 10 個封面標題，10 種類型各一個，依序是：${TTYPES.join('、')}。
 影片主題或原始腳本：
@@ -1293,7 +1335,7 @@ async function runTitle(){
 只回傳 JSON：{"titles":[{"type":"痛點型","text":"標題","score":8,"reason":"推薦原因"}]}`);
     s.res=(r.titles||[]).slice(0,10).map(t=>({type:String(t.type||''),text:String(t.text||''),score:n10(t.score),reason:String(t.reason||'')}));s.q=q;s.text=titleText();
   }catch(e){
-    s.err=aiErr(e);
+    if(e&&e.code==='unavailable'){s.res=offTitles(q);s.offline=true;s.q=q;s.text=titleText();s.busy=false;renderTitle();return}s.err=aiErr(e);
     s.res=null;
   }
   s.busy=false;renderTitle();
@@ -1303,7 +1345,7 @@ function renderTitle(){
   const s=ST2.title;
   if(s.busy){$('#ti-out').innerHTML=busyHTML('AI 正在想 10 個不同風格的標題…');return}
   if(!s.res){$('#ti-out').innerHTML=s.err?errHTML(s.err):'';return}
-  $('#ti-out').innerHTML=`<section class="panel"><h2>10 個封面標題</h2><p class="muted">點「寫腳本」會帶著這個標題去生成完整腳本。</p>
+  $('#ti-out').innerHTML=offNote('title')+`<section class="panel"><h2>10 個封面標題</h2><p class="muted">點「寫腳本」會帶著這個標題去生成完整腳本。</p>
   ${s.res.map((t,i)=>`<div class="it"><span class="pill ${t.score>=8?'ok':t.score>=6?'warn':'bad'}">${t.score}/10</span><div><div class="nm" style="font-size:1.05rem">${esc(t.text)}</div><div class="fx"><span class="tag" style="margin:0 6px 0 0">${esc(t.type)}</span>${esc(t.reason)}</div>
   <div class="chips" style="margin-top:6px"><button class="chip" type="button" data-ticopy="${i}">複製</button><button class="chip" type="button" data-tipick="${i}">用這個標題寫腳本</button></div></div></div>`).join('')}
   ${actBar('title')}</section>`;
@@ -1318,7 +1360,7 @@ function renderGenOpts(){
 }
 async function runGen(){
   const topic=$('#g-topic').value.trim();if(!topic){toast('先填影片主題');$('#g-topic').focus();return}
-  const s=ST2.gen;s.busy=true;s.edit=false;renderGen();
+  const s=ST2.gen;s.busy=true;s.offline=false;s.err=null;s.edit=false;renderGen();
   const mk=s.vtype==='信任'?s.make:'';const f=$('#g-formula').value,green=$('#g-green').checked,len=green?Math.min(s.len,40):s.len,words=len<=30?'110–140':len<=40?'140–170':'220–250';
   try{
     const r=await askAI(`任務：寫一支 ${len} 秒短影音的完整腳本。
@@ -1333,7 +1375,7 @@ ${mk==='配音'?'製作方式：文案配音型。script 寫成完整旁白（�
 只回傳 JSON：{"title":"封面標題 8–16 字","hook":"前 3 秒開場那一句","script":"完整口白（或片段順序＋字幕），分段用 \\n","formula":"A","shots":["拍攝畫面建議，依順序 4–6 個，標秒數"],"edit":["剪輯節奏建議 3–4 個"],"cta":"結尾互動句","seconds":${len},"todo":["需要使用者補的真實資訊，沒有就給空陣列"]}`);
     s.res={title:String(r.title||''),hook:String(r.hook||''),script:String(r.script||''),formula:FORMULAS[r.formula]?r.formula:(f||'A'),shots:(r.shots||[]).map(String),edit:(r.edit||[]).map(String),cta:String(r.cta||''),seconds:Number(r.seconds)||len,todo:(r.todo||[]).map(String)};
     s.res.make=mk;s.topic=topic;s.text=genText();
-  }catch(e){s.res=null;s.err=aiErr(e)}
+  }catch(e){if(e&&e.code==='unavailable'){s.res=offGen(topic,len,f,mk,green);s.offline=true;s.topic=topic;s.text=genText()}else{s.res=null;s.err=aiErr(e)}}
   s.busy=false;renderGen();
 }
 function genText(){const r=ST2.gen.res;return `${r.make?`【製作方式】${MAKES[r.make][0]}\n`:''}【封面標題】${r.title}\n【前 3 秒】${r.hook}\n\n【完整口白】\n${r.script}\n\n【腳本公式】${r.formula}｜${FORMULAS[r.formula][0]}\n\n【拍攝畫面】\n${r.shots.map((x,i)=>`${i+1}. ${x}`).join('\n')}\n\n【剪輯節奏】\n${r.edit.map(x=>'・'+x).join('\n')}\n\n【結尾互動】${r.cta}\n【預估秒數】約 ${r.seconds} 秒${r.todo.length?`\n\n【待補資訊】\n${r.todo.map(x=>'・'+x).join('\n')}`:''}`}
@@ -1343,7 +1385,7 @@ function renderGen(){
   if(s.busy){$('#g-out').innerHTML=busyHTML('AI 正在依照你的人設寫腳本…');return}
   if(!s.res){$('#g-out').innerHTML=s.err?errHTML(s.err):'';return}
   const r=s.res,chars=r.script.replace(/\s/g,'').length;
-  $('#g-out').innerHTML=`<section class="panel">
+  $('#g-out').innerHTML=offNote('gen')+`<section class="panel">
   <span class="stage">${r.make?MAKES[r.make][0]+'・':''}公式 ${r.formula}｜${FORMULAS[r.formula][0]}　約 ${r.seconds} 秒・${chars} 字</span>
   <div class="ptitle" style="font-size:1.35rem">${esc(r.title)}</div>
   <div class="sec"><h2>前 3 秒開場</h2><p style="margin:0;font-size:1.05rem">${esc(r.hook)}</p></div>
